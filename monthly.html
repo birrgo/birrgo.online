@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Monthly BirrDraw</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --accent-glow: rgba(128, 0, 32, 0.15);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--bg-light);
+            padding: calc(16px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom)) 20px;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .hero-banner {
+            width: 100%;
+            height: 160px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .hero-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .draw-details {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-light);
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .draw-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .draw-price {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .draw-price span {
+            color: var(--primary-burgundy);
+            font-weight: 800;
+        }
+
+        /* Number Generator Area */
+        .generator-box {
+            background: #0f172a;
+            border-radius: var(--border-radius-md);
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-label {
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .number-display {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .digit-slot {
+            width: 38px;
+            height: 48px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ffd700;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            transition: all 0.1s ease;
+        }
+
+        .btn-generate {
+            background: linear-gradient(90deg, #ffd700, #ffa500);
+            color: #000000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            width: 80%;
+            transition: transform 0.1s;
+        }
+
+        .btn-generate:active {
+            transform: scale(0.96);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            height: 54px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(128, 0, 32, 0.25);
+            margin-bottom: 20px;
+        }
+
+        /* NEW SIMPLE SINGLE BUTTON TO JUMP TO DASHBOARD */
+        .btn-go-dashboard {
+            width: 100%;
+            height: 54px;
+            background: #ffffff;
+            color: var(--primary-burgundy);
+            border: 2px solid var(--primary-burgundy);
+            border-radius: var(--border-radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .btn-go-dashboard:active {
+            background: var(--accent-glow);
+        }
+
+        /* Bottom Sheet Styling */
+        .sheet-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            align-items: flex-end;
+            z-index: 5000;
+        }
+
+        .sheet-backdrop.active {
+            display: flex;
+        }
+
+        .bottom-sheet {
+            background: #ffffff;
+            width: 100%;
+            border-top-left-radius: var(--border-radius-lg);
+            border-top-right-radius: var(--border-radius-lg);
+            padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .sheet-backdrop.active .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: var(--border-light);
+            border-radius: 10px;
+            margin: 0 auto 18px auto;
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 50px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            letter-spacing: 4px;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-burgundy);
+        }
+
+        .btn-sheet-confirm {
+            width: 100%;
+            height: 50px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Success Dialog Overlay Popup UI */
+        .success-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            z-index: 7000;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            border-radius: var(--border-radius-lg);
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: popScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popScale {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .success-icon-box {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+            font-size: 32px;
+        }
+
+        .success-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .success-msg {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .ticket-receipt-badge {
+            background: var(--bg-light);
+            border: 2px dashed var(--border-light);
+            padding: 14px;
+            border-radius: var(--border-radius-md);
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-burgundy);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .success-footer-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #b8860b;
+            margin-bottom: 24px;
+        }
+
+        .btn-view-dash {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        /* Toast Messages */
+        .toast {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #0f172a;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 6000;
+            width: 85%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error { background: var(--danger-red); }
+        .toast.success { background: var(--success-green); }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        <div id="toastNotification" class="toast"></div>
+
+        <div class="success-overlay" id="successPopup">
+            <div class="success-card">
+                <div class="success-icon-box">✨</div>
+                <h3 class="success-title">Order Confirmed</h3>
+                <p class="success-msg">Your sequence has been safely certified and logged into your account.</p>
+                
+                <div class="ticket-receipt-badge" id="receiptTicketNum">0000000</div>
+                <div class="success-footer-text">✨ Good Luck! ✨</div>
+
+                <button class="btn-view-dash" id="popupDashboardBtn">View My Dashboard</button>
+            </div>
+        </div>
+
+        <div class="app-content" id="appContentScrollContainer">
+            <div class="brand-header">
+                <button class="btn-back" onclick="window.location.href='lottery.html'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <div style="font-weight: 800; font-size: 16px; color: var(--text-dark);">Monthly Draw</div>
+                <div style="width: 40px;"></div>
+            </div>
+
+            <div class="hero-banner">
+                <img src="33440.png" alt="Monthly Draw Banner">
+            </div>
+
+            <div class="draw-details">
+                <h2 class="draw-title">Monthly BirrDraw</h2>
+                <p class="draw-price">Price: <span>200 Birr</span> / ticket</p>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Tap generate to configure a completely unique 7-digit lottery ticket number setup from up to 10,000,000 possibilities.</p>
+            </div>
+
+            <div class="generator-box">
+                <div class="ticket-label">Your Ticket Number Sequence</div>
+                <div class="number-display" id="numberDisplay">
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                    <div class="digit-slot">0</div>
+                </div>
+                <button class="btn-generate" id="generateBtn">🎲 Generate Number</button>
+            </div>
+
+            <button class="btn-checkout" id="checkoutBtn">Purchase Ticket</button>
+
+            <button class="btn-go-dashboard" id="goToDashboardBtn">
+                🎟️ View Live Tickets Dashboard
+            </button>
+        </div>
+
+        <div class="sheet-backdrop" id="securitySheet">
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-title">Secure Checkout</div>
+                
+                <div style="background: var(--bg-light); padding: 14px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-light);">
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
+                        <span style="color:var(--text-muted)">Ticket sequence:</span>
+                        <span id="sheetTicketNum" style="font-weight:700; color:var(--text-dark)">0000000</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:14px;">
+                        <span style="color:var(--text-muted)">Total Cost:</span>
+                        <span style="font-weight:800; color:var(--primary-burgundy)">200 Birr</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="userPinInput">Enter Account PIN (4-digits)</label>
+                    <input type="password" id="userPinInput" maxlength="4" inputmode="numeric" class="input-field" placeholder="••••">
+                </div>
+
+                <button class="btn-sheet-confirm" id="confirmPurchaseBtn">Verify & Pay 200 Birr</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let currentGeneratedNumber = "";
+        let activeUserPhone = localStorage.getItem('auth_session_phone');
+        let completeRawCardSequence = "";
+        const ticketCost = 200;
+
+        let lcgSeed = Date.now();
+        function generateUniqueSevenDigit() {
+            const a = 1664525;
+            const c = 1013904223;
+            const m = Math.pow(2, 32);
+            lcgSeed = (a * lcgSeed + c) % m;
+            
+            let rawNumber = Math.floor((lcgSeed / m) * 10000000);
+            return String(rawNumber).padStart(7, '0');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            return phoneStr.replace(/\D/g, ''); 
+        }
+
+        const generateBtn = document.getElementById('generateBtn');
+        const numberDisplay = document.getElementById('numberDisplay');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const securitySheet = document.getElementById('securitySheet');
+        const confirmPurchaseBtn = document.getElementById('confirmPurchaseBtn');
+        const successPopup = document.getElementById('successPopup');
+
+        function renderNewNumber() {
+            currentGeneratedNumber = generateUniqueSevenDigit();
+            const slots = numberDisplay.querySelectorAll('.digit-slot');
+            for(let i = 0; i < 7; i++) {
+                slots[i].innerText = currentGeneratedNumber[i];
+            }
+        }
+        renderNewNumber();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const cleanPhone = normalizePhoneNumber(activeUserPhone);
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            const localizedKeyGuess = cleanPhone + final6Reversed;
+
+            try {
+                const directCheckSnap = await get(ref(db, `users/${localizedKeyGuess}`));
+                if (directCheckSnap.exists()) {
+                    completeRawCardSequence = localizedKeyGuess;
+                } else {
+                    const usersSnapshot = await get(ref(db, 'users'));
+                    let found = false;
+                    if (usersSnapshot.exists()) {
+                        usersSnapshot.forEach((childSnapshot) => {
+                            const userData = childSnapshot.val();
+                            const dbPhone1 = normalizePhoneNumber(userData.phoneNumber);
+                            const dbPhone2 = normalizePhoneNumber(userData.phone);
+                            if ((dbPhone1 && (dbPhone1.includes(cleanPhone) || cleanPhone.includes(dbPhone1))) ||
+                                (dbPhone2 && (dbPhone2.includes(cleanPhone) || cleanPhone.includes(dbPhone2)))) {
+                                completeRawCardSequence = childSnapshot.key;
+                                found = true;
+                            }
+                        });
+                    }
+                    if (!found) completeRawCardSequence = localizedKeyGuess;
+                }
+            } catch (err) {
+                completeRawCardSequence = localizedKeyGuess;
+            }
+        });
+
+        generateBtn.addEventListener('click', () => {
+            renderNewNumber();
+        });
+
+        checkoutBtn.addEventListener('click', () => {
+            if(!activeUserPhone) {
+                showToast("Session expired. Please log in again.", "error");
+                return;
+            }
+            document.getElementById('sheetTicketNum').innerText = currentGeneratedNumber;
+            securitySheet.classList.add('active');
+        });
+
+        securitySheet.addEventListener('click', (e) => {
+            if(e.target.id === 'securitySheet') {
+                securitySheet.classList.remove('active');
+            }
+        });
+
+        document.getElementById('goToDashboardBtn').addEventListener('click', () => {
+            window.location.href = "monthly.html"; 
+        });
+
+        document.getElementById('popupDashboardBtn').addEventListener('click', () => {
+            window.location.href = "monthly.html";
+        });
+
+        confirmPurchaseBtn.addEventListener('click', async () => {
+            const enteredPin = document.getElementById('userPinInput').value.trim();
+            if(!enteredPin || enteredPin.length !== 4) {
+                showToast("Please enter your valid 4-digit security PIN.", "error");
+                return;
+            }
+
+            confirmPurchaseBtn.disabled = true;
+            confirmPurchaseBtn.innerText = "Verifying Transaction...";
+
+            try {
+                const targetPathKey = completeRawCardSequence || activeUserPhone;
+                const usersSnapshot = await get(ref(db, 'users'));
+
+                if(!usersSnapshot.exists() || !usersSnapshot.hasChild(targetPathKey)) {
+                    showToast("User profile details missing.", "error");
+                    resetSheetButton();
+                    return;
+                }
+
+                const allUsers = usersSnapshot.val();
+                const userData = allUsers[targetPathKey];
+
+                if (userData.securityPin !== enteredPin && userData.pin !== enteredPin) {
+                    showToast("Invalid security PIN verification.", "error");
+                    resetSheetButton();
+                    return;
+                }
+
+                let clearBalance = 0.00;
+                if (userData.walletBalance !== undefined && userData.walletBalance !== null) {
+                    clearBalance = parseFloat(userData.walletBalance);
+                } else if (userData.balance !== undefined && userData.balance !== null) {
+                    clearBalance = parseFloat(userData.balance);
+                }
+                
+                if(isNaN(clearBalance)) clearBalance = 0.00;
+
+                if(clearBalance < ticketCost) {
+                    showToast(`Insufficient balance! Balance: ${clearBalance} Birr`, "error");
+                    resetSheetButton();
+                    return;
+                }
+
+                // Locate admin node containing continuous zeros in phone or key mapping layout
+                let adminNodeKey = null;
+                Object.keys(allUsers).forEach((key) => {
+                    if (key.includes("000000") || (allUsers[key].cardNumber && allUsers[key].cardNumber.includes("000000"))) {
+                        adminNodeKey = key;
+                    }
+                });
+
+                const finalBalance = parseFloat((clearBalance - ticketCost).toFixed(2));
+                const timestampStr = new Date().toLocaleString();
+                const updates = {};
+
+                // Update standard user payload paths
+                updates[`users/${targetPathKey}/walletBalance`] = finalBalance;
+                if (userData.balance !== undefined) {
+                    updates[`users/${targetPathKey}/balance`] = finalBalance;
+                }
+                
+                const ticketsRef = ref(db, `users/${targetPathKey}/tickets`);
+                const nextTicketKey = push(ticketsRef).key;
+                updates[`users/${targetPathKey}/tickets/${nextTicketKey}`] = {
+                    ticketNumber: currentGeneratedNumber,
+                    type: "Monthly BirrDraw",
+                    price: ticketCost,
+                    timestamp: timestampStr
+                };
+
+                const txRef = ref(db, `users/${targetPathKey}/transactions`);
+                const nextTxKey = push(txRef).key;
+                updates[`users/${targetPathKey}/transactions/${nextTxKey}`] = {
+                    title: `MONTHLY BIRRDRAW ENTRY #${currentGeneratedNumber}`,
+                    amount: -ticketCost,
+                    type: "expense",
+                    timestamp: timestampStr
+                };
+
+                // CRITICAL INTEGRATION: Direct transfer of funds seamlessly straight into the designated Admin profile pool node tracker
+                if (adminNodeKey) {
+                    const oldAdminBal = parseFloat(allUsers[adminNodeKey].walletBalance) || 0;
+                    const finalAdminBal = parseFloat((oldAdminBal + ticketCost).toFixed(2));
+                    
+                    updates[`users/${adminNodeKey}/walletBalance`] = finalAdminBal;
+                    
+                    const adminTxRef = ref(db, `users/${adminNodeKey}/transactions`);
+                    const nextAdminTxKey = push(adminTxRef).key;
+                    updates[`users/${adminNodeKey}/transactions/${nextAdminTxKey}`] = {
+                        title: `TICKET POOL ENTRY RECIEVED (USER: +251${targetPathKey})`,
+                        amount: ticketCost,
+                        type: "income",
+                        timestamp: timestampStr
+                    };
+                }
+
+                await update(ref(db), updates);
+
+                securitySheet.classList.remove('active');
+                document.getElementById('userPinInput').value = "";
+                
+                document.getElementById('receiptTicketNum').innerText = currentGeneratedNumber;
+                successPopup.classList.add('active');
+
+                renderNewNumber();
+
+            } catch(error) {
+                console.error(error);
+                showToast("Network execution fault error.", "error");
+            } finally {
+                resetSheetButton();
+            }
+        });
+
+        function resetSheetButton() {
+            confirmPurchaseBtn.disabled = false;
+            confirmPurchaseBtn.innerText = "Verify & Pay 200 Birr";
+        }
+    </script>
+</body>
+</html>

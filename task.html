@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Premium Tasks</title>
+    <!-- Premium, modern tech typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --accent-glow: rgba(128, 0, 32, 0.15);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--bg-light);
+            padding: calc(16px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
+            scrollbar-width: none;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Premium Header Styling */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 4px 2px;
+        }
+
+        .logo-image {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Profile Avatar Button Setup */
+        .profile-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #eaf0f6;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .profile-btn:active {
+            transform: scale(0.94);
+            background-color: #e2e8f0;
+        }
+
+        .profile-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+
+        /* NEW HIGH-END PAGE SUB-MENU LINK SELECTORS */
+        .task-view-toggle-bar {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 24px;
+            gap: 4px;
+        }
+
+        .toggle-tab-btn {
+            flex: 1;
+            height: 44px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-tab-btn.active-view-tab {
+            background: #ffffff;
+            color: var(--primary-burgundy);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Section View Panel Management setup */
+        .sub-view-panel {
+            display: none;
+        }
+        .sub-view-panel.panel-active {
+            display: block;
+        }
+
+        /* ZOOMED / BIG SECTION HEADING */
+        .section-heading {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Task List Matrix Stack */
+        .active-list-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .list-item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 16px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.15s ease;
+        }
+
+        .list-item-card:active {
+            transform: scale(0.99);
+        }
+
+        .list-item-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .list-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fcf6f0;
+        }
+
+        .list-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        .list-item-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .list-item-info p {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .reward-highlight {
+            color: var(--primary-burgundy);
+            font-weight: 800;
+        }
+
+        /* Tactile Action Buttons */
+        .btn-task {
+            background: var(--primary-burgundy);
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            min-width: 105px;
+            text-align: center;
+            box-shadow: 0 4px 10px var(--accent-glow);
+            transition: all 0.2s ease;
+        }
+
+        .btn-task:disabled {
+            cursor: not-allowed;
+        }
+
+        .btn-task.cooldown {
+            background: #e2e8f0;
+            color: var(--text-muted);
+            box-shadow: none;
+            font-size: 11px;
+            padding: 8px 12px;
+        }
+
+        .btn-task.watching {
+            background: var(--warning-amber);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Premium Glass Tier Invite Container */
+        .invite-card {
+            background: #ffffff;
+            border: 1px dashed var(--primary-burgundy);
+            padding: 24px 20px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .invite-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .invite-desc {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .invite-desc b {
+            color: var(--primary-burgundy);
+            font-weight: 700;
+        }
+
+        .global-action-area {
+            display: flex;
+            gap: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-action-filled {
+            width: 100%;
+            height: 52px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action-filled:active {
+            transform: scale(0.97);
+        }
+
+        /* Invited History Framework Layout Rows */
+        .sub-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 2px;
+        }
+
+        .sub-title-text {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .counter-badge {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+        }
+
+        .referred-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .empty-history-notice {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .referred-friend-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 14px 16px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--card-shadow);
+        }
+
+        .friend-avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-burgundy);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .friend-meta h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .friend-meta p {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .bonus-amount-pill {
+            font-size: 12px;
+            font-weight: 800;
+            color: #10b981;
+            background: #ecfdf5;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* High-End Micro Notification Pop */
+        .toast-container {
+            position: absolute;
+            top: calc(20px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 999;
+            display: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Fixed Premium Navigation Matrix */
+        .bottom-nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: calc(68px + env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active-tab {
+            color: var(--primary-burgundy);
+        }
+        
+        .nav-item.active-tab .tab-icon-wrapper {
+            background-color: #fdf2f4;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: -2px;
+        }
+        .nav-item.active-tab svg {
+            stroke: var(--primary-burgundy);
+            stroke-width: 2.4;
+        }
+
+        /* App Embedded Ad Viewer Overlay styles */
+        .immersive-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: #ffffff;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+        .overlay-navbar {
+            height: calc(55px + env(safe-area-inset-top));
+            padding-top: env(safe-area-inset-top);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .overlay-countdown-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-burgundy);
+            background: #fdf2f4;
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+        .btn-close-overlay {
+            background: none;
+            border: none;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            line-height: 1;
+            display: none;
+        }
+        .ad-iframe-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #fafafa;
+        }
+
+        /* Premium Custom App Dialog Overlay Modal Matrix */
+        .custom-popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .custom-popup-backdrop.show-modal {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-popup-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            border-radius: var(--border-radius-lg);
+            padding: 28px 24px 24px 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .custom-popup-backdrop.show-modal .custom-popup-card {
+            transform: scale(1);
+        }
+        .popup-status-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px auto;
+        }
+        .popup-status-badge.bg-success {
+            background: #ecfdf5;
+            color: var(--success-green);
+        }
+        .popup-status-badge.bg-lock {
+            background: #fffbeb;
+            color: var(--warning-amber);
+        }
+        .popup-status-badge.bg-error {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+        .popup-status-badge svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+        .custom-popup-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
+        }
+        .custom-popup-msg {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .btn-popup-confirm {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
+            transition: background 0.2s ease;
+        }
+        .btn-popup-confirm:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toast">Invite Link Copied!</div>
+
+    <div class="app-view">
+        
+        <div class="app-content">
+            
+            <!-- Branding Header Row with Profile / Logout Button -->
+            <div class="brand-header">
+                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet">
+                <button class="profile-btn" id="logoutBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- TWO BUTTONS TO JUMP BETWEEN THE SECTIONS -->
+            <div class="task-view-toggle-bar">
+                <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
+                <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
+            </div>
+
+            <!-- PANEL 1: WATCH & EARN -->
+            <div id="panelWatchEarn" class="sub-view-panel panel-active">
+                <h2 class="section-heading">Watch & Earn</h2>
+                <div class="active-list-stack" id="video-task-container">
+                    <!-- Dynamic task rows render clean code natively below -->
+                </div>
+            </div>
+
+            <!-- PANEL 2: INVITATION SYSTEM -->
+            <div id="panelInvitation" class="sub-view-panel">
+                <h2 class="section-heading">Invite System</h2>
+                <div class="invite-card">
+                    <h3 class="invite-title">Invite Friends</h3>
+                    <p class="invite-desc">Share your unique link with friends. When they join BirrGo, you will receive a random bonus cash drop of up to <b>20 Birr</b> directly in your wallet balance!</p>
+                    <div class="global-action-area">
+                        <button class="btn-action-filled" id="shareBtn">Share Invite Link</button>
+                    </div>
+                </div>
+
+                <!-- NEW INVITED FRIENDS HISTORY REGISTRY MATRIX SECTION -->
+                <div class="sub-header-row">
+                    <h4 class="sub-title-text">Invited Friends</h4>
+                    <span class="counter-badge" id="inviteCountLabel">0 Users</span>
+                </div>
+                
+                <div class="referred-history-list" id="referredHistoryContainer">
+                    <div class="empty-history-notice">You haven't invited anyone yet. Share your link above to get started!</div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Sticky Persistent Premium Navigation Frame -->
+        <nav class="bottom-nav-bar">
+            <a href="dashboard.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+            <a href="#" class="nav-item active-tab">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                </div>
+                Tasks
+            </a>
+            <a href="lottery.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Lottery
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Wallet
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- Fixed App-Embedded Immersive Window Container Matrix -->
+    <div class="immersive-overlay" id="adViewerOverlay">
+        <div class="overlay-navbar">
+            <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 2:00</div>
+            <button class="btn-close-overlay" id="closeOverlayBtn">&times;</button>
+        </div>
+        <iframe class="ad-iframe-frame" id="adIframe" src=""></iframe>
+    </div>
+
+    <!-- Premium Native Custom Popup Modal Layout Struct -->
+    <div class="custom-popup-backdrop" id="customPopup">
+        <div class="custom-popup-card">
+            <div class="popup-status-badge bg-success" id="popupBadge">
+                <svg viewBox="0 0 24 24" id="popupIcon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
+            <p class="custom-popup-msg" id="popupMessage">Message info goes here natively.</p>
+            <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
+        </div>
+    </div>
+
+    <!-- Modular Firebase Application Environment Pipeline -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const totalVideos = 5;
+        const watchDuration = 120; 
+        const cooldownDuration = 3600000; 
+
+        const taskUrls = {
+            1: "https://omg10.com/4/10851265",
+            2: "https://omg10.com/4/10933166",
+            3: "https://omg10.com/4/10933166",
+            4: "https://omg10.com/4/10933166",
+            5: "https://omg10.com/4/10933166"
+        };
+
+        let activeUserPhone = "";
+
+        const adViewerOverlay = document.getElementById('adViewerOverlay');
+        const adIframe = document.getElementById('adIframe');
+        const overlayCountdown = document.getElementById('overlayCountdown');
+        const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+
+        const customPopup = document.getElementById('customPopup');
+        const popupBadge = document.getElementById('popupBadge');
+        const popupIcon = document.getElementById('popupIcon');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupMessage = document.getElementById('popupMessage');
+        const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+        // TAB SWITCH VIEW HANDLING LOGIC
+        window.switchTaskPanel = function(targetPanel) {
+            const btnWatch = document.getElementById('tabBtnWatch');
+            const btnInvite = document.getElementById('tabBtnInvite');
+            const panelWatch = document.getElementById('panelWatchEarn');
+            const panelInvite = document.getElementById('panelInvitation');
+
+            if (targetPanel === 'watch') {
+                btnWatch.classList.add('active-view-tab');
+                btnInvite.classList.remove('active-view-tab');
+                panelWatch.classList.add('panel-active');
+                panelInvite.classList.remove('panel-active');
+            } else {
+                btnInvite.classList.add('active-view-tab');
+                btnWatch.classList.remove('active-view-tab');
+                panelInvite.classList.add('panel-active');
+                panelWatch.classList.remove('panel-active');
+                // Auto-load reference list metrics when arriving here
+                loadReferredUsers();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+            initTasks();
+            setupOverlayEvents();
+            setupProfileEvents();
+        });
+
+        function displayAppModal(type, title, message, onConfirm = null) {
+            popupBadge.className = "popup-status-badge";
+            popupTitle.innerText = title;
+            popupMessage.innerText = message;
+
+            if (type === 'success') {
+                popupBadge.classList.add('bg-success');
+                popupIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+            } else if (type === 'lock') {
+                popupBadge.classList.add('bg-lock');
+                popupIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+            } else {
+                popupBadge.classList.add('bg-error');
+                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            }
+
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+
+            const handleClosure = () => {
+                customPopup.classList.remove('show-modal');
+                setTimeout(() => {
+                    customPopup.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                }, 300);
+                popupConfirmBtn.removeEventListener('click', handleClosure);
+            };
+            popupConfirmBtn.addEventListener('click', handleClosure);
+        }
+
+        function initTasks() {
+            const container = document.getElementById('video-task-container');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= totalVideos; i++) {
+                const card = document.createElement('div');
+                card.className = 'list-item-card';
+                card.id = `video-card-${i}`;
+
+                const lastWatched = localStorage.getItem(`video_cooldown_${i}`);
+                const now = Date.now();
+                
+                let buttonHTML = `<button class="btn-task" id="btn-action-${i}">Watch</button>`;
+                let remainingMinutes = 0;
+                
+                if (lastWatched && (now - lastWatched < cooldownDuration)) {
+                    remainingMinutes = Math.ceil((cooldownDuration - (now - lastWatched)) / 60000);
+                    buttonHTML = `<button class="btn-task cooldown" id="btn-action-${i}">Locked (${remainingMinutes}m)</button>`;
+                }
+
+                card.innerHTML = `
+                    <div class="list-item-left">
+                        <div class="list-icon-box">
+                            <img src="33164.png" alt="10 Birr Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7152/7152349.png'">
+                        </div>
+                        <div class="list-item-info">
+                            <h4>Video Task ${i}</h4>
+                            <p>Watch 2 minutes<br>Reward: <span class="reward-highlight">10 Birr</span></p>
+                        </div>
+                    </div>
+                    ${buttonHTML}
+                `;
+                container.appendChild(card);
+
+                const targetBtn = document.getElementById(`btn-action-${i}`);
+                if (targetBtn.classList.contains('cooldown')) {
+                    targetBtn.addEventListener('click', () => showReminder(remainingMinutes));
+                } else {
+                    targetBtn.addEventListener('click', () => handleTask(i));
+                }
+            }
+        }
+
+        // DATABASE METHOD: PULL INIVITED INDIVIDUALS BY THIS UNIQUE PHONE REFERRAL
+        async function loadReferredUsers() {
+            const container = document.getElementById('referredHistoryContainer');
+            const counterLabel = document.getElementById('inviteCountLabel');
+            
+            try {
+                const referredRef = ref(db, `users/${activeUserPhone}/referredUsers`);
+                const snapshot = await get(referredRef);
+                
+                if (snapshot.exists()) {
+                    container.innerHTML = '';
+                    const rawData = snapshot.val();
+                    const objectList = Object.values(rawData);
+                    
+                    counterLabel.innerText = `${objectList.length} ${objectList.length === 1 ? 'User' : 'Users'}`;
+                    
+                    // Sort down by inverse timestamp order if available
+                    objectList.reverse().forEach(friend => {
+                        const fullName = friend.fullName || "Anonymous Member";
+                        const phoneNumber = friend.phone ? `+251${friend.phone.slice(-9)}` : "Hidden Phone";
+                        const firstInitial = fullName.charAt(0).toUpperCase();
+                        
+                        const row = document.createElement('div');
+                        row.className = 'referred-friend-row';
+                        row.innerHTML = `
+                            <div class="list-item-left">
+                                <div class="friend-avatar-circle">${firstInitial}</div>
+                                <div class="friend-meta">
+                                    <h5>${fullName}</h5>
+                                    <p>${phoneNumber}</p>
+                                </div>
+                            </div>
+                            <span class="bonus-amount-pill">+20 Birr</span>
+                        `;
+                        container.appendChild(row);
+                    });
+                } else {
+                    counterLabel.innerText = '0 Users';
+                    container.innerHTML = `<div class="empty-history-notice">You haven't invited anyone yet. Share your link above to get started!</div>`;
+                }
+            } catch (error) {
+                console.error("Firebase fetch anomaly occurred reading referrals: ", error);
+                container.innerHTML = `<div class="empty-history-notice" style="color:#ef4444;">Failed to sync invited list history data.</div>`;
+            }
+        }
+
+        async function handleTask(id) {
+            const card = document.getElementById(`video-card-${id}`);
+            const btn = card.querySelector('.btn-task');
+            const targetUrl = taskUrls[id] || "https://omg10.com/4/10933166";
+            
+            adIframe.src = targetUrl;
+            adViewerOverlay.style.display = "flex";
+            closeOverlayBtn.style.display = "none"; 
+            
+            btn.className = "btn-task watching";
+            btn.disabled = true;
+            
+            let timeLeft = watchDuration;
+            overlayCountdown.innerText = "Remaining: 2:00";
+            btn.innerText = "2:00";
+
+            const countdown = setInterval(async () => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const standardTimeFormatted = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                btn.innerText = standardTimeFormatted;
+                overlayCountdown.innerText = `Remaining: ${standardTimeFormatted}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    
+                    try {
+                        const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                        await runTransaction(balanceRef, (currentBalance) => {
+                            let parsedBalance = parseFloat(currentBalance);
+                            if (isNaN(parsedBalance)) parsedBalance = 0;
+                            return parsedBalance + 10;
+                        });
+
+                        const txHistoryRef = ref(db, `users/${activeUserPhone}/transactions`);
+                        const newTxNode = push(txHistoryRef);
+                        await set(newTxNode, {
+                            title: `Watch Video Task #${id}`,
+                            amount: 10.00,
+                            type: "income",
+                            timestamp: new Date().toLocaleString()
+                        });
+
+                        localStorage.setItem(`video_cooldown_${id}`, Date.now());
+                        
+                        overlayCountdown.innerText = "Task Finished! +10 Birr";
+                        closeOverlayBtn.style.display = "block"; 
+                        
+                        displayAppModal(
+                            'success', 
+                            'Task Completed', 
+                            'Success! 10 Birr has been credited directly to your database wallet balance.'
+                        );
+                    } catch (error) {
+                        console.error("Firebase Transaction dropped: ", error);
+                        displayAppModal(
+                            'error', 
+                            'Sync Failed', 
+                            'Network validation error. Balance sync failed.'
+                        );
+                        overlayCountdown.innerText = "Sync Failed. Close and try again.";
+                        closeOverlayBtn.style.display = "block";
+                    }
+                }
+            }, 1000);
+        }
+
+        function setupOverlayEvents() {
+            closeOverlayBtn.addEventListener('click', () => {
+                adIframe.src = "";
+                adViewerOverlay.style.display = "none";
+                initTasks();
+            });
+        }
+
+        function setupProfileEvents() {
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                displayAppModal(
+                    'lock', 
+                    'Sign Out', 
+                    'Are you sure you want to end your session and return to the login screen?', 
+                    () => {
+                        localStorage.removeItem('auth_session_phone');
+                        window.location.href = "login.html";
+                    }
+                );
+            });
+        }
+
+        function showReminder(minutes) {
+            displayAppModal(
+                'lock', 
+                'Task Locked', 
+                `This video row is locked. Please come back after ${minutes} minutes to watch and claim another 10 Birr!`
+            );
+        }
+
+        function secureCopy(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                return navigator.clipboard.writeText(text);
+            } else {
+                return new Promise((resolve, reject) => {
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = text;
+                    tempInput.style.position = 'fixed'; 
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    try {
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        if (success) resolve(); else reject();
+                    } catch (err) {
+                        document.body.removeChild(tempInput);
+                        reject(err);
+                    }
+                });
+            }
+        }
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            const cleanRefPhone = activeUserPhone.replace(/\D/g, '').slice(-9);
+            const clearPathUrl = window.location.href.split('?')[0];
+            const registrationLink = clearPathUrl.replace('task.html', 'register.html') + "?ref=" + cleanRefPhone;
+            
+            secureCopy(registrationLink).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            }).catch(err => {
+                console.error("Copy action failed: ", err);
+            });
+        });
+    </script>
+</body>
+</html>

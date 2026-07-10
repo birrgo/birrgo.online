@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Premium Wallet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --accent-glow: rgba(128, 0, 32, 0.15);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+            
+            /* Premium Gold Chip Matrix Colors */
+            --gold-metallic: linear-gradient(135deg, #ffe07d 0%, #f5af19 45%, #e65c00 100%);
+            --gold-lines: rgba(139, 92, 26, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--bg-light);
+            padding: calc(16px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
+            scrollbar-width: none;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Premium Header Styling */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 4px 2px;
+        }
+
+        .logo-image {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            letter-spacing: -0.6px;
+        }
+
+        /* High-End Digital Card Visual */
+        .digital-card {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            color: #ffffff;
+            box-shadow: 0 20px 35px -8px rgba(128, 0, 32, 0.3);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .digital-card::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 140px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        /* High-End Realistic Gold SIM Chip */
+        .card-chip {
+            width: 44px;
+            height: 32px;
+            background: var(--gold-metallic);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(184, 134, 11, 0.4);
+            overflow: hidden;
+        }
+
+        /* Microchip Circuit Internal Lines */
+        .card-chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 14px;
+            width: 14px;
+            height: 100%;
+            border-left: 1px solid var(--gold-lines);
+            border-right: 1px solid var(--gold-lines);
+            pointer-events: none;
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 11px;
+            border-top: 1px solid var(--gold-lines);
+            border-bottom: 1px solid var(--gold-lines);
+            pointer-events: none;
+        }
+
+        /* Identity Eye Box styling */
+        .card-identity-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-type {
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.85;
+        }
+
+        .btn-eye-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-eye-toggle:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-eye-toggle svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+
+        .card-number {
+            font-size: 18px;
+            font-weight: 600;
+            font-family: monospace;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2px;
+        }
+
+        .card-holder-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Asset Breakdown Stack */
+        .section-heading {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            letter-spacing: -0.4px;
+            margin-top: 10px;
+        }
+
+        .history-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .history-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 16px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--card-shadow);
+        }
+
+        .history-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .history-icon-box {
+            font-size: 20px;
+            background-color: #f1f5f9;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .history-info p {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .history-right {
+            text-align: right;
+        }
+
+        .history-amount {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        /* Specialized Real-Time Transaction Log Colors */
+        .history-amount.income {
+            color: var(--success-green);
+        }
+
+        .history-amount.expense {
+            color: var(--primary-burgundy);
+        }
+
+        /* Large Action Controls */
+        .wallet-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .btn-wallet-action {
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-wallet-action.primary {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2);
+        }
+
+        .btn-wallet-action.secondary {
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+        }
+
+        .btn-wallet-action:active {
+            transform: scale(0.97);
+        }
+
+        /* Navigation Layout Bar */
+        .bottom-nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: calc(68px + env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active-tab {
+            color: var(--primary-burgundy);
+        }
+        
+        .nav-item.active-tab .tab-icon-wrapper {
+            background-color: #fdf2f4;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: -2px;
+        }
+        .nav-item.active-tab svg {
+            stroke: var(--primary-burgundy);
+            stroke-width: 2.4;
+        }
+
+        /* Premium Security Dialog Input Popups Layout Structural Nodes */
+        .security-modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .security-modal-backdrop.show-modal {
+            display: flex;
+            opacity: 1;
+        }
+        .security-modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            border-radius: var(--border-radius-lg);
+            padding: 28px 24px 24px 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.92);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .security-modal-backdrop.show-modal .security-modal-card {
+            transform: scale(1);
+        }
+        .security-modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #fdf2f4;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+            transition: all 0.3s ease;
+        }
+        .security-modal-icon.bg-lock {
+            background: #fffbeb;
+            color: var(--warning-amber);
+        }
+        .security-modal-icon svg {
+            width: 26px;
+            height: 26px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+        .security-modal-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .security-modal-desc {
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        /* New Embedded Error UI Styling */
+        .modal-error-banner {
+            display: none;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+            animation: shakeFeedback 0.35s ease-in-out;
+        }
+
+        @keyframes shakeFeedback {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .security-password-input {
+            width: 100%;
+            height: 50px;
+            border-radius: var(--border-radius-md);
+            border: 1.5px solid var(--border-light);
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .security-password-input:focus {
+            border-color: var(--primary-burgundy);
+        }
+        
+        /* Interactive dynamic error state variations */
+        .security-modal-card.has-error .security-password-input {
+            border-color: #dc2626;
+            background-color: #fffafb;
+        }
+        .security-modal-card.has-error .security-modal-icon {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .security-modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+        }
+        .security-modal-actions.single-btn {
+            grid-template-columns: 1fr;
+        }
+        .btn-modal-cancel {
+            height: 48px;
+            background: #f1f5f9;
+            color: var(--text-dark);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-modal-submit {
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
+        }
+        .btn-modal-submit:active, .btn-modal-cancel:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <div class="app-content">
+            
+            <div class="brand-header">
+                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+                <button id="dashboardLogoutBtn" style="background: #f1f5f9; border: 1px solid var(--border-light); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dark); cursor: pointer; transition: all 0.2s ease; box-shadow: var(--card-shadow);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <h1 class="page-title">Wallet Ledger</h1>
+
+            <div class="digital-card">
+                <div class="card-top">
+                    <div class="card-chip"></div>
+                    <div class="card-identity-box">
+                        <div class="card-type" id="wallet-card-identity">•••• ••••</div>
+                        <button class="btn-eye-toggle" id="eyeToggleBtn">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-number" id="wallet-card-number">•••• •••• •••• ••••</div>
+                
+                <div class="card-bottom">
+                    <div>
+                        <div class="card-holder-label">Card Holder</div>
+                        <div class="card-holder-name" id="wallet-holder-name">•••• ••••••</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="card-holder-label">Total Balance</div>
+                        <div class="card-holder-name" id="wallet-total-balance" style="font-size: 16px; font-weight: 800;">0.00 Birr</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wallet-actions">
+                <button class="btn-wallet-action primary" id="depositBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    Deposit
+                </button>
+                <button class="btn-wallet-action secondary" id="withdrawBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    Withdraw
+                </button>
+            </div>
+
+            <h2 class="section-heading">Transaction History</h2>
+            <div class="history-stack" id="transaction-history-container">
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+                    Streaming system history...
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav-bar">
+            <a href="dashboard.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Hub
+            </a>
+            <a href="task.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Tasks
+            </a>
+            <a href="lottery.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Lottery
+            </a>
+            <a href="#" class="nav-item active-tab">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
+                Wallet
+            </a>
+        </nav>
+
+    </div>
+
+    <div class="security-modal-backdrop" id="securityModal">
+        <div class="security-modal-card" id="securityModalCard">
+            <div class="security-modal-icon" id="modalIconBox">
+                <svg viewBox="0 0 24 24" id="modalIconSvg"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="security-modal-title" id="modalTitle">Enter PIN</h3>
+            <p class="security-modal-desc" id="modalDesc">Please input your 4-digit account security PIN to decrypt your secure ledger identity details.</p>
+            
+            <div class="modal-error-banner" id="modalErrorBanner"></div>
+
+            <input type="password" maxlength="4" inputmode="numeric" class="security-password-input" id="securePassInput" placeholder="••••">
+            <div class="security-modal-actions" id="modalActionsGroup">
+                <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
+                <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let decryptedCardNum = "";
+        let decryptedFullName = "";
+        let infoIsVisible = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            calculateCardIdentityMatrix();
+            startLiveWalletListeners();
+            setupSecurityToggles();
+            setupFeatureGateways();
+            setupLogoutHandler();
+        });
+
+        function setupLogoutHandler() {
+            document.getElementById('dashboardLogoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('auth_session_phone');
+                window.location.href = "login.html";
+            });
+        }
+
+        function calculateCardIdentityMatrix() {
+            const cleanPhone = activeUserPhone.replace(/\D/g, '');
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            const completeRawCardSequence = cleanPhone + final6Reversed;
+            decryptedCardNum = completeRawCardSequence.match(/.{1,4}/g).join(' ');
+            document.getElementById('wallet-card-identity').innerText = `+${cleanPhone.substring(0, 6)}...`;
+            
+            const userRef = ref(db, `users/${activeUserPhone}`);
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists() && snapshot.val().fullName) {
+                    decryptedFullName = snapshot.val().fullName;
+                } else {
+                    decryptedFullName = "Elite Member";
+                }
+            }).catch(() => {
+                decryptedFullName = "Elite Member";
+            });
+        }
+
+        function setupSecurityToggles() {
+            const modal = document.getElementById('securityModal');
+            const modalCard = document.getElementById('securityModalCard');
+            const errorBanner = document.getElementById('modalErrorBanner');
+            const passInput = document.getElementById('securePassInput');
+            const iconBox = document.getElementById('modalIconBox');
+            const iconSvg = document.getElementById('modalIconSvg');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const actionsGroup = document.getElementById('modalActionsGroup');
+            
+            function clearErrorState() {
+                modalCard.classList.remove('has-error');
+                errorBanner.style.display = "none";
+                errorBanner.innerText = "";
+            }
+
+            document.getElementById('eyeToggleBtn').addEventListener('click', () => {
+                if (infoIsVisible) {
+                    document.getElementById('wallet-card-number').innerText = "•••• •••• •••• ••••";
+                    document.getElementById('wallet-holder-name').innerText = "•••• ••••••";
+                    document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                    infoIsVisible = false;
+                } else {
+                    clearErrorState();
+                    iconBox.className = "security-modal-icon";
+                    iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+                    title.innerText = "Enter PIN";
+                    desc.innerText = "Please input your 4-digit account security PIN to decrypt your secure ledger identity details.";
+                    passInput.style.display = "block";
+                    passInput.value = "";
+                    actionsGroup.className = "security-modal-actions";
+                    actionsGroup.innerHTML = `
+                        <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
+                        <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
+                    `;
+                    
+                    document.getElementById('closeModalBtn').addEventListener('click', closeModalTerminal);
+                    document.getElementById('submitPassBtn').addEventListener('click', handlePinVerification);
+
+                    modal.style.display = "flex";
+                    setTimeout(() => modal.classList.add('show-modal'), 10);
+                }
+            });
+
+            function closeModalTerminal() {
+                modal.classList.remove('show-modal');
+                setTimeout(() => modal.style.display = "none", 200);
+            }
+
+            passInput.addEventListener('input', () => {
+                if(modalCard.classList.contains('has-error')) clearErrorState();
+            });
+
+            async function handlePinVerification() {
+                const typedPin = passInput.value.trim();
+                if(!typedPin) return;
+
+                const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
+                try {
+                    const snap = await get(pinRef);
+                    if(snap.exists() && String(snap.val()) === typedPin) {
+                        document.getElementById('wallet-card-number').innerText = decryptedCardNum;
+                        document.getElementById('wallet-holder-name').innerText = decryptedFullName;
+                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+                        infoIsVisible = true;
+                        closeModalTerminal();
+                    } else {
+                        modalCard.classList.add('has-error');
+                        errorBanner.innerText = "Invalid security PIN sequence. Try again.";
+                        errorBanner.style.display = "block";
+                        passInput.value = "";
+                        errorBanner.style.animation = 'none';
+                        errorBanner.offsetHeight; 
+                        errorBanner.style.animation = null;
+                    }
+                } catch(e) {
+                    modalCard.classList.add('has-error');
+                    errorBanner.innerText = "Verification connection interrupted.";
+                    errorBanner.style.display = "block";
+                }
+            }
+        }
+
+        function setupFeatureGateways() {
+            const modal = document.getElementById('securityModal');
+            const iconBox = document.getElementById('modalIconBox');
+            const iconSvg = document.getElementById('modalIconSvg');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const passInput = document.getElementById('securePassInput');
+            const actionsGroup = document.getElementById('modalActionsGroup');
+            const errorBanner = document.getElementById('modalErrorBanner');
+            const modalCard = document.getElementById('securityModalCard');
+
+            function launchLockedNotice(type) {
+                modalCard.classList.remove('has-error');
+                errorBanner.style.display = "none";
+                
+                iconBox.className = "security-modal-icon bg-lock";
+                iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+                
+                if (type === 'deposit') {
+                    title.innerText = "Deposit Gateway Locked";
+                    desc.innerText = "The local premium automated deposit pipeline terminal is currently undergoing testing structural checks. Available in the next updates.";
+                } else {
+                    title.innerText = "Withdraw System Locked";
+                    desc.innerText = "The native withdrawal gateway is coming soon! Complete video tasks daily to continue stacking up your database wallet balance.";
+                }
+
+                passInput.style.display = "none";
+                actionsGroup.className = "security-modal-actions single-btn";
+                actionsGroup.innerHTML = `<button class="btn-modal-submit" id="dismissLockBtn">Understood</button>`;
+
+                document.getElementById('dismissLockBtn').addEventListener('click', () => {
+                    modal.classList.remove('show-modal');
+                    setTimeout(() => modal.style.display = "none", 200);
+                });
+
+                modal.style.display = "flex";
+                setTimeout(() => modal.classList.add('show-modal'), 10);
+            }
+
+            document.getElementById('depositBtn').addEventListener('click', () => launchLockedNotice('deposit'));
+            document.getElementById('withdrawBtn').addEventListener('click', () => launchLockedNotice('withdraw'));
+        }
+
+        function startLiveWalletListeners() {
+            const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+            
+            onValue(balanceRef, (snapshot) => {
+                const balanceVal = snapshot.val();
+                
+                // Real-time provisioning check for missing user nodes
+                if (balanceVal === null) {
+                    set(balanceRef, 0);
+                    document.getElementById('wallet-total-balance').innerText = "0.00 Birr";
+                    return;
+                }
+                
+                const numericTotal = parseFloat(balanceVal);
+                document.getElementById('wallet-total-balance').innerText = `${numericTotal.toFixed(2)} Birr`;
+            });
+
+            const historyRef = ref(db, `users/${activeUserPhone}/transactions`);
+            const historyContainer = document.getElementById('transaction-history-container');
+
+            onValue(historyRef, (snapshot) => {
+                const data = snapshot.val();
+                historyContainer.innerHTML = ''; 
+
+                if (!data) {
+                    historyContainer.innerHTML = `
+                        <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">
+                            No account activity tracked yet. Complete a task video to see it pop here!
+                        </div>`;
+                    return;
+                }
+
+                const transactionList = Object.keys(data).map(key => data[key]);
+                transactionList.reverse(); 
+
+                transactionList.forEach(tx => {
+                    const cardRow = document.createElement('div');
+                    cardRow.className = 'history-card';
+
+                    const isIncome = tx.type === 'income' || tx.amount > 0;
+                    const visualSymbol = isIncome ? '⚡' : '🎟️';
+                    const stylingClass = isIncome ? 'income' : 'expense';
+                    const prefixMathSign = isIncome ? '+' : '-';
+
+                    cardRow.innerHTML = `
+                        <div class="history-left">
+                            <div class="history-icon-box">${visualSymbol}</div>
+                            <div class="history-info">
+                                <h4>${tx.title || 'Wallet Activity'}</h4>
+                                <p>${tx.timestamp || 'Just now'}</p>
+                            </div>
+                        </div>
+                        <div class="history-right">
+                            <div class="history-amount ${stylingClass}">
+                                ${prefixMathSign}${Math.abs(tx.amount).toFixed(2)} Br
+                            </div>
+                        </div>
+                    `;
+                    historyContainer.appendChild(cardRow);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

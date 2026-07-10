@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BIRRGO Scratch & Win</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0016;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .card-container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 25px;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .top-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .btn-back {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header-logo {
+            max-width: 140px;
+            height: auto;
+        }
+
+        .header-spacer { width: 40px; }
+
+        .game-status-text {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .grid-item {
+            aspect-ratio: 1 / 1; 
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 12px;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--border-light);
+        }
+
+        .prize-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scratch-foil {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 10px;
+            background-color: #ffffff; 
+            background-image: url('33274.jpg');
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 1);
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            user-select: none;
+        }
+
+        .grid-item.revealed .scratch-foil {
+            transform: scale(0.6);
+            opacity: 0;
+            pointer-events: none; 
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px 25px;
+            border-radius: var(--border-radius-lg);
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .modal-title.win { color: var(--success-green); }
+        .modal-title.lose { color: var(--danger-red); }
+
+        .modal-logo-count {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .modal-prize-box {
+            background-color: #fdf2f4;
+            border: 2px dashed var(--primary-burgundy);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .modal-prize-amount {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary-burgundy);
+        }
+
+        .input-field {
+            width: 100%;
+            height: 50px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(139, 0, 22, 0.3);
+        }
+        .btn.btn-dark { background: #0f172a; }
+
+        /* Toast Messages */
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 9999;
+            width: 85%;
+            text-align: center;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+        .toast.error { background: var(--danger-red); }
+        .toast.success { background: var(--success-green); }
+    </style>
+</head>
+<body>
+
+    <div id="toastNotification" class="toast"></div>
+
+    <div class="card-container">
+        <div class="top-navbar">
+            <a href="lottery.html" class="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+            <img src="image_1.png" alt="BIRRGO Mobile Wallet" class="header-logo">
+            <div class="header-spacer"></div>
+        </div>
+        
+        <div id="gameInstruction" class="game-status-text">Unlock card to start playing!</div>
+        <div id="gridContainer" class="grid-container"></div>
+    </div>
+
+    <div id="gameModal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modalTitle" class="modal-title">Confirm Ticket</div>
+            <div id="modalLogos" class="modal-logo-count">1 ticket price is 20 Birr. Enter your 4-digit PIN to pay and play.</div>
+            
+            <input type="password" id="userPinInput" maxlength="4" inputmode="numeric" class="input-field" placeholder="••••">
+
+            <div class="modal-prize-box" id="modalPrizeBox" style="display: none;">
+                <div style="font-size: 0.85rem; color: #888; text-transform: uppercase;">Your Payout</div>
+                <div id="modalPrize" class="modal-prize-amount">0 Birr</div>
+            </div>
+
+            <button id="modalActionBtn" class="btn" onclick="processTicketPurchase()">Pay 20 Birr & Play</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Same Database Connection used in monthly.html
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const ticketCost = 20;
+        const loseImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'];
+        const winImage = '6.jpg';
+        const totalItems = 12;
+
+        let logosFound = 0;
+        let revealedItems = 0;
+        let activeGameState = false; 
+        let activeUserPhone = localStorage.getItem('auth_session_phone');
+        let completeRawCardSequence = "";
+        let currentRoundWinValue = 0;
+        let targetLogosCount = 0;
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Setup phone normalization logic identical to monthly.html
+        function normalizePhoneNumber(phoneStr) {
+            return phoneStr ? phoneStr.replace(/\D/g, '') : "";
+        }
+
+        window.onload = async () => {
+            if(!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+            const cleanPhone = normalizePhoneNumber(activeUserPhone);
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            completeRawCardSequence = cleanPhone + final6Reversed;
+
+            // Fetch true account key profile layout mapping context
+            try {
+                const directCheckSnap = await get(ref(db, `users/${completeRawCardSequence}`));
+                if (!directCheckSnap.exists()) {
+                    const usersSnapshot = await get(ref(db, 'users'));
+                    if (usersSnapshot.exists()) {
+                        usersSnapshot.forEach((child) => {
+                            const ud = child.val();
+                            if ((ud.phoneNumber && normalizePhoneNumber(ud.phoneNumber).includes(cleanPhone)) ||
+                                (ud.phone && normalizePhoneNumber(ud.phone).includes(cleanPhone))) {
+                                completeRawCardSequence = child.key;
+                            }
+                        });
+                    }
+                }
+            } catch (err) { console.error(err); }
+
+            showPaymentPromptModal();
+        };
+
+        function showPaymentPromptModal() {
+            activeGameState = false;
+            document.getElementById('gridContainer').innerHTML = '';
+            document.getElementById('gameInstruction').innerText = "Unlock card to start playing!";
+            
+            document.getElementById('modalTitle').innerText = "Confirm Ticket";
+            document.getElementById('modalTitle').className = "modal-title";
+            document.getElementById('modalLogos').innerText = "1 ticket price is 20 Birr. Enter your 4-digit PIN to pay and play.";
+            document.getElementById('userPinInput').style.display = "block";
+            document.getElementById('userPinInput').value = "";
+            document.getElementById('modalPrizeBox').style.display = "none";
+            
+            const actionBtn = document.getElementById('modalActionBtn');
+            actionBtn.innerText = "Pay 20 Birr & Play";
+            actionBtn.className = "btn";
+            
+            document.getElementById('gameModal').classList.add('active');
+        }
+
+        // SECURED MATHEMATICAL WINNING PROBABILITY MATRIX ENGINE
+        function calculateSecureOutcome() {
+            const chance = Math.random();
+            if (chance < 0.90) {
+                return { logos: 1, payout: 0 };    // 90% Win Rate -> 0 Birr
+            } else if (chance < 0.95) {
+                return { logos: 2, payout: 10 };   // 5% Win Rate -> 10 Birr
+            } else if (chance < 0.98) {
+                return { logos: 4, payout: 50 };   // 3% Win Rate -> 50 Birr
+            } else {
+                return { logos: 6, payout: 1000 }; // 2% Win Rate -> 1,000 Birr
+            }
+        }
+
+        window.processTicketPurchase = async function() {
+            if(!activeGameState && document.getElementById('userPinInput').style.display !== "none") {
+                const enteredPin = document.getElementById('userPinInput').value.trim();
+                if(!enteredPin || enteredPin.length !== 4) {
+                    showToast("Please enter your valid 4-digit security PIN.", "error");
+                    return;
+                }
+
+                const actionBtn = document.getElementById('modalActionBtn');
+                actionBtn.disabled = true;
+                actionBtn.innerText = "Processing Transaction...";
+
+                try {
+                    const usersSnapshot = await get(ref(db, 'users'));
+                    if(!usersSnapshot.exists() || !usersSnapshot.hasChild(completeRawCardSequence)) {
+                        showToast("User details profile missing.", "error");
+                        resetModalBtn();
+                        return;
+                    }
+
+                    const allUsers = usersSnapshot.val();
+                    const userData = allUsers[completeRawCardSequence];
+
+                    if (userData.securityPin !== enteredPin && userData.pin !== enteredPin) {
+                        showToast("Invalid security PIN verification.", "error");
+                        resetModalBtn();
+                        return;
+                    }
+
+                    let clearBalance = parseFloat(userData.walletBalance || userData.balance || 0);
+                    if(clearBalance < ticketCost) {
+                        showToast(`Insufficient balance! Current: ${clearBalance} Birr`, "error");
+                        resetModalBtn();
+                        return;
+                    }
+
+                    // Securely establish target win parameters before any card layout maps
+                    const secureResult = calculateSecureOutcome();
+                    targetLogosCount = secureResult.logos;
+                    currentRoundWinValue = secureResult.payout;
+
+                    // Locate admin destination payload tracking key node
+                    let adminNodeKey = null;
+                    Object.keys(allUsers).forEach((key) => {
+                        if (key.includes("000000") || (allUsers[key].cardNumber && allUsers[key].cardNumber.includes("000000"))) {
+                            adminNodeKey = key;
+                        }
+                    });
+
+                    // Deduct Entry Fee & Add Winnings directly into Wallet Balance changes simultaneously
+                    const adjustedUserBalance = parseFloat((clearBalance - ticketCost + currentRoundWinValue).toFixed(2));
+                    const timestampStr = new Date().toLocaleString();
+                    const updates = {};
+
+                    updates[`users/${completeRawCardSequence}/walletBalance`] = adjustedUserBalance;
+                    if (userData.balance !== undefined) {
+                        updates[`users/${completeRawCardSequence}/balance`] = adjustedUserBalance;
+                    }
+
+                    // Log initial ticket play purchase
+                    const ticketPushKey = push(ref(db, `users/${completeRawCardSequence}/tickets`)).key;
+                    updates[`users/${completeRawCardSequence}/tickets/${ticketPushKey}`] = {
+                        type: "Bingo Scratch Ticket",
+                        price: ticketCost,
+                        payout: currentRoundWinValue,
+                        timestamp: timestampStr
+                    };
+
+                    // Log corresponding deduction expense transaction
+                    const txPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
+                    updates[`users/${completeRawCardSequence}/transactions/${txPushKey}`] = {
+                        title: "BINGO SCRATCH TICKET ENTRY",
+                        amount: -ticketCost,
+                        type: "expense",
+                        timestamp: timestampStr
+                    };
+
+                    // If user won money, update transactions log immediately
+                    if(currentRoundWinValue > 0) {
+                        const winTxPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
+                        updates[`users/${completeRawCardSequence}/transactions/${winTxPushKey}`] = {
+                            title: "BINGO SCRATCH CARD WINNINGS",
+                            amount: currentRoundWinValue,
+                            type: "income",
+                            timestamp: timestampStr
+                        };
+                    }
+
+                    // Route entry fee to designated Admin profile node ledger
+                    if (adminNodeKey) {
+                        const currentAdminBal = parseFloat(allUsers[adminNodeKey].walletBalance) || 0;
+                        updates[`users/${adminNodeKey}/walletBalance`] = parseFloat((currentAdminBal + ticketCost).toFixed(2));
+                        
+                        const adminTxKey = push(ref(db, `users/${adminNodeKey}/transactions`)).key;
+                        updates[`users/${adminNodeKey}/transactions/${adminTxKey}`] = {
+                            title: `BINGO ENTRY POOL RECEIVED (+251${completeRawCardSequence})`,
+                            amount: ticketCost,
+                            type: "income",
+                            timestamp: timestampStr
+                        };
+                    }
+
+                    // Commit balance alterations to database securely
+                    await update(ref(db), updates);
+
+                    // Build and render game board
+                    buildGameBoardLayout();
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("Transaction execution error.", "error");
+                } finally {
+                    resetModalBtn();
+                }
+            } else {
+                // If round complete, clicking action button prompts next ticket round initialization 
+                showPaymentPromptModal();
+            }
+        };
+
+        function resetModalBtn() {
+            const actionBtn = document.getElementById('modalActionBtn');
+            actionBtn.disabled = false;
+            actionBtn.innerText = "Pay 20 Birr & Play";
+        }
+
+        function buildGameBoardLayout() {
+            logosFound = 0;
+            revealedItems = 0;
+            activeGameState = true;
+
+            document.getElementById('gameModal').classList.remove('active');
+            document.getElementById('gameInstruction').innerText = 'Scratch to find the money logos!';
+
+            let contentsArray = [];
+            for (let i = 0; i < totalItems; i++) {
+                contentsArray.push(i < targetLogosCount);
+            }
+            contentsArray.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('gridContainer');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < totalItems; i++) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'grid-item';
+                itemDiv.onclick = () => scratchBox(itemDiv, contentsArray[i]);
+
+                const imgEl = document.createElement('img');
+                imgEl.className = 'prize-image';
+
+                if (contentsArray[i]) {
+                    imgEl.src = winImage;
+                    imgEl.alt = 'Winning Logo';
+                } else {
+                    const randomLoseImg = loseImages[Math.floor(Math.random() * loseImages.length)];
+                    imgEl.src = randomLoseImg;
+                    imgEl.alt = 'Try Again';
+                }
+                
+                itemDiv.appendChild(imgEl);
+                const foilDiv = document.createElement('div');
+                foilDiv.className = 'scratch-foil';
+                itemDiv.appendChild(foilDiv);
+                grid.appendChild(itemDiv);
+            }
+        }
+
+        function scratchBox(itemElement, isLogo) {
+            if (!activeGameState || itemElement.classList.contains('revealed')) return;
+
+            itemElement.classList.add('revealed');
+            revealedItems++;
+
+            if (isLogo) logosFound++;
+
+            if (revealedItems < totalItems) {
+                document.getElementById('gameInstruction').innerText = `Scratched ${revealedItems} / ${totalItems}`;
+            } else {
+                setTimeout(showRewardPopup, 500);
+            }
+        }
+
+        function showRewardPopup() {
+            activeGameState = false;
+            document.getElementById('gameInstruction').innerText = 'Round Complete!';
+            
+            const title = document.getElementById('modalTitle');
+            const logosText = document.getElementById('modalLogos');
+            const prizeBox = document.getElementById('modalPrizeBox');
+            const prizeText = document.getElementById('modalPrize');
+            const actionBtn = document.getElementById('modalActionBtn');
+
+            document.getElementById('userPinInput').style.display = "none";
+            prizeBox.style.display = "block";
+            
+            logosText.innerText = `You uncovered ${logosFound} money logo${logosFound !== 1 ? 's' : ''}.`;
+            prizeText.innerText = `${currentRoundWinValue} Birr`;
+
+            if (currentRoundWinValue > 0) {
+                title.innerText = "Congratulations!";
+                title.className = "modal-title win";
+                actionBtn.innerText = "Play Again";
+                actionBtn.className = "btn";
+                showToast(`Credited ${currentRoundWinValue} Birr to your wallet balance!`, "success");
+            } else {
+                title.innerText = "Game Over!";
+                title.className = "modal-title lose";
+                actionBtn.innerText = "Try Again";
+                actionBtn.className = "btn btn-dark";
+            }
+
+            document.getElementById('gameModal').classList.add('active');
+        }
+    </script>
+</body>
+</html>

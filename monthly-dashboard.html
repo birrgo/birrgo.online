@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirrGo - Premium Live Feed Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --gold-gradient: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            --success-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-view {
+            width: 100%;
+            max-width: 650px;
+            background-color: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .live-badge .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success-green);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        .dashboard-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .dashboard-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 20px 0 10px 4px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ticket-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            padding: 18px 20px;
+            border-radius: 18px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        /* Premium style explicitly designating the viewer's own ticket configurations */
+        .ticket-card.my-ticket {
+            background: linear-gradient(135deg, #fffdf5 0%, #fff9e6 100%);
+            border: 2px solid #ffd700;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.12);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-info {
+            text-align: left;
+        }
+
+        .phone-display {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .my-badge {
+            background: var(--gold-gradient);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .timestamp-display {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .ticket-badge {
+            background: var(--primary-gradient);
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.12);
+            letter-spacing: 1px;
+        }
+
+        .ticket-card.my-ticket .ticket-badge {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(128, 0, 32, 0.2);
+        }
+
+        .no-data {
+            color: var(--text-muted);
+            padding: 30px;
+            text-align: center;
+            font-size: 14px;
+            background: var(--bg-light);
+            border: 1px dashed var(--border-light);
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-view">
+        <div class="header-section">
+            <div class="live-badge">
+                <span class="dot"></span> Live Tracker
+            </div>
+            <h1 class="dashboard-title">Monthly Draw Leaderboard</h1>
+            <p class="dashboard-subtitle">Real-time entry verification feed ledger updates</p>
+        </div>
+
+        <!-- Pinned Viewer Section -->
+        <div class="section-label" id="labelMyTickets" style="display:none;">⭐ Your Active Numbers</div>
+        <div class="ticket-list" id="myTicketsContainer"></div>
+
+        <!-- Global Feed Section -->
+        <div class="section-label">🌐 Global Participants Stream</div>
+        <div class="ticket-list" id="globalTicketsContainer">
+            <div class="no-data" id="loadingState">Establishing secure cloud socket stream...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Fetching phone profile parameter of the viewing user session
+        const currentViewerPhone = localStorage.getItem('auth_session_phone') || "";
+
+        function normalize(p) { return p ? p.replace(/\D/g, '') : ""; }
+
+        function anonymizePhone(phoneStr) {
+            if (!phoneStr) return "Hidden Entry";
+            let clean = phoneStr.replace(/\D/g, ''); 
+            if (clean.length >= 9) {
+                return `${clean.substring(0, 4)}***${clean.substring(7)}`;
+            }
+            return "Participant";
+        }
+
+        const myContainer = document.getElementById('myTicketsContainer');
+        const globalContainer = document.getElementById('globalTicketsContainer');
+        const labelMyTickets = document.getElementById('labelMyTickets');
+
+        const usersRef = ref(db, 'users');
+        onValue(usersRef, (snapshot) => {
+            if (!snapshot.exists()) {
+                globalContainer.innerHTML = `<div class="no-data">No active entry sessions found.</div>`;
+                return;
+            }
+
+            let myTickets = [];
+            let globalTickets = [];
+            const cleanViewerPhone = normalize(currentViewerPhone);
+
+            snapshot.forEach((userChild) => {
+                const userData = userChild.val();
+                let rawPhone = userData.phoneNumber || userData.phone || userChild.key;
+                let cleanRaw = normalize(rawPhone);
+
+                // Is this node path resource owned by the actively viewing device?
+                let isCurrentViewer = false;
+                if(cleanViewerPhone && (cleanRaw.includes(cleanViewerPhone) || cleanViewerPhone.includes(cleanRaw))) {
+                    isCurrentViewer = true;
+                }
+
+                if (userData.tickets) {
+                    Object.keys(userData.tickets).forEach((ticketId) => {
+                        const ticket = userData.tickets[ticketId];
+                        if (ticket.type === "Monthly BirrDraw") {
+                            
+                            const ticketObj = {
+                                isMe: isCurrentViewer,
+                                displayPhone: anonymizePhone(rawPhone),
+                                ticketNumber: ticket.ticketNumber,
+                                timestamp: ticket.timestamp || 'Just Now',
+                                sortTime: typeof ticket.timestamp === 'string' ? Date.parse(ticket.timestamp) : (ticket.timestamp || 0)
+                            };
+
+                            if (isCurrentViewer) {
+                                myTickets.push(ticketObj);
+                            } else {
+                                globalTickets.push(ticketObj);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Sort both array timelines cleanly by most recent entry arrival point
+            myTickets.sort((a, b) => b.sortTime - a.sortTime);
+            globalTickets.sort((a, b) => b.sortTime - a.sortTime);
+
+            // 1. Render Active Viewer's Top Pinned Tickets
+            if (myTickets.length > 0) {
+                labelMyTickets.style.display = "flex";
+                myContainer.innerHTML = "";
+                myTickets.forEach(t => {
+                    myContainer.appendChild(createCardElement(t));
+                });
+            } else {
+                labelMyTickets.style.display = "none";
+                myContainer.innerHTML = "";
+            }
+
+            // 2. Render Remaining Global Tickets Streams
+            if (globalTickets.length > 0) {
+                globalContainer.innerHTML = "";
+                globalTickets.forEach(t => {
+                    globalContainer.appendChild(createCardElement(t));
+                });
+            } else {
+                globalContainer.innerHTML = `<div class="no-data">No external community entries found yet.</div>`;
+            }
+        });
+
+        function createCardElement(t) {
+            const card = document.createElement('div');
+            card.className = `ticket-card ${t.isMe ? 'my-ticket' : ''}`;
+            card.innerHTML = `
+                <div class="user-info">
+                    <div class="phone-display">
+                        📱 ${t.displayPhone} 
+                        ${t.isMe ? '<span class="my-badge">You</span>' : ''}
+                    </div>
+                    <div class="timestamp-display">${t.timestamp}</div>
+                </div>
+                <div class="ticket-badge">🎫 ${t.ticketNumber}</div>
+            `;
+            return card;
+        }
+    </script>
+</body>
+</html>

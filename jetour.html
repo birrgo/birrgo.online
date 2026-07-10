@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo Premium — Jetour Luxury Raffle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #77051c;
+            --primary-gradient: linear-gradient(135deg, #77051c 0%, #3f010b 100%);
+            --accent-glow: rgba(119, 5, 28, 0.05);
+            --text-dark: #111827;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #f1f5f9;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 16px -6px rgba(0, 0, 0, 0.02);
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --error-crimson: #dc2626;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc(14px + env(safe-area-inset-top)) 16px 14px 16px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-back:active {
+            transform: scale(0.95);
+        }
+
+        .birrgo-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .birrgo-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .brand-main-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-burgundy);
+            line-height: 1.1;
+        }
+        .brand-sub-motto {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+        .birrgo-badge-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--primary-gradient);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(119, 5, 28, 0.2);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #fafbfc;
+            padding: 16px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            scrollbar-width: none;
+            min-height: 0;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 12px 14px;
+            border-radius: var(--border-radius-md);
+            position: relative;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-card p {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .stat-card.sold h3 { color: var(--text-dark); }
+        .stat-card.remain h3 { color: var(--success-green); }
+
+        .premium-card-box {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            flex-shrink: 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .form-heading {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            letter-spacing: -0.2px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 85px;
+            gap: 12px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .premium-input {
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 0 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            outline: none;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .premium-input:focus {
+            border-color: var(--primary-burgundy);
+            background: #ffffff;
+        }
+
+        .search-engine-box {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 18px 16px;
+            text-align: center;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 12px 24px -6px rgba(119, 5, 28, 0.25);
+        }
+
+        .search-engine-box h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #ffffff;
+            opacity: 0.8;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .large-number-input {
+            width: 100%;
+            height: 52px;
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            margin-top: 6px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            transition: all 0.2s ease;
+        }
+        .large-number-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .status-feedback {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status-feedback.available {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+        .status-feedback.taken {
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        .live-feed-panel {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            min-height: 130px;
+        }
+
+        #liveOrdersFeed {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        #liveOrdersFeed::-webkit-scrollbar { display: none; }
+
+        .feed-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 2px;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 14px;
+        }
+        .feed-row:last-child { border-bottom: none; }
+        
+        .buyer-id { 
+            font-weight: 600; 
+            color: var(--text-dark); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .buyer-id::before { 
+            content: ''; 
+            width: 6px;
+            height: 6px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .buyer-ticket { 
+            background: #f1f5f9;
+            color: var(--text-dark); 
+            font-weight: 700; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 11px;
+        }
+
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        .btn-submit-booking {
+            width: 100%;
+            height: 50px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(119, 5, 28, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-submit-booking:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .btn-submit-booking:active:not(:disabled) { 
+            transform: scale(0.98); 
+        }
+        
+        .btn-secondary-link {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-burgundy);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px 0;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.2);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .password-popup-card {
+            width: 100%;
+            max-width: 340px;
+            background: #ffffff;
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.active .password-popup-card {
+            transform: scale(1);
+        }
+        .popup-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #fdf2f4;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+        }
+        .popup-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+        .popup-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .popup-subtitle {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+        .password-input-field {
+            width: 100%;
+            height: 46px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid #e2e8f0;
+            padding: 0 16px;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 16px;
+            outline: none;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+        .password-input-field:focus {
+            border-color: var(--primary-burgundy);
+            background: #ffffff;
+        }
+        .popup-action-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 12px;
+        }
+        .btn-popup-cancel {
+            height: 44px;
+            background: #f1f5f9;
+            color: var(--text-dark);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-popup-confirm {
+            height: 44px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .status-popup-card {
+            width: 100%;
+            max-width: 340px;
+            background: #ffffff;
+            border-radius: var(--border-radius-lg);
+            padding: 26px 22px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.active .status-popup-card {
+            transform: scale(1);
+        }
+        .status-icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px auto;
+        }
+        .status-icon-circle.error-state {
+            background: #fdf2f2;
+            color: var(--error-crimson);
+        }
+        .status-icon-circle.success-state {
+            background: #ecfdf5;
+            color: var(--success-green);
+        }
+        .status-msg-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .status-msg-desc {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+        .btn-status-close {
+            width: 100%;
+            height: 46px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-back" onclick="window.location.href='lottery.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="header-title">
+                    <h2 style="font-size: 16px; font-weight: 700; color: var(--text-dark);">Jetour Campaign</h2>
+                </div>
+            </div>
+            
+            <div class="birrgo-logo-container">
+                <div class="birrgo-brand-text" style="text-align: right;">
+                    <span class="brand-main-title">BirrGo</span>
+                    <span class="brand-sub-motto">PREMIUM</span>
+                </div>
+                <div class="birrgo-badge-icon">B</div>
+            </div>
+        </div>
+
+        <div class="app-content">
+
+            <div class="analytics-grid">
+                <div class="stat-card sold">
+                    <p>Total Distributed</p>
+                    <h3 id="statSold">0</h3>
+                </div>
+                <div class="stat-card remain">
+                    <p>Available Pools</p>
+                    <h3 id="statRemaining">3501</h3>
+                </div>
+            </div>
+
+            <div class="premium-card-box">
+                <div class="form-heading">Participant Verification</div>
+                <div class="input-row">
+                    <div class="field-group">
+                        <label>Location</label>
+                        <input type="text" id="userLocation" class="premium-input" placeholder="Enter Location">
+                    </div>
+                    <div class="field-group">
+                        <label>Age (18+)</label>
+                        <input type="number" id="userAge" class="premium-input" placeholder="Age" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-engine-box">
+                <h3>Select Raffle Position</h3>
+                <p style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-bottom: 2px;">Enter code sequence interval (0 - 3500)</p>
+                <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="3500">
+                <div id="feedbackBadge" class="status-feedback"></div>
+            </div>
+
+            <div class="live-feed-panel">
+                <div class="form-heading" style="margin-bottom: 8px;">Live Allocation Stream</div>
+                <div id="liveOrdersFeed"></div>
+            </div>
+
+            <div class="action-container">
+                <button class="btn-submit-booking" id="confirmPurchaseBtn" disabled>
+                    Authorize Placement (5,000 Br)
+                </button>
+                <a href="jetour-dashboard.html" class="btn-secondary-link">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    View Real-time Metrics Matrix
+                </a>
+            </div>
+
+        </div>
+
+        <div class="modal-overlay" id="passwordModal">
+            <div class="password-popup-card">
+                <div class="popup-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div class="popup-title">Security Gateway</div>
+                <div class="popup-subtitle">Please enter your 4-digit security PIN to authenticate fund movement.</div>
+                <input type="password" id="transactionPin" maxlength="4" inputmode="numeric" class="password-input-field" placeholder="••••">
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="closeModalBtn">Decline</button>
+                    <button class="btn-popup-confirm" id="submitPasswordBtn">Authorize</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="statusAlertModal">
+            <div class="status-popup-card">
+                <div class="status-icon-circle error-state" id="statusAlertIcon"></div>
+                <div class="status-msg-title" id="statusAlertTitle">Notification</div>
+                <div class="status-msg-desc" id="statusAlertMessage">Alert content status text placeholder.</div>
+                <button class="btn-status-close" id="statusAlertCloseBtn">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let completeRawCardSequence = ""; 
+        let adminDatabaseKeyNode = "510000000000000"; // Dynamic tracking default fallback
+        let isTicketAvailable = false;
+        let validatedTicketNumber = null;
+        let globallyTakenTicketsMap = {}; 
+        
+        const totalTicketsCount = 3501; 
+        let currentAlertCallback = null;
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            return phoneStr.replace(/\D/g, ''); 
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if(!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const cleanPhone = normalizePhoneNumber(activeUserPhone);
+
+            try {
+                // FLEXIBLE USER AND ADMIN SCANNER
+                const usersSnapshot = await get(ref(db, 'users'));
+                if (usersSnapshot.exists()) {
+                    const allUsers = usersSnapshot.val();
+                    let userFound = false;
+
+                    Object.keys(allUsers).forEach((key) => {
+                        const profile = allUsers[key];
+                        const storedCard = profile.cardNumber ? normalizePhoneNumber(profile.cardNumber) : "";
+                        const dbPhone1 = profile.phoneNumber ? normalizePhoneNumber(profile.phoneNumber) : "";
+                        const dbPhone2 = profile.phone ? normalizePhoneNumber(profile.phone) : "";
+
+                        // Catch Admin zero node layout smoothly
+                        if (key.includes("000000") || storedCard.includes("000000")) {
+                            adminDatabaseKeyNode = key;
+                        }
+
+                        // Match current logged-in profile cleanly
+                        if (!userFound && (
+                            key === cleanPhone || 
+                            storedCard === cleanPhone || 
+                            (dbPhone1 && dbPhone1.includes(cleanPhone)) || 
+                            (dbPhone2 && dbPhone2.includes(cleanPhone))
+                        )) {
+                            completeRawCardSequence = key;
+                            userFound = true;
+                        }
+                    });
+
+                    if (!userFound) {
+                        completeRawCardSequence = cleanPhone;
+                    }
+                } else {
+                    completeRawCardSequence = cleanPhone;
+                }
+
+                attachRealtimeDatabaseListeners();
+                setupFormEngineListeners();
+
+            } catch (err) {
+                console.error("Initialization scanner breakdown:", err);
+                completeRawCardSequence = cleanPhone;
+                attachRealtimeDatabaseListeners();
+                setupFormEngineListeners();
+            }
+        });
+
+        function openCustomAlert(title, message, type = 'error', callback = null) {
+            const modal = document.getElementById('statusAlertModal');
+            const iconBox = document.getElementById('statusAlertIcon');
+            const titleBox = document.getElementById('statusAlertTitle');
+            const msgBox = document.getElementById('statusAlertMessage');
+            
+            titleBox.innerText = title;
+            msgBox.innerText = message;
+            currentAlertCallback = callback;
+
+            if(type === 'success') {
+                iconBox.className = "status-icon-circle success-state";
+                iconBox.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                iconBox.className = "status-icon-circle error-state";
+                iconBox.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            }
+
+            modal.classList.add('active');
+        }
+
+        document.getElementById('statusAlertCloseBtn').addEventListener('click', () => {
+            document.getElementById('statusAlertModal').classList.remove('active');
+            if(typeof currentAlertCallback === 'function') {
+                currentAlertCallback();
+                currentAlertCallback = null;
+            }
+        });
+
+        function setupFormEngineListeners() {
+            const numInput = document.getElementById('ticketNumberInput');
+            const ageInput = document.getElementById('userAge');
+            const locInput = document.getElementById('userLocation');
+
+            numInput.addEventListener('input', executeLiveTicketStatusCheck);
+            ageInput.addEventListener('input', validateGlobalInputsState);
+            locInput.addEventListener('input', validateGlobalInputsState);
+            
+            document.getElementById('confirmPurchaseBtn').addEventListener('click', openVerificationModal);
+            document.getElementById('closeModalBtn').addEventListener('click', closeVerificationModal);
+            document.getElementById('submitPasswordBtn').addEventListener('click', processPinVerification);
+        }
+
+        function openVerificationModal() {
+            document.getElementById('transactionPin').value = '';
+            document.getElementById('passwordModal').classList.add('active');
+            document.getElementById('transactionPin').focus();
+        }
+
+        function closeVerificationModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function attachRealtimeDatabaseListeners() {
+            const ticketsRef = ref(db, 'lottery/jetour/tickets');
+            onValue(ticketsRef, (snapshot) => {
+                globallyTakenTicketsMap = snapshot.val() || {};
+                const takenEntries = Object.values(globallyTakenTicketsMap);
+                const soldCount = takenEntries.length;
+                
+                document.getElementById('statSold').innerText = soldCount;
+                document.getElementById('statRemaining').innerText = totalTicketsCount - soldCount;
+                
+                executeLiveTicketStatusCheck();
+                renderLiveOrdersFeed(globallyTakenTicketsMap);
+            });
+        }
+
+        function executeLiveTicketStatusCheck() {
+            const inputField = document.getElementById('ticketNumberInput');
+            const feedback = document.getElementById('feedbackBadge');
+            const targetNum = parseInt(inputField.value);
+
+            if(!inputField.value || isNaN(targetNum)) {
+                feedback.className = "status-feedback";
+                feedback.style.display = "none";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            if(targetNum < 0 || targetNum > 3500) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = "OUT OF RANGE (0-3500)";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            let buyerCardMatch = null;
+            Object.values(globallyTakenTicketsMap).forEach(entry => {
+                if(parseInt(entry.ticketNum) === targetNum) {
+                    buyerCardMatch = entry.cardSequence || entry.phone || "0000000000000000";
+                }
+            });
+
+            if(buyerCardMatch) {
+                const maskedCard = buyerCardMatch.substring(0, 4) + "••••" + buyerCardMatch.slice(-4);
+                feedback.className = "status-feedback taken";
+                feedback.innerText = `ALLOCATED TO CARD ID ${maskedCard}`;
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+            } else {
+                feedback.className = "status-feedback available";
+                feedback.innerText = `POSITION #${targetNum} OPEN`;
+                isTicketAvailable = true;
+                validatedTicketNumber = targetNum;
+            }
+
+            validateGlobalInputsState();
+        }
+
+        function validateGlobalInputsState() {
+            const age = parseInt(document.getElementById('userAge').value) || 0;
+            const location = document.getElementById('userLocation').value.trim();
+            const submitBtn = document.getElementById('confirmPurchaseBtn');
+
+            if(age >= 18 && location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function renderLiveOrdersFeed(data) {
+            const container = document.getElementById('liveOrdersFeed');
+            container.innerHTML = '';
+            
+            const entries = Object.values(data);
+            if(entries.length === 0) {
+                container.innerHTML = `<div style="text-align:center;font-size:13px;font-weight:600;color:var(--text-muted);padding:20px;">NO TRANSACTIONS IN WINDOW.</div>`;
+                return;
+            }
+
+            entries.reverse().slice(0, 6).forEach(tx => {
+                if(parseInt(tx.ticketNum) > 3500) return;
+
+                const row = document.createElement('div');
+                row.className = 'feed-row';
+                
+                const rawCard = tx.cardSequence || tx.phone || "0000000000000000";
+                const hiddenCard = rawCard.substring(0, 4) + "••••" + rawCard.slice(-4);
+
+                row.innerHTML = `
+                    <span class="buyer-id">CARD ID ${hiddenCard}</span>
+                    <span class="buyer-ticket">POS #${tx.ticketNum}</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        async function processPinVerification() {
+            const pinInput = document.getElementById('transactionPin').value.trim();
+            if(pinInput.length !== 4) return;
+
+            const submitVerifyBtn = document.getElementById('submitPasswordBtn');
+            submitVerifyBtn.disabled = true;
+            submitVerifyBtn.innerText = "VERIFYING...";
+
+            try {
+                const accountSnap = await get(ref(db, `users/${completeRawCardSequence}`));
+                if(accountSnap.exists()) {
+                    const userData = accountSnap.val();
+                    
+                    if(userData.securityPin === pinInput || userData.pin === pinInput) {
+                        closeVerificationModal();
+                        await executeTicketPurchasePipeline();
+                    } else {
+                        submitVerifyBtn.disabled = false;
+                        submitVerifyBtn.innerText = "Authorize";
+                        openCustomAlert("Verification Failed", "INVALID SECURITY PIN.", "error");
+                    }
+                } else {
+                    submitVerifyBtn.disabled = false;
+                    submitVerifyBtn.innerText = "Authorize";
+                    openCustomAlert("Configuration Error", `Profile ledger node [${completeRawCardSequence}] not matched. Check path configuration layout.`, "error");
+                }
+            } catch (err) {
+                submitVerifyBtn.disabled = false;
+                submitVerifyBtn.innerText = "Authorize";
+                openCustomAlert("Network Error", "SECURITY HANDSHAKE EXCEPTION.", "error");
+            }
+        }
+
+        async function executeTicketPurchasePipeline() {
+            const confirmBtn = document.getElementById('confirmPurchaseBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "Processing safe ledger write...";
+
+            const ticketInputVal = parseInt(document.getElementById('ticketNumberInput').value);
+            const userAgeVal = document.getElementById('userAge').value;
+            const userLocationVal = document.getElementById('userLocation').value.trim();
+
+            try {
+                const ticketCheckSnap = await get(ref(db, 'lottery/jetour/tickets'));
+                const upToDateTickets = ticketCheckSnap.val() || {};
+                let alreadyTaken = false;
+                Object.values(upToDateTickets).forEach(entry => {
+                    if (parseInt(entry.ticketNum) === ticketInputVal) {
+                        alreadyTaken = true;
+                    }
+                });
+
+                if (alreadyTaken) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = "Authorize Placement (5,000 Br)";
+                    openCustomAlert("Allocation Taken", "This raffle position was just claimed by another user.", "error");
+                    return;
+                }
+
+                // FETCH USER CARD NODE BALANCE
+                const userBalanceSnapshot = await get(ref(db, `users/${completeRawCardSequence}/walletBalance`));
+                let userBalance = parseFloat(userBalanceSnapshot.val());
+                if (isNaN(userBalance)) userBalance = 0.00;
+
+                if (userBalance < 5000) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = "Authorize Placement (5,000 Br)";
+                    openCustomAlert("Transaction Terminated", "INSUFFICIENT LEDGER BALANCE.", "error");
+                    return;
+                }
+
+                // FETCH ADMIN MAIN NODE BALANCE VIA DYNAMIC KEY
+                const adminBalanceSnapshot = await get(ref(db, `users/${adminDatabaseKeyNode}/walletBalance`));
+                let adminBalance = parseFloat(adminBalanceSnapshot.val());
+                if (isNaN(adminBalance)) adminBalance = 0.00;
+
+                const calculatedUserRemainder = parseFloat((userBalance - 5000).toFixed(2));
+                const calculatedAdminAddition = parseFloat((adminBalance + 5000).toFixed(2));
+
+                const ticketsListRef = ref(db, 'lottery/jetour/tickets');
+                const userTxListRef = ref(db, `users/${completeRawCardSequence}/transactions`);
+                const adminTxListRef = ref(db, `users/${adminDatabaseKeyNode}/transactions`);
+                
+                const newTicketKey = push(ticketsListRef).key;
+                const newTxKey = push(userTxListRef).key;
+                const adminTxKey = push(adminTxListRef).key;
+                const timestampStr = new Date().toLocaleString();
+
+                const atomicPayloadUpdates = {};
+                
+                // 1. Deduct money from user card node path
+                atomicPayloadUpdates[`/users/${completeRawCardSequence}/walletBalance`] = calculatedUserRemainder;
+                atomicPayloadUpdates[`/users/${completeRawCardSequence}/transactions/${newTxKey}`] = {
+                    title: `JETOUR CAMPAIGN ENTRY #${ticketInputVal}`,
+                    amount: -5000.00,
+                    type: "expense",
+                    timestamp: timestampStr
+                };
+
+                // 2. Add money directly to matched admin node path
+                atomicPayloadUpdates[`/users/${adminDatabaseKeyNode}/walletBalance`] = calculatedAdminAddition;
+                atomicPayloadUpdates[`/users/${adminDatabaseKeyNode}/transactions/${adminTxKey}`] = {
+                    title: `RAFFLE TICKET SALE INCOME #${ticketInputVal}`,
+                    amount: 5000.00,
+                    type: "income",
+                    timestamp: timestampStr
+                };
+                
+                // 3. Register ticket allocation matrix data
+                atomicPayloadUpdates[`/lottery/jetour/tickets/${newTicketKey}`] = {
+                    cardSequence: completeRawCardSequence,
+                    phone: activeUserPhone,
+                    ticketNum: ticketInputVal,
+                    age: userAgeVal,
+                    location: userLocationVal,
+                    timestamp: timestampStr
+                };
+
+                const rootDbRef = ref(db);
+                await update(rootDbRef, atomicPayloadUpdates);
+
+                openCustomAlert("Success", `PLACEMENT #${ticketInputVal} REGISTERED SUCCESSFULLY.`, "success", () => {
+                    window.location.href = "lottery.html";
+                });
+
+            } catch (error) {
+                console.error("Critical mutation error caught:", error);
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = "Authorize Placement (5,000 Br)";
+                openCustomAlert("System Error", "CRITICAL LEDGER MUTATION LOCK FAILURE.", "error");
+            }
+        }
+    </script>
+</body>
+</html>

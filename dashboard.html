@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Premium Dashboard Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --accent-glow: rgba(128, 0, 32, 0.15);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --success-bg: #ecfdf5;
+            --warning-amber: #f59e0b;
+            --danger-red: #ef4444;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--bg-light);
+            padding: calc(16px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
+            scrollbar-width: none;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Premium Header Styling */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 4px 2px;
+        }
+
+        .logo-image {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .profile-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* High-End Wallet Card */
+        .balance-card {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius-lg);
+            padding: 26px;
+            color: #ffffff;
+            box-shadow: 0 20px 35px -8px rgba(128, 0, 32, 0.3);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ambient Glass Graphic Layer */
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            width: 85px;
+            height: 85px;
+            background: url('33164.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.15;
+            filter: brightness(0) invert(1);
+        }
+
+        .balance-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .balance-amount {
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .balance-currency {
+            font-size: 20px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .wallet-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 14px;
+        }
+
+        .wallet-id {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pill {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Micro-Metrics Matrix Row */
+        .metrics-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .metric-tile {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 14px 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metric-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Quick Utilities Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .action-icon-box {
+            width: 58px;
+            height: 58px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-burgundy);
+            margin-bottom: 8px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .action-icon-box svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+        }
+
+        .action-item:hover .action-icon-box,
+        .action-item:active .action-icon-box {
+            transform: translateY(-3px);
+            background-color: var(--primary-burgundy);
+            color: #ffffff;
+            border-color: var(--primary-burgundy);
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        /* Fixed Navigation Framework */
+        .bottom-nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: calc(68px + env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active-tab {
+            color: var(--primary-burgundy);
+        }
+        
+        .nav-item.active-tab .tab-icon-wrapper {
+            background-color: #fdf2f4;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: -2px;
+        }
+        .nav-item.active-tab svg {
+            stroke: var(--primary-burgundy);
+            stroke-width: 2.4;
+        }
+
+        /* Premium Custom Dialog Overlay Layout Matrix */
+        .custom-popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .custom-popup-backdrop.show-modal {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-popup-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            border-radius: var(--border-radius-lg);
+            padding: 28px 24px 24px 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .custom-popup-backdrop.show-modal .custom-popup-card {
+            transform: scale(1);
+        }
+        .popup-status-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px auto;
+        }
+        .popup-status-badge.bg-lock {
+            background: #fffbeb;
+            color: var(--warning-amber);
+        }
+        .popup-status-badge.bg-danger {
+            background: #fef2f2;
+            color: var(--danger-red);
+        }
+        .popup-status-badge svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+        .custom-popup-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
+        }
+        .custom-popup-msg {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .btn-popup-confirm {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
+            transition: background 0.2s ease;
+        }
+        .btn-popup-confirm:active {
+            transform: scale(0.98);
+        }
+
+        /* Twin Button Layout for Confirmation Modals */
+        .modal-action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-popup-cancel {
+            width: 100%;
+            height: 48px;
+            background: #f1f5f9;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-popup-cancel:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <div class="app-content">
+            
+            <div class="brand-header">
+                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+                <div class="profile-badge" id="profileBadgeNode">👤</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-meta">
+                    <span class="balance-label">Available Balance</span>
+                    <span class="status-pill">Verified</span>
+                </div>
+                <div class="balance-amount">
+                    <span id="dashboard-balance">0.00</span>
+                    <span class="balance-currency">Birr</span>
+                </div>
+                <div class="wallet-footer">
+                    <div class="wallet-id" id="displayWalletId">ID: •••• ••••</div>
+                    <div class="wallet-id">••• Gold Premium</div>
+                </div>
+            </div>
+
+            <div class="metrics-matrix">
+                <div class="metric-tile">
+                    <span class="metric-header">Claimed Tasks</span>
+                    <span class="metric-value" id="completed-count">0 / 5</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-header">Invited Friends</span>
+                    <span class="metric-value" id="invited-count-metric">0 Members</span>
+                </div>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-item" id="action-send">
+                    <div class="action-icon-box">
+                        <svg viewBox="0 0 24 24" stroke-dasharray="none" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </div>
+                    <div class="action-label">Send</div>
+                </div>
+                <div class="action-item" id="action-receive">
+                    <div class="action-icon-box">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    </div>
+                    <div class="action-label">Receive</div>
+                </div>
+                <div class="action-item" id="action-deposit">
+                    <div class="action-icon-box">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    </div>
+                    <div class="action-label">Deposit</div>
+                </div>
+                <div class="action-item" id="action-withdraw">
+                    <div class="action-icon-box">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    </div>
+                    <div class="action-label">Withdraw</div>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav-bar">
+            <a href="#" class="nav-item active-tab">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                Home
+            </a>
+            <a href="task.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Tasks
+            </a>
+            <a href="lottery.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Lottery
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Wallet
+            </a>
+        </nav>
+
+    </div>
+
+    <div class="custom-popup-backdrop" id="customPopup">
+        <div class="custom-popup-card">
+            <div class="popup-status-badge bg-lock">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="custom-popup-title">Feature Locked</h3>
+            <p class="custom-popup-msg" id="popupMessage">This action framework module is coming soon in the upcoming secure patch release updates.</p>
+            <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
+        </div>
+    </div>
+
+    <div class="custom-popup-backdrop" id="logoutPopup">
+        <div class="custom-popup-card">
+            <div class="popup-status-badge bg-danger">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </div>
+            <h3 class="custom-popup-title">Sign Out Account</h3>
+            <p class="custom-popup-msg">Are you sure you want to end the secure session, <br><strong id="logoutTargetName" style="color: var(--text-dark);">User Member</strong>?</p>
+            <div class="modal-action-row">
+                <button class="btn-popup-cancel" id="logoutCancelBtn">Cancel</button>
+                <button class="btn-popup-confirm" id="logoutConfirmBtn" style="background: var(--danger-red); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        const totalVideos = 5;
+
+        // Custom Modals Core Selectors
+        const customPopup = document.getElementById('customPopup');
+        const popupMessage = document.getElementById('popupMessage');
+        const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+        const logoutPopup = document.getElementById('logoutPopup');
+        const logoutCancelBtn = document.getElementById('logoutCancelBtn');
+        const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
+        const logoutTargetName = document.getElementById('logoutTargetName');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            
+            if (!activeUserPhone) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            streamLiveDashboardMetrics();
+            setupInterfaceActions();
+        });
+
+        // App Framework Locked Features Popup
+        function displayAppModal(message) {
+            popupMessage.innerText = message;
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+        }
+
+        popupConfirmBtn.addEventListener('click', () => {
+            customPopup.classList.remove('show-modal');
+            setTimeout(() => { customPopup.style.display = 'none'; }, 300);
+        });
+
+        // Logout Custom UI Toggle Framework Operations
+        function openLogoutDialog() {
+            logoutPopup.style.display = 'flex';
+            setTimeout(() => logoutPopup.classList.add('show-modal'), 10);
+        }
+
+        function closeLogoutDialog() {
+            logoutPopup.classList.remove('show-modal');
+            setTimeout(() => { logoutPopup.style.display = 'none'; }, 300);
+        }
+
+        logoutCancelBtn.addEventListener('click', closeLogoutDialog);
+        
+        logoutConfirmBtn.addEventListener('click', () => {
+            localStorage.removeItem('auth_session_phone');
+            window.location.href = "login.html";
+        });
+
+        function streamLiveDashboardMetrics() {
+            // 1. Keep card display calculation local for cosmetic display only
+            const cleanPhone = activeUserPhone.replace(/\D/g, '');
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            const completeRawCardSequence = cleanPhone + final6Reversed;
+            const cardLast4Digits = completeRawCardSequence.slice(-4); 
+            
+            document.getElementById('displayWalletId').innerText = `ID: •••• ${cardLast4Digits}`;
+
+            // 2. Fetch User Identity using the active plain phone path node
+            const userProfileRef = ref(db, `users/${activeUserPhone}`);
+            onValue(userProfileRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const first = data.firstName || "";
+                    const middle = data.middleName || "";
+                    const compiledName = `${first} ${middle}`.trim();
+                    
+                    if (compiledName.length > 0) {
+                        logoutTargetName.innerText = compiledName;
+                    } else {
+                        logoutTargetName.innerText = "Premium Member";
+                    }
+                }
+            });
+
+            // 3. Live stream real-time database balances cleanly from the primary user node
+            const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+            onValue(balanceRef, (snapshot) => {
+                const currentVal = snapshot.val();
+                let parsedBalance = parseFloat(currentVal);
+                if (currentVal === null || isNaN(parsedBalance)) parsedBalance = 0.00;
+                document.getElementById('dashboard-balance').innerText = parsedBalance.toFixed(2);
+            });
+
+            // 4. Live stream referral metric data counts safely from user phone path
+            const referredRef = ref(db, `users/${activeUserPhone}/referredCount`);
+            onValue(referredRef, (snapshot) => {
+                const currentVal = snapshot.val();
+                let invitedCount = parseInt(currentVal);
+                if (currentVal === null || isNaN(invitedCount)) invitedCount = 0;
+                document.getElementById('invited-count-metric').innerText = `${invitedCount} ${invitedCount === 1 ? 'Member' : 'Members'}`;
+            });
+
+            // 5. Stream video metrics statuses from the active user profile path node
+            const tasksRef = ref(db, `users/${activeUserPhone}/completedTasks`);
+            onValue(tasksRef, (snapshot) => {
+                const tasksData = snapshot.val();
+                let count = 0;
+                if (tasksData) {
+                    count = Object.keys(tasksData).length; 
+                }
+                document.getElementById('completed-count').innerText = `${count} / ${totalVideos}`;
+            });
+        }
+
+        function setupInterfaceActions() {
+            document.getElementById('action-send').addEventListener('click', () => {
+                displayAppModal("The P2P money transfer framework system module is coming soon in the next software wallet compilation release patch.");
+            });
+
+            document.getElementById('action-receive').addEventListener('click', () => {
+                displayAppModal("Your personal account QR matrix framework receipt module is coming soon.");
+            });
+
+            document.getElementById('action-deposit').addEventListener('click', () => {
+                displayAppModal("The secure automated local deposit payment systems network interface layer is coming soon.");
+            });
+
+            document.getElementById('action-withdraw').addEventListener('click', () => {
+                displayAppModal("Telebirr automatic instant gateway settlement withdrawal systems are processing setup and coming soon.");
+            });
+
+            // Trigger elegant custom popup modal framework instead of default alert blocks
+            document.getElementById('profileBadgeNode').addEventListener('click', openLogoutDialog);
+        }
+    </script>
+</body>
+</html>
