@@ -6,7 +6,7 @@
     <title>BirrGo - Premium Dashboard Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -52,28 +52,49 @@
             width: 100%;
             height: 100dvh;
             max-width: 450px;
-            background-color: #ffffff;
+            background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
             position: relative;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Decorative Background Waves pinned inside container */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 12vh;
+            min-height: 80px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 10vh;
+            min-height: 70px;
         }
 
         .app-content {
             flex: 1;
             overflow-y: auto;
-            background-color: var(--bg-light);
+            background-color: transparent; /* Allows waves to display underneath cleanly */
             padding: calc(16px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
             scrollbar-width: none;
+            position: relative;
+            z-index: 1;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Premium Header Styling */
         .brand-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 8px;
             padding: 4px 2px;
         }
 
@@ -87,7 +108,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #e2e8f0;
+            background: rgba(255, 255, 255, 0.85);
             border: 2px solid #ffffff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             display: flex;
@@ -95,9 +116,54 @@
             justify-content: center;
             font-size: 16px;
             cursor: pointer;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* High-End Wallet Card */
+        .news-container {
+            display: flex;
+            margin-top: -4px;
+            margin-bottom: 18px; 
+        }
+
+        .news-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-burgundy);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid rgba(128, 0, 32, 0.08);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .news-pill:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .news-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--danger-red);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-notification 1.5s infinite;
+        }
+
+        @keyframes pulse-notification {
+            0% { transform: scale(0.9); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(0.9); opacity: 1; }
+        }
+
         .balance-card {
             background: var(--primary-gradient);
             border-radius: var(--border-radius-lg);
@@ -110,7 +176,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Ambient Glass Graphic Layer */
         .balance-card::before {
             content: '';
             position: absolute;
@@ -195,7 +260,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Micro-Metrics Matrix Row */
         .metrics-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -228,7 +292,6 @@
             color: var(--text-dark);
         }
 
-        /* Quick Utilities Grid */
         .action-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -274,6 +337,10 @@
             box-shadow: 0 10px 20px var(--accent-glow);
         }
 
+        .action-item:active {
+            transform: scale(0.95);
+        }
+
         .action-label {
             font-size: 12px;
             font-weight: 700;
@@ -281,7 +348,6 @@
             text-align: center;
         }
 
-        /* Fixed Navigation Framework */
         .bottom-nav-bar {
             position: absolute;
             bottom: 0;
@@ -339,7 +405,6 @@
             stroke-width: 2.4;
         }
 
-        /* Premium Custom Dialog Overlay Layout Matrix */
         .custom-popup-backdrop {
             position: absolute;
             top: 0;
@@ -388,10 +453,6 @@
             background: #fffbeb;
             color: var(--warning-amber);
         }
-        .popup-status-badge.bg-danger {
-            background: #fef2f2;
-            color: var(--danger-red);
-        }
         .popup-status-badge svg {
             width: 28px;
             height: 28px;
@@ -430,26 +491,51 @@
             transform: scale(0.98);
         }
 
-        /* Twin Button Layout for Confirmation Modals */
-        .modal-action-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        .profile-display-box {
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            margin-bottom: 24px;
         }
-        .btn-popup-cancel {
+        .profile-info-row {
+            margin-bottom: 14px;
+        }
+        .profile-info-row:last-child {
+            margin-bottom: 0;
+        }
+        .profile-info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .profile-info-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .btn-logout-premium {
             width: 100%;
             height: 48px;
-            background: #f1f5f9;
-            color: var(--text-dark);
-            border: 1px solid var(--border-light);
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
             border-radius: var(--border-radius-md);
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s ease;
+            box-shadow: 0 6px 16px var(--accent-glow);
+            transition: all 0.2s ease;
         }
-        .btn-popup-cancel:active {
+        .btn-logout-premium:active {
             transform: scale(0.98);
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -457,11 +543,34 @@
 
     <div class="app-view">
         
+        <!-- Top Wave Background Layer -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#9A0019"/>
+                    <stop offset="1" stop-color="#700010"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Bottom Wave Background Layer -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+        </svg>
+        
         <div class="app-content">
             
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
                 <div class="profile-badge" id="profileBadgeNode">👤</div>
+            </div>
+
+            <div class="news-container">
+                <div class="news-pill" id="dashboardNewsPill">
+                    <span class="news-dot"></span>
+                    <span>What's new today?</span>
+                </div>
             </div>
 
             <div class="balance-card">
@@ -493,7 +602,7 @@
             <div class="action-grid">
                 <div class="action-item" id="action-send">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-dasharray="none" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </div>
                     <div class="action-label">Send</div>
                 </div>
@@ -545,28 +654,38 @@
 
     </div>
 
+    <!-- Feature Locked Modal -->
     <div class="custom-popup-backdrop" id="customPopup">
         <div class="custom-popup-card">
             <div class="popup-status-badge bg-lock">
                 <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
             <h3 class="custom-popup-title">Feature Locked</h3>
-            <p class="custom-popup-msg" id="popupMessage">This action framework module is coming soon in the upcoming secure patch release updates.</p>
+            <p class="custom-popup-msg" id="popupMessage">This action framework module is coming soon.</p>
             <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
         </div>
     </div>
 
-    <div class="custom-popup-backdrop" id="logoutPopup">
+    <!-- Info Account Details Profile Modal -->
+    <div class="custom-popup-backdrop" id="profilePopup">
         <div class="custom-popup-card">
-            <div class="popup-status-badge bg-danger">
-                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="custom-popup-title" style="margin-bottom: 0;">Account Profile</h3>
+                <span id="profileCloseBtn" style="cursor: pointer; font-size: 24px; font-weight: 700; color: var(--text-muted); line-height: 1;">&times;</span>
             </div>
-            <h3 class="custom-popup-title">Sign Out Account</h3>
-            <p class="custom-popup-msg">Are you sure you want to end the secure session, <br><strong id="logoutTargetName" style="color: var(--text-dark);">User Member</strong>?</p>
-            <div class="modal-action-row">
-                <button class="btn-popup-cancel" id="logoutCancelBtn">Cancel</button>
-                <button class="btn-popup-confirm" id="logoutConfirmBtn" style="background: var(--danger-red); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);">Sign Out</button>
+
+            <div class="profile-display-box">
+                <div class="profile-info-row">
+                    <span class="profile-info-label">Full Name</span>
+                    <span class="profile-info-val" id="profileFullNameText">Loading...</span>
+                </div>
+                <div class="profile-info-row" style="margin-top: 16px;">
+                    <span class="profile-info-label">Phone Number</span>
+                    <span class="profile-info-val" id="profilePhoneText">Loading...</span>
+                </div>
             </div>
+
+            <button class="btn-logout-premium" id="logoutConfirmBtn">Logout</button>
         </div>
     </div>
 
@@ -590,16 +709,17 @@
 
         let activeUserPhone = "";
         const totalVideos = 5;
+        const cooldownDuration = 3600000;
 
-        // Custom Modals Core Selectors
         const customPopup = document.getElementById('customPopup');
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
 
-        const logoutPopup = document.getElementById('logoutPopup');
-        const logoutCancelBtn = document.getElementById('logoutCancelBtn');
+        const profilePopup = document.getElementById('profilePopup');
+        const profileCloseBtn = document.getElementById('profileCloseBtn');
+        const profileFullNameText = document.getElementById('profileFullNameText');
+        const profilePhoneText = document.getElementById('profilePhoneText');
         const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
-        const logoutTargetName = document.getElementById('logoutTargetName');
 
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
@@ -610,10 +730,10 @@
             }
 
             streamLiveDashboardMetrics();
+            updateLocalTaskMetrics();
             setupInterfaceActions();
         });
 
-        // App Framework Locked Features Popup
         function displayAppModal(message) {
             popupMessage.innerText = message;
             customPopup.style.display = 'flex';
@@ -625,51 +745,61 @@
             setTimeout(() => { customPopup.style.display = 'none'; }, 300);
         });
 
-        // Logout Custom UI Toggle Framework Operations
-        function openLogoutDialog() {
-            logoutPopup.style.display = 'flex';
-            setTimeout(() => logoutPopup.classList.add('show-modal'), 10);
+        function openProfileDialog() {
+            profilePopup.style.display = 'flex';
+            setTimeout(() => profilePopup.classList.add('show-modal'), 10);
         }
 
-        function closeLogoutDialog() {
-            logoutPopup.classList.remove('show-modal');
-            setTimeout(() => { logoutPopup.style.display = 'none'; }, 300);
+        function closeProfileDialog() {
+            profilePopup.classList.remove('show-modal');
+            setTimeout(() => { profilePopup.style.display = 'none'; }, 300);
         }
 
-        logoutCancelBtn.addEventListener('click', closeLogoutDialog);
+        profileCloseBtn.addEventListener('click', closeProfileDialog);
         
         logoutConfirmBtn.addEventListener('click', () => {
             localStorage.removeItem('auth_session_phone');
             window.location.href = "login.html";
         });
 
+        function updateLocalTaskMetrics() {
+            let currentlyClaimed = 0;
+            const now = Date.now();
+
+            for (let i = 1; i <= totalVideos; i++) {
+                const lastWatched = localStorage.getItem(`video_cooldown_${i}`);
+                if (lastWatched && (now - lastWatched < cooldownDuration)) {
+                    currentlyClaimed++;
+                }
+            }
+            document.getElementById('completed-count').innerText = `${currentlyClaimed} / ${totalVideos}`;
+        }
+
         function streamLiveDashboardMetrics() {
-            // 1. Keep card display calculation local for cosmetic display only
             const cleanPhone = activeUserPhone.replace(/\D/g, '');
             const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
             const completeRawCardSequence = cleanPhone + final6Reversed;
             const cardLast4Digits = completeRawCardSequence.slice(-4); 
             
             document.getElementById('displayWalletId').innerText = `ID: •••• ${cardLast4Digits}`;
+            profilePhoneText.innerText = activeUserPhone;
 
-            // 2. Fetch User Identity using the active plain phone path node
             const userProfileRef = ref(db, `users/${activeUserPhone}`);
             onValue(userProfileRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    const first = data.firstName || "";
-                    const middle = data.middleName || "";
-                    const compiledName = `${first} ${middle}`.trim();
-                    
-                    if (compiledName.length > 0) {
-                        logoutTargetName.innerText = compiledName;
+                    if (data.fullName) {
+                        profileFullNameText.innerText = data.fullName;
                     } else {
-                        logoutTargetName.innerText = "Premium Member";
+                        const fName = data.firstName || "";
+                        const mName = data.middleName || "";
+                        profileFullNameText.innerText = `${fName} ${mName}`.trim() || "N/A";
                     }
+                } else {
+                    profileFullNameText.innerText = "N/A";
                 }
             });
 
-            // 3. Live stream real-time database balances cleanly from the primary user node
             const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
             onValue(balanceRef, (snapshot) => {
                 const currentVal = snapshot.val();
@@ -678,24 +808,14 @@
                 document.getElementById('dashboard-balance').innerText = parsedBalance.toFixed(2);
             });
 
-            // 4. Live stream referral metric data counts safely from user phone path
-            const referredRef = ref(db, `users/${activeUserPhone}/referredCount`);
+            const referredRef = ref(db, `users/${activeUserPhone}/referredUsers`);
             onValue(referredRef, (snapshot) => {
-                const currentVal = snapshot.val();
-                let invitedCount = parseInt(currentVal);
-                if (currentVal === null || isNaN(invitedCount)) invitedCount = 0;
-                document.getElementById('invited-count-metric').innerText = `${invitedCount} ${invitedCount === 1 ? 'Member' : 'Members'}`;
-            });
-
-            // 5. Stream video metrics statuses from the active user profile path node
-            const tasksRef = ref(db, `users/${activeUserPhone}/completedTasks`);
-            onValue(tasksRef, (snapshot) => {
-                const tasksData = snapshot.val();
-                let count = 0;
-                if (tasksData) {
-                    count = Object.keys(tasksData).length; 
+                if (snapshot.exists()) {
+                    const totalInvited = Object.keys(snapshot.val()).length;
+                    document.getElementById('invited-count-metric').innerText = `${totalInvited} ${totalInvited === 1 ? 'Member' : 'Members'}`;
+                } else {
+                    document.getElementById('invited-count-metric').innerText = "0 Members";
                 }
-                document.getElementById('completed-count').innerText = `${count} / ${totalVideos}`;
             });
         }
 
@@ -716,8 +836,11 @@
                 displayAppModal("Telebirr automatic instant gateway settlement withdrawal systems are processing setup and coming soon.");
             });
 
-            // Trigger elegant custom popup modal framework instead of default alert blocks
-            document.getElementById('profileBadgeNode').addEventListener('click', openLogoutDialog);
+            document.getElementById('profileBadgeNode').addEventListener('click', openProfileDialog);
+
+            document.getElementById('dashboardNewsPill').addEventListener('click', () => {
+                window.location.href = "news.html";
+            });
         }
     </script>
 </body>

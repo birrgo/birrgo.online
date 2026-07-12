@@ -4,36 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo Mobile Wallet</title>
-    <!-- Premium, modern tech typography matching your login/signup pages -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(180deg, #8b0000 0%, #4a0000 100%);
-            --text-dark: #222222;
-            --text-muted: #666666;
-            --bg-light: #ffffff;
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; /* Slightly deeper black for professional contrast */
+            --text-muted: #4b5563; /* Crisp professional gray */
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            /* Anti-aliasing makes fonts look incredibly crisp on mobile screens */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Immersive full-screen framework */
+        /* Prevent scrolling and ensure the body strictly fits the viewport */
         html, body {
             width: 100%;
             height: 100dvh; 
             overflow: hidden;
             background-color: var(--bg-light);
+            position: relative;
         }
 
         body {
@@ -42,161 +45,278 @@
             align-items: center;
         }
 
-        /* Mobile APK container frame logic */
+        /* Decorative Background Waves */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 12vh;
+            min-height: 80px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 10vh;
+            min-height: 70px;
+        }
+
+        /* Main Container */
         .app-view {
             width: 100%;
             height: 100dvh;
             max-width: 450px; 
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: calc(20px + env(safe-area-inset-top)) 24px calc(20px + env(safe-area-inset-bottom)) 24px;
-            background: radial-gradient(circle at 100% 0%, rgba(0,0,0,0.015) 0%, transparent 40%),
-                        radial-gradient(circle at 0% 100%, rgba(0,0,0,0.01) 0%, transparent 40%);
+            justify-content: center; 
+            padding: calc(14vh + env(safe-area-inset-top)) 20px calc(12vh + env(safe-area-inset-bottom)) 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Centered logo container */
+        /* Brand & Logo */
         .brand-section {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-top: 15px;
-            width: 100%;
-            flex: 1.2;
             justify-content: center;
+            align-items: center;
+            margin-bottom: 2vh;
         }
 
         .logo-image {
-            width: 75%;
-            max-width: 220px;
+            width: 200px; /* Scaled up to 200px as requested */
             height: auto;
             object-fit: contain;
         }
 
-        /* Headline text */
+        /* Welcome Text */
         .welcome-content {
             text-align: center;
-            padding: 0 10px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            margin-bottom: 3vh;
         }
 
         .welcome-content h1 {
-            font-size: 30px;
-            font-weight: 800;
+            font-size: 24px; 
+            font-weight: 700; /* Inter looks best at 700 for main headers */
             color: var(--text-dark);
-            margin-bottom: 12px;
-            letter-spacing: -0.6px;
+            margin-bottom: 8px;
+            letter-spacing: -0.03em; /* Professional tight tracking */
+        }
+
+        .welcome-content h1 span {
+            color: var(--primary-burgundy);
         }
 
         .welcome-content p {
-            font-size: 15px;
+            font-size: 13px;
             color: var(--text-muted);
             line-height: 1.5;
-            font-weight: 500;
+            font-weight: 400; /* Clean, readable body weight */
+            padding: 0 10px;
         }
 
-        /* Horizontal mini-slides cards feature container */
+        /* Feature Cards */
         .features-container {
             display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin: 15px 0;
-            width: 100%;
-            flex: 1;
-            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 4vh; 
         }
 
         .feature-card {
             flex: 1;
-            max-width: 105px;
-            height: 105px;
             background: #ffffff;
-            border-radius: 20px;
+            border-radius: 16px;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px 12px; 
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            margin-bottom: 12px;
         }
 
-        .feature-card.active {
-            transform: scale(1.06);
-            border: 1px solid rgba(0,0,0,0.06);
+        .card-1-icon { background-color: #fceceb; color: #d32f2f; }
+        .card-2-icon { background-color: #e8f0fe; color: #1976d2; }
+        .card-3-icon { background-color: #fdf4e7; color: #f57c00; }
+
+        .feature-title {
+            font-size: 12px;
+            font-weight: 600; /* Semi-bold is crisp for card titles */
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
         }
 
-        .card-inner-box {
-            width: 100%;
-            height: 100%;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
+        .feature-desc {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            flex-grow: 1;
+            font-weight: 400;
         }
 
-        /* Navigation action triggers at bottom */
+        .indicator-dash {
+            width: 14px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .dash-1 { background-color: #d32f2f; }
+        .dash-2 { background-color: #1976d2; }
+        .dash-3 { background-color: #f57c00; }
+
+        /* Buttons & Footer Container */
         .action-area {
             display: flex;
             flex-direction: column;
             gap: 12px;
             width: 100%;
-            margin-top: auto;
-            padding-bottom: 5px;
+            padding-bottom: 28px; 
         }
 
         .btn {
             width: 100%;
-            height: 54px;
-            border-radius: 27px;
-            font-size: 18px;
-            font-weight: 700;
+            height: 56px; 
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600; /* Professional button weight */
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 20px;
             cursor: pointer;
             transition: transform 0.1s ease;
-            text-decoration: none; /* Clear standard anchor text underline style rules */
+            text-decoration: none;
+            letter-spacing: -0.01em;
         }
 
         .btn:active {
             transform: scale(0.98);
         }
 
+        .btn-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
         .btn-primary {
             background: var(--primary-gradient);
             color: #ffffff;
-            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.25);
+            box-shadow: var(--btn-shadow);
+        }
+        
+        .btn-primary .btn-icon-wrapper {
+            color: var(--primary-burgundy);
         }
 
         .btn-secondary {
-            background: transparent;
+            background: #ffffff;
             color: var(--text-dark);
-            border: 2px solid #333333;
+            border: 1px solid #e5e7eb; /* Softer, more modern border color */
+            box-shadow: var(--card-shadow);
         }
 
+        .btn-secondary .btn-icon-wrapper {
+            background: transparent;
+            color: var(--text-dark);
+            margin-left: -8px; 
+        }
+
+        /* Footer - Positioned exactly as before */
         .footer-links {
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 10px;
-            font-weight: 500;
+            position: fixed;
+            bottom: calc(4vh + env(safe-area-inset-bottom));
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px; 
+            color: #ffffff;
+            font-weight: 600; /* Kept bold for the red background */
+            z-index: 10;
         }
 
         .footer-links a {
-            color: var(--text-dark);
-            text-decoration: underline;
-            margin: 0 2px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: opacity 0.2s;
             font-weight: 600;
+        }
+
+        .footer-links a.highlight {
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        
+        .footer-icon {
+            color: var(--primary-burgundy);
+            background: #ffffff;
+            padding: 4px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .divider {
+            color: rgba(255, 255, 255, 0.7); /* Slightly softer divider */
+            margin: 0 2px;
+        }
+
+        /* Small screen adjustments */
+        @media (max-height: 650px) {
+            .app-view { padding-top: 100px; padding-bottom: 80px; }
+            .logo-image { width: 150px; } /* Proportional scale-up for mobile viewport heights */
+            .welcome-content h1 { font-size: 20px; margin-bottom: 4px; }
+            .feature-card { padding: 12px 6px 10px; }
+            .icon-circle { width: 32px; height: 32px; margin-bottom: 8px; }
+            .btn { height: 50px; }
         }
     </style>
 </head>
 <body>
+
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+    </svg>
 
     <div class="app-view">
         
@@ -205,49 +325,105 @@
         </div>
 
         <div class="welcome-content">
-            <h1>Welcome to BirrGo!</h1>
-            <p>The fast, secure, and easy way to manage your finances in Ethiopia. Pay, send, and save with confidence.</p>
+            <h1><strong>Welcome to <span>BirrGo!</span></strong></h1>
         </div>
 
         <div class="features-container">
             <div class="feature-card">
-                <div class="card-inner-box" style="background-color: #fdf2f4;">
-                    <span>💸</span>
+                <div class="icon-circle card-1-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
                 </div>
+                <div class="feature-title">Send & Receive</div>
+                <div class="feature-desc">Send and receive money instantly, anytime.</div>
+                <div class="indicator-dash dash-1"></div>
             </div>
-            <div class="feature-card active">
-                <div class="card-inner-box" style="background-color: #f0f4f8;">
-                    <span>📱🔒</span>
-                </div>
-            </div>
+
             <div class="feature-card">
-                <div class="card-inner-box" style="background-color: #fcf6f0;">
-                    <span>🏦</span>
+                <div class="icon-circle card-2-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <rect x="9" y="11" width="6" height="6" rx="1"></rect>
+                        <path d="M12 11V9a2 2 0 1 1 4 0"></path>
+                    </svg>
                 </div>
+                <div class="feature-title">Secure & Safe</div>
+                <div class="feature-desc">Bank-level security to protect your money.</div>
+                <div class="indicator-dash dash-2"></div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-circle card-3-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 22 7 12 2"></polygon>
+                        <polyline points="2 17 22 17"></polyline>
+                        <polyline points="2 22 22 22"></polyline>
+                        <line x1="6" y1="17" x2="6" y2="7"></line>
+                        <line x1="10" y1="17" x2="10" y2="7"></line>
+                        <line x1="14" y1="17" x2="14" y2="7"></line>
+                        <line x1="18" y1="17" x2="18" y2="7"></line>
+                    </svg>
+                </div>
+                <div class="feature-title">Save & Grow</div>
+                <div class="feature-desc">Save your money and grow your future.</div>
+                <div class="indicator-dash dash-3"></div>
             </div>
         </div>
 
         <div class="action-area">
-            <!-- Target registration node button (FIXED to point to register.html) -->
-            <a href="register.html" id="createAccountBtn" class="btn btn-primary">Create Account</a>
+            <a href="register.html" id="createAccountBtn" class="btn btn-primary">
+                <div class="btn-left">
+                    <div class="btn-icon-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <span>Create Account</span>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
             
-            <a href="login.html" class="btn btn-secondary">Log In</a>
+            <a href="login.html" class="btn btn-secondary">
+                <div class="btn-left">
+                    <div class="btn-icon-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <span>Log In</span>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
             
             <div class="footer-links">
-                Need help? <a href="#">Contact support</a> | <a href="#">Terms</a> | <a href="#">Privacy</a>
+                <div class="footer-icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                    </svg>
+                </div>
+                <span>Need help?</span> 
+                <a href="#" class="highlight">Contact support</a> 
+                <span class="divider">|</span>
+                <a href="#">Terms</a> 
+                <span class="divider">|</span>
+                <a href="#">Privacy</a>
             </div>
         </div>
 
     </div>
 
-    <!-- Referral Link Protection Script Pipeline -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Read URL parameter details from current browser context
             const urlParams = new URLSearchParams(window.location.search);
             const refParam = urlParams.get('ref');
 
-            // If a referral token exists, append it seamlessly to the Sign-up link (FIXED to register.html)
             if (refParam) {
                 const createBtn = document.getElementById('createAccountBtn');
                 if (createBtn) {

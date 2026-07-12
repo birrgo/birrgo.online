@@ -267,7 +267,12 @@
         </div>
         
         <div id="gameInstruction" class="game-status-text">Unlock card to start playing!</div>
-        <div id="gridContainer" class="grid-container"></div>
+        
+        <div id="initPlaySection" style="padding: 20px 0;">
+            <button class="btn" onclick="startPlayWorkflow()">Get Started (20 Birr)</button>
+        </div>
+
+        <div id="gridContainer" class="grid-container" style="display: none;"></div>
     </div>
 
     <div id="gameModal" class="modal-overlay">
@@ -290,7 +295,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Same Database Connection used in monthly.html
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
             authDomain: "birrgo-fdf7e.firebaseapp.com",
@@ -312,6 +316,7 @@
         let logosFound = 0;
         let revealedItems = 0;
         let activeGameState = false; 
+        let pinVerifiedThisSession = false; // Tracks if PIN has already been verified
         let activeUserPhone = localStorage.getItem('auth_session_phone');
         let completeRawCardSequence = "";
         let currentRoundWinValue = 0;
@@ -325,7 +330,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Setup phone normalization logic identical to monthly.html
         function normalizePhoneNumber(phoneStr) {
             return phoneStr ? phoneStr.replace(/\D/g, '') : "";
         }
@@ -339,7 +343,6 @@
             const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
             completeRawCardSequence = cleanPhone + final6Reversed;
 
-            // Fetch true account key profile layout mapping context
             try {
                 const directCheckSnap = await get(ref(db, `users/${completeRawCardSequence}`));
                 if (!directCheckSnap.exists()) {
@@ -355,20 +358,33 @@
                     }
                 }
             } catch (err) { console.error(err); }
-
-            showPaymentPromptModal();
         };
 
-        function showPaymentPromptModal() {
+        window.startPlayWorkflow = function() {
+            if (pinVerifiedThisSession) {
+                // Skip modal entirely and buy ticket instantly if PIN was already entered once
+                executeTicketTransaction("");
+            } else {
+                showPaymentPromptModal();
+            }
+        };
+
+        window.showPaymentPromptModal = function() {
             activeGameState = false;
+            
             document.getElementById('gridContainer').innerHTML = '';
+            document.getElementById('gridContainer').style.display = 'none';
+            document.getElementById('initPlaySection').style.display = 'block';
             document.getElementById('gameInstruction').innerText = "Unlock card to start playing!";
             
             document.getElementById('modalTitle').innerText = "Confirm Ticket";
             document.getElementById('modalTitle').className = "modal-title";
             document.getElementById('modalLogos').innerText = "1 ticket price is 20 Birr. Enter your 4-digit PIN to pay and play.";
-            document.getElementById('userPinInput').style.display = "block";
-            document.getElementById('userPinInput').value = "";
+            
+            const pinInput = document.getElementById('userPinInput');
+            pinInput.style.display = "block";
+            pinInput.value = ""; 
+            
             document.getElementById('modalPrizeBox').style.display = "none";
             
             const actionBtn = document.getElementById('modalActionBtn');
@@ -376,19 +392,19 @@
             actionBtn.className = "btn";
             
             document.getElementById('gameModal').classList.add('active');
+            setTimeout(() => pinInput.focus(), 400);
         }
 
-        // SECURED MATHEMATICAL WINNING PROBABILITY MATRIX ENGINE
         function calculateSecureOutcome() {
             const chance = Math.random();
             if (chance < 0.90) {
-                return { logos: 1, payout: 0 };    // 90% Win Rate -> 0 Birr
+                return { logos: 1, payout: 0 };    
             } else if (chance < 0.95) {
-                return { logos: 2, payout: 10 };   // 5% Win Rate -> 10 Birr
+                return { logos: 2, payout: 10 };   
             } else if (chance < 0.98) {
-                return { logos: 4, payout: 50 };   // 3% Win Rate -> 50 Birr
+                return { logos: 4, payout: 50 };   
             } else {
-                return { logos: 6, payout: 1000 }; // 2% Win Rate -> 1,000 Birr
+                return { logos: 6, payout: 1000 }; 
             }
         }
 
@@ -399,118 +415,116 @@
                     showToast("Please enter your valid 4-digit security PIN.", "error");
                     return;
                 }
+                executeTicketTransaction(enteredPin);
+            } else {
+                // Safe-close response layouts and route play flow
+                document.getElementById('gameModal').classList.remove('active');
+                startPlayWorkflow();
+            }
+        };
 
-                const actionBtn = document.getElementById('modalActionBtn');
-                actionBtn.disabled = true;
-                actionBtn.innerText = "Processing Transaction...";
+        async function executeTicketTransaction(enteredPin) {
+            const actionBtn = document.getElementById('modalActionBtn');
+            actionBtn.disabled = true;
+            actionBtn.innerText = "Processing...";
 
-                try {
-                    const usersSnapshot = await get(ref(db, 'users'));
-                    if(!usersSnapshot.exists() || !usersSnapshot.hasChild(completeRawCardSequence)) {
-                        showToast("User details profile missing.", "error");
-                        resetModalBtn();
-                        return;
-                    }
+            try {
+                const usersSnapshot = await get(ref(db, 'users'));
+                if(!usersSnapshot.exists() || !usersSnapshot.hasChild(completeRawCardSequence)) {
+                    showToast("User details profile missing.", "error");
+                    resetModalBtn();
+                    return;
+                }
 
-                    const allUsers = usersSnapshot.val();
-                    const userData = allUsers[completeRawCardSequence];
+                const allUsers = usersSnapshot.val();
+                const userData = allUsers[completeRawCardSequence];
 
+                // Validate PIN only if it hasn't been verified yet
+                if (!pinVerifiedThisSession) {
                     if (userData.securityPin !== enteredPin && userData.pin !== enteredPin) {
                         showToast("Invalid security PIN verification.", "error");
                         resetModalBtn();
                         return;
                     }
-
-                    let clearBalance = parseFloat(userData.walletBalance || userData.balance || 0);
-                    if(clearBalance < ticketCost) {
-                        showToast(`Insufficient balance! Current: ${clearBalance} Birr`, "error");
-                        resetModalBtn();
-                        return;
-                    }
-
-                    // Securely establish target win parameters before any card layout maps
-                    const secureResult = calculateSecureOutcome();
-                    targetLogosCount = secureResult.logos;
-                    currentRoundWinValue = secureResult.payout;
-
-                    // Locate admin destination payload tracking key node
-                    let adminNodeKey = null;
-                    Object.keys(allUsers).forEach((key) => {
-                        if (key.includes("000000") || (allUsers[key].cardNumber && allUsers[key].cardNumber.includes("000000"))) {
-                            adminNodeKey = key;
-                        }
-                    });
-
-                    // Deduct Entry Fee & Add Winnings directly into Wallet Balance changes simultaneously
-                    const adjustedUserBalance = parseFloat((clearBalance - ticketCost + currentRoundWinValue).toFixed(2));
-                    const timestampStr = new Date().toLocaleString();
-                    const updates = {};
-
-                    updates[`users/${completeRawCardSequence}/walletBalance`] = adjustedUserBalance;
-                    if (userData.balance !== undefined) {
-                        updates[`users/${completeRawCardSequence}/balance`] = adjustedUserBalance;
-                    }
-
-                    // Log initial ticket play purchase
-                    const ticketPushKey = push(ref(db, `users/${completeRawCardSequence}/tickets`)).key;
-                    updates[`users/${completeRawCardSequence}/tickets/${ticketPushKey}`] = {
-                        type: "Bingo Scratch Ticket",
-                        price: ticketCost,
-                        payout: currentRoundWinValue,
-                        timestamp: timestampStr
-                    };
-
-                    // Log corresponding deduction expense transaction
-                    const txPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
-                    updates[`users/${completeRawCardSequence}/transactions/${txPushKey}`] = {
-                        title: "BINGO SCRATCH TICKET ENTRY",
-                        amount: -ticketCost,
-                        type: "expense",
-                        timestamp: timestampStr
-                    };
-
-                    // If user won money, update transactions log immediately
-                    if(currentRoundWinValue > 0) {
-                        const winTxPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
-                        updates[`users/${completeRawCardSequence}/transactions/${winTxPushKey}`] = {
-                            title: "BINGO SCRATCH CARD WINNINGS",
-                            amount: currentRoundWinValue,
-                            type: "income",
-                            timestamp: timestampStr
-                        };
-                    }
-
-                    // Route entry fee to designated Admin profile node ledger
-                    if (adminNodeKey) {
-                        const currentAdminBal = parseFloat(allUsers[adminNodeKey].walletBalance) || 0;
-                        updates[`users/${adminNodeKey}/walletBalance`] = parseFloat((currentAdminBal + ticketCost).toFixed(2));
-                        
-                        const adminTxKey = push(ref(db, `users/${adminNodeKey}/transactions`)).key;
-                        updates[`users/${adminNodeKey}/transactions/${adminTxKey}`] = {
-                            title: `BINGO ENTRY POOL RECEIVED (+251${completeRawCardSequence})`,
-                            amount: ticketCost,
-                            type: "income",
-                            timestamp: timestampStr
-                        };
-                    }
-
-                    // Commit balance alterations to database securely
-                    await update(ref(db), updates);
-
-                    // Build and render game board
-                    buildGameBoardLayout();
-
-                } catch (err) {
-                    console.error(err);
-                    showToast("Transaction execution error.", "error");
-                } finally {
-                    resetModalBtn();
+                    pinVerifiedThisSession = true; // Pin works! Remember it for next games
                 }
-            } else {
-                // If round complete, clicking action button prompts next ticket round initialization 
-                showPaymentPromptModal();
+
+                let clearBalance = parseFloat(userData.walletBalance || userData.balance || 0);
+                if(clearBalance < ticketCost) {
+                    showToast(`Insufficient balance! Current: ${clearBalance} Birr`, "error");
+                    resetModalBtn();
+                    return;
+                }
+
+                const secureResult = calculateSecureOutcome();
+                targetLogosCount = secureResult.logos;
+                currentRoundWinValue = secureResult.payout;
+
+                let adminNodeKey = null;
+                Object.keys(allUsers).forEach((key) => {
+                    if (key.includes("000000") || (allUsers[key].cardNumber && allUsers[key].cardNumber.includes("000000"))) {
+                        adminNodeKey = key;
+                    }
+                });
+
+                const adjustedUserBalance = parseFloat((clearBalance - ticketCost + currentRoundWinValue).toFixed(2));
+                const timestampStr = new Date().toLocaleString();
+                const updates = {};
+
+                updates[`users/${completeRawCardSequence}/walletBalance`] = adjustedUserBalance;
+                if (userData.balance !== undefined) {
+                    updates[`users/${completeRawCardSequence}/balance`] = adjustedUserBalance;
+                }
+
+                const ticketPushKey = push(ref(db, `users/${completeRawCardSequence}/tickets`)).key;
+                updates[`users/${completeRawCardSequence}/tickets/${ticketPushKey}`] = {
+                    type: "Bingo Scratch Ticket",
+                    price: ticketCost,
+                    payout: currentRoundWinValue,
+                    timestamp: timestampStr
+                };
+
+                const txPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
+                updates[`users/${completeRawCardSequence}/transactions/${txPushKey}`] = {
+                    title: "BINGO SCRATCH TICKET ENTRY",
+                    amount: -ticketCost,
+                    type: "expense",
+                    timestamp: timestampStr
+                };
+
+                if(currentRoundWinValue > 0) {
+                    const winTxPushKey = push(ref(db, `users/${completeRawCardSequence}/transactions`)).key;
+                    updates[`users/${completeRawCardSequence}/transactions/${winTxPushKey}`] = {
+                        title: "BINGO SCRATCH CARD WINNINGS",
+                        amount: currentRoundWinValue,
+                        type: "income",
+                        timestamp: timestampStr
+                    };
+                }
+
+                if (adminNodeKey) {
+                    const currentAdminBal = parseFloat(allUsers[adminNodeKey].walletBalance) || 0;
+                    updates[`users/${adminNodeKey}/walletBalance`] = parseFloat((currentAdminBal + ticketCost).toFixed(2));
+                    
+                    const adminTxKey = push(ref(db, `users/${adminNodeKey}/transactions`)).key;
+                    updates[`users/${adminNodeKey}/transactions/${adminTxKey}`] = {
+                        title: `BINGO ENTRY POOL RECEIVED (+251${completeRawCardSequence})`,
+                        amount: ticketCost,
+                        type: "income",
+                        timestamp: timestampStr
+                    };
+                }
+
+                await update(ref(db), updates);
+                buildGameBoardLayout();
+
+            } catch (err) {
+                console.error(err);
+                showToast("Transaction execution error.", "error");
+            } finally {
+                resetModalBtn();
             }
-        };
+        }
 
         function resetModalBtn() {
             const actionBtn = document.getElementById('modalActionBtn');
@@ -524,6 +538,12 @@
             activeGameState = true;
 
             document.getElementById('gameModal').classList.remove('active');
+            document.getElementById('initPlaySection').style.display = 'none';
+            
+            const grid = document.getElementById('gridContainer');
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
+            
             document.getElementById('gameInstruction').innerText = 'Scratch to find the money logos!';
 
             let contentsArray = [];
@@ -531,9 +551,6 @@
                 contentsArray.push(i < targetLogosCount);
             }
             contentsArray.sort(() => Math.random() - 0.5);
-
-            const grid = document.getElementById('gridContainer');
-            grid.innerHTML = '';
 
             for (let i = 0; i < totalItems; i++) {
                 const itemDiv = document.createElement('div');

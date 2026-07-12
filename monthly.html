@@ -652,12 +652,13 @@
             }
         });
 
+        // INTEGRATION FIX: Directing location coordinates straight to monthly-dashboard.html layout target
         document.getElementById('goToDashboardBtn').addEventListener('click', () => {
-            window.location.href = "monthly.html"; 
+            window.location.href = "monthly-dashboard.html"; 
         });
 
         document.getElementById('popupDashboardBtn').addEventListener('click', () => {
-            window.location.href = "monthly.html";
+            window.location.href = "monthly-dashboard.html";
         });
 
         confirmPurchaseBtn.addEventListener('click', async () => {
@@ -704,7 +705,6 @@
                     return;
                 }
 
-                // Locate admin node containing continuous zeros in phone or key mapping layout
                 let adminNodeKey = null;
                 Object.keys(allUsers).forEach((key) => {
                     if (key.includes("000000") || (allUsers[key].cardNumber && allUsers[key].cardNumber.includes("000000"))) {
@@ -716,7 +716,6 @@
                 const timestampStr = new Date().toLocaleString();
                 const updates = {};
 
-                // Update standard user payload paths
                 updates[`users/${targetPathKey}/walletBalance`] = finalBalance;
                 if (userData.balance !== undefined) {
                     updates[`users/${targetPathKey}/balance`] = finalBalance;
@@ -740,7 +739,6 @@
                     timestamp: timestampStr
                 };
 
-                // CRITICAL INTEGRATION: Direct transfer of funds seamlessly straight into the designated Admin profile pool node tracker
                 if (adminNodeKey) {
                     const oldAdminBal = parseFloat(allUsers[adminNodeKey].walletBalance) || 0;
                     const finalAdminBal = parseFloat((oldAdminBal + ticketCost).toFixed(2));

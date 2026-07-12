@@ -21,8 +21,8 @@
             --success-green: #10b981;
             --warning-amber: #f59e0b;
             --danger-red: #ef4444;
-            --border-radius-lg: 24px;
-            --border-radius-md: 16px;
+            --border-radius-lg: 20px;
+            --border-radius-md: 14px;
         }
 
         * {
@@ -51,7 +51,7 @@
             width: 100%;
             height: 100dvh;
             max-width: 450px;
-            background-color: #ffffff;
+            background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
             position: relative;
@@ -59,12 +59,35 @@
             overflow: hidden;
         }
 
+        /* Decorative Background Waves pinned inside container */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 12vh;
+            min-height: 80px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 10vh;
+            min-height: 70px;
+        }
+
         .app-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent; /* Allows waves to display underneath cleanly */
+            padding: calc(16px + env(safe-area-inset-top)) 16px calc(85px + env(safe-area-inset-bottom)) 16px;
             overflow-y: auto;
-            background-color: var(--bg-light);
-            padding: calc(16px + env(safe-area-inset-top)) 20px calc(85px + env(safe-area-inset-bottom)) 20px;
             scrollbar-width: none;
+            position: relative;
+            z-index: 1;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
@@ -72,8 +95,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             padding: 4px 2px;
+            flex-shrink: 0;
         }
 
         .logo-image {
@@ -82,33 +106,42 @@
             object-fit: contain;
         }
 
-        .page-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 24px;
-            letter-spacing: -0.6px;
+        .profile-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* Reconfigured to a Vertical Stack Row */
-        .featured-vertical-stack {
+        .featured-grid-stack {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            margin-bottom: 24px;
+            gap: 14px;
         }
 
         .featured-card {
             width: 100%;
+            height: 125px;
             border-radius: var(--border-radius-lg);
             overflow: hidden;
             background: var(--primary-gradient);
             color: #ffffff;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 30px -5px rgba(128, 0, 32, 0.15);
+            box-shadow: var(--card-shadow);
             cursor: pointer;
             transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
         }
 
         .featured-card:active {
@@ -116,14 +149,15 @@
         }
 
         .card-img-wrapper {
-            width: 100%;
-            height: 160px;
+            width: 35%;
+            height: 100%;
             background-color: #0f172a;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .card-img-wrapper img {
@@ -134,58 +168,69 @@
 
         .badge-premium {
             position: absolute;
-            top: 14px;
-            left: 14px;
+            top: 10px;
+            right: 12px;
             background: linear-gradient(90deg, #ffd700, #ffa500);
             color: #000000;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 9px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
             z-index: 2;
         }
 
         .featured-card-body {
-            padding: 18px;
+            flex: 1;
+            padding: 14px 14px 14px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            gap: 4px;
+            height: 100%;
+            min-width: 0; 
         }
 
         .featured-title {
-            font-size: 19px;
+            font-size: 17px; 
             font-weight: 800;
-            margin-bottom: 6px;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 50px; 
+            color: #ffffff;
         }
 
         .featured-meta {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.75);
-            margin-bottom: 14px;
-            line-height: 1.5;
+            font-size: 12px; 
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.4;
+            font-weight: 500;
         }
 
         .featured-meta span {
             color: #ffd700;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .card-footer-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: flex-start;
+            margin-top: 2px;
         }
 
         .countdown-pill {
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(16, 185, 129, 0.25);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             gap: 4px;
@@ -221,6 +266,7 @@
             gap: 4px;
             flex: 1;
             height: 100%;
+            cursor: pointer;
         }
 
         .nav-item svg {
@@ -247,6 +293,150 @@
         .nav-item.active-tab svg {
             stroke: var(--primary-burgundy);
             stroke-width: 2.4;
+        }
+
+        /* SYSTEM DIALOG POPUPS & BACKDROPS */
+        .custom-popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        
+        .custom-popup-backdrop.show-modal {
+            display: flex;
+            opacity: 1;
+        }
+
+        .custom-popup-card {
+            background-color: #ffffff;
+            border-radius: var(--border-radius-lg);
+            padding: 28px 24px 24px 24px;
+            width: 88%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.9);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .custom-popup-backdrop.show-modal .custom-popup-card {
+            transform: scale(1);
+        }
+
+        .popup-status-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .bg-success { background-color: #ecfdf5; color: #10b981; }
+        .bg-lock { background-color: #fffbeb; color: var(--warning-amber); }
+        .bg-error { background-color: #fef2f2; color: #ef4444; }
+
+        .popup-status-badge svg {
+            width: 28px;
+            height: 28px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .custom-popup-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .custom-popup-msg {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .btn-popup-confirm {
+            width: 100%;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
+        }
+        .btn-popup-confirm:active {
+            transform: scale(0.98);
+        }
+
+        .profile-display-box {
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        .profile-info-row {
+            margin-bottom: 14px;
+        }
+        .profile-info-row:last-child {
+            margin-bottom: 0;
+        }
+        .profile-info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .profile-info-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .btn-logout-premium {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px var(--accent-glow);
+            transition: all 0.2s ease;
+        }
+        .btn-logout-premium:active {
+            transform: scale(0.98);
         }
 
         /* PREMIUM BOTTOM SHEET FOR ERRORS */
@@ -278,7 +468,7 @@
             width: 100%;
             max-width: 360px;
             border-radius: var(--border-radius-lg);
-            padding: 28px 24px 24px 24px;
+            padding: 24px;
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
             text-align: center;
             transform: scale(0.9);
@@ -290,49 +480,49 @@
         }
 
         .sheet-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px auto;
+            margin: 0 auto 14px auto;
             background: #fef2f2;
             color: var(--danger-red);
         }
 
         .sheet-icon svg {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             fill: none;
             stroke: currentColor;
             stroke-width: 2.5;
         }
 
         .sheet-title {
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: -0.3px;
         }
 
         .sheet-message {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 24px;
+            line-height: 1.4;
+            margin-bottom: 20px;
         }
 
         .btn-sheet-close {
             width: 100%;
-            height: 48px;
+            height: 44px;
             background: var(--primary-gradient);
             color: #ffffff;
             border: none;
             border-radius: var(--border-radius-md);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
@@ -347,24 +537,30 @@
 
     <div class="app-view">
         
+        <!-- Top Wave Background Layer -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#9A0019"/>
+                    <stop offset="1" stop-color="#700010"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Bottom Wave Background Layer -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+        </svg>
+        
         <div class="app-content">
             
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
-                
-                <button id="dashboardLogoutBtn" style="background: #f1f5f9; border: 1px solid var(--border-light); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dark); cursor: pointer;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                </button>
+                <div class="profile-badge" id="headerProfileBtn">👤</div>
             </div>
 
-          
-
-            <!-- Changed to a Vertical Presentation Layer -->
-            <div class="featured-vertical-stack">
+            <div class="featured-grid-stack">
                 
                 <!-- 1. Jetour Card -->
                 <div class="featured-card" id="jetourRaffleCard">
@@ -373,10 +569,10 @@
                         <img src="33111.jpg" alt="Jetour Dashing Car">
                     </div>
                     <div class="featured-card-body">
-                        <h3 class="featured-title">Jetour Dashing Car Raffle</h3>
-                        <p class="featured-meta">Ticket Price: <span>5,000 Birr</span><br>Grand Prize: Brand New Luxury Jetour SUV</p>
+                        <h3 class="featured-title">Jetour Dashing</h3>
+                        <p class="featured-meta">Price: <span>5,000 Birr</span><br>Prize: Luxury Jetour SUV</p>
                         <div class="card-footer-row">
-                            <span class="countdown-pill">⏳ Closes in 2D 5H</span>
+                            <span class="countdown-pill">⚡ Always Open</span>
                         </div>
                     </div>
                 </div>
@@ -388,25 +584,25 @@
                         <img src="33440.png" alt="Monthly BirrDraw">
                     </div>
                     <div class="featured-card-body">
-                        <h3 class="featured-title">Monthly BirrDraw</h3>
-                        <p class="featured-meta">Ticket Price: <span>200 Birr</span><br>Jackpot: 1,000,000 Birr Cash</p>
+                        <h3 class="featured-title">Win 1 Million Birr</h3>
+                        <p class="featured-meta">Price: <span>200 Birr</span><br>Jackpot: 1,000,000 Birr</p>
                         <div class="card-footer-row">
-                            <span class="countdown-pill">⏳ Closes in 1D 5H</span>
+                            <span class="countdown-pill">⚡ Always Open</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. Bingo / Scratch Card Option -->
+                <!-- 3. Scratch Card Option -->
                 <div class="featured-card" id="bingoScratchCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff4e50, #f9d423); color: #ffffff;">Instant Win</span>
                     <div class="card-img-wrapper">
-                        <img src="33274.jpg" alt="Scratch & Win Box">
+                        <img src="33274.jpg" alt="Win 100,000 Birr Box">
                     </div>
                     <div class="featured-card-body">
-                        <h3 class="featured-title">Scratch & Win Game</h3>
-                        <p class="featured-meta">Ticket Price: <span>50 Birr</span><br>Top Reward: Up to 1,000 Birr Instantly</p>
+                        <h3 class="featured-title">Win 100,000 Birr</h3>
+                        <p class="featured-meta">Price: <span>20 Birr</span><br>Reward: Up to 100,000 Birr</p>
                         <div class="card-footer-row">
-                            <span class="countdown-pill" style="background: rgba(16, 185, 129, 0.3);">⚡ Always Open</span>
+                            <span class="countdown-pill">⚡ Always Open</span>
                         </div>
                     </div>
                 </div>
@@ -414,31 +610,71 @@
             </div>
         </div>
 
-        <!-- Fixed Premium Navigation Header Structure -->
-        <nav class="bottom-nav-bar">
-            <a href="dashboard.html" class="nav-item">
+        <!-- Aligned Navigation Bottom Sticky Bar Framework -->
+        <nav class="bottom-nav-bar" id="bottomNavBar">
+            <div id="navHome" class="nav-item">
                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
                 Home
-            </a>
-            <a href="task.html" class="nav-item">
-                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            </div>
+            <div id="navTasks" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                 Tasks
-            </a>
-            <a href="#" class="nav-item active-tab">
+            </div>
+            <div id="navLottery" class="nav-item active-tab">
                 <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    <svg viewBox="0 0 24 24" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
                 </div>
-                Lottery 
-            </a>
-            <a href="wallet.html" class="nav-item">
-                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Lottery
+            </div>
+            <div id="navWallet" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                 Wallet
-            </a>
+            </div>
         </nav>
 
+        <!-- SYSTEM PROFILE POPUP MODAL -->
+        <div class="custom-popup-backdrop" id="profilePopup">
+            <div class="custom-popup-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;">
+                    <h3 class="custom-popup-title" style="margin-bottom: 0;">Account Profile</h3>
+                    <span id="closeProfilePopupBtn" style="cursor: pointer; font-size: 24px; font-weight: 700; color: var(--text-muted); line-height: 1;">&times;</span>
+                </div>
+                
+                <div class="profile-display-box">
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Full Name</span>
+                        <span class="profile-info-val" id="modalFullName">Loading...</span>
+                    </div>
+                    <div class="profile-info-row" style="margin-top: 16px;">
+                        <span class="profile-info-label">Phone Number</span>
+                        <span class="profile-info-val" id="modalPhone">Loading...</span>
+                    </div>
+                </div>
+
+                <button class="btn-logout-premium" id="modalLogoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <!-- System Modal Framework for Popups -->
+        <div class="custom-popup-backdrop" id="customPopup">
+            <div class="custom-popup-card">
+                <div class="popup-status-badge bg-success" id="popupBadge">
+                    <svg viewBox="0 0 24 24" id="popupIcon">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
+                <p class="custom-popup-msg" id="popupMessage">Message info goes here natively.</p>
+                <button class="btn-popup-confirm" id="popupConfirmBtn">Done</button>
+            </div>
+        </div>
+
+        <!-- Insufficient Funds Sheet -->
         <div class="ui-sheet-backdrop" id="errorSheetBackdrop">
             <div class="ui-bottom-sheet">
                 <div class="sheet-icon">
@@ -468,10 +704,24 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        
         let activeUserPhone = "";
         let completeRawCardSequence = "";
 
-        document.addEventListener('DOMContentLoaded', () => {
+        const profilePopup = document.getElementById('profilePopup');
+        const customPopup = document.getElementById('customPopup');
+        const popupBadge = document.getElementById('popupBadge');
+        const popupIcon = document.getElementById('popupIcon');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupMessage = document.getElementById('popupMessage');
+        const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+        window.goToPage = function(page) {
+            if (page === '#') return;
+            window.location.replace(page);
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
                 window.location.href = "login.html";
@@ -482,16 +732,89 @@
             const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
             completeRawCardSequence = cleanPhone + final6Reversed;
 
-            setupLogoutHandler();
+            try {
+                const snapshot = await get(ref(db, `users/${activeUserPhone}`));
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    if (userData.fullName) {
+                        document.getElementById('modalFullName').innerText = userData.fullName;
+                    } else {
+                        const fName = userData.firstName || "";
+                        const mName = userData.middleName || "";
+                        document.getElementById('modalFullName').innerText = `${fName} ${mName}`.trim() || "Premium User";
+                    }
+                    document.getElementById('modalPhone').innerText = activeUserPhone;
+                }
+            } catch (err) {
+                console.error("Profile sync error: ", err);
+            }
+
+            setupProfileEvents();
+            setupNavigationHandlers();
             setupGates();
             setupSheetActions();
         });
 
-        function setupLogoutHandler() {
-            document.getElementById('dashboardLogoutBtn').addEventListener('click', () => {
-                localStorage.removeItem('auth_session_phone');
-                window.location.href = "login.html";
+        function displayAppModal(type, title, message, onConfirm = null) {
+            popupBadge.className = "popup-status-badge";
+            popupTitle.innerText = title;
+            popupMessage.innerText = message;
+
+            if (type === 'success') {
+                popupBadge.classList.add('bg-success');
+                popupIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+            } else if (type === 'lock') {
+                popupBadge.classList.add('bg-lock');
+                popupIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+            } else {
+                popupBadge.classList.add('bg-error');
+                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            }
+
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+
+            const handleClosure = () => {
+                customPopup.classList.remove('show-modal');
+                setTimeout(() => {
+                    customPopup.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                }, 300);
+                popupConfirmBtn.removeEventListener('click', handleClosure);
+            };
+            popupConfirmBtn.addEventListener('click', handleClosure);
+        }
+
+        function setupProfileEvents() {
+            const openBtn = document.getElementById('headerProfileBtn');
+            const closeBtn = document.getElementById('closeProfilePopupBtn');
+            const logoutBtn = document.getElementById('modalLogoutBtn');
+
+            openBtn.addEventListener('click', () => {
+                profilePopup.style.display = 'flex';
+                setTimeout(() => profilePopup.classList.add('show-modal'), 10);
             });
+
+            closeBtn.addEventListener('click', () => {
+                profilePopup.classList.remove('show-modal');
+                setTimeout(() => { profilePopup.style.display = 'none'; }, 300);
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                profilePopup.classList.remove('show-modal');
+                profilePopup.style.display = 'none';
+                
+                displayAppModal('lock', 'Logout', 'Are you sure you want to end your session?', () => {
+                    localStorage.removeItem('auth_session_phone');
+                    window.location.href = "login.html";
+                });
+            });
+        }
+
+        function setupNavigationHandlers() {
+            document.getElementById('navHome').addEventListener('click', () => goToPage('dashboard.html'));
+            document.getElementById('navTasks').addEventListener('click', () => goToPage('task.html'));
+            document.getElementById('navWallet').addEventListener('click', () => goToPage('wallet.html'));
         }
 
         function setupGates() {

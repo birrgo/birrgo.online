@@ -46,6 +46,37 @@
             border-radius: 28px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
             padding: 35px;
+            position: relative;
+        }
+
+        /* Nav Header Area for Back Button */
+        .nav-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-burgundy);
+            border-color: #9b0026;
+            background: rgba(155, 0, 38, 0.03);
+            transform: translateX(-3px);
         }
 
         .header-section {
@@ -123,7 +154,6 @@
             animation: slideIn 0.4s ease forwards;
         }
 
-        /* Premium style explicitly designating the viewer's own ticket configurations */
         .ticket-card.my-ticket {
             background: linear-gradient(135deg, #fffdf5 0%, #fff9e6 100%);
             border: 2px solid #ffd700;
@@ -194,6 +224,11 @@
 <body>
 
     <div class="dashboard-view">
+        <!-- Navigation Header with Square Back Icon Only -->
+        <div class="nav-header">
+            <a href="monthly.html" class="back-btn" aria-label="Back">←</a>
+        </div>
+
         <div class="header-section">
             <div class="live-badge">
                 <span class="dot"></span> Live Tracker
@@ -230,7 +265,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fetching phone profile parameter of the viewing user session
         const currentViewerPhone = localStorage.getItem('auth_session_phone') || "";
 
         function normalize(p) { return p ? p.replace(/\D/g, '') : ""; }
@@ -264,7 +298,6 @@
                 let rawPhone = userData.phoneNumber || userData.phone || userChild.key;
                 let cleanRaw = normalize(rawPhone);
 
-                // Is this node path resource owned by the actively viewing device?
                 let isCurrentViewer = false;
                 if(cleanViewerPhone && (cleanRaw.includes(cleanViewerPhone) || cleanViewerPhone.includes(cleanRaw))) {
                     isCurrentViewer = true;
@@ -293,11 +326,9 @@
                 }
             });
 
-            // Sort both array timelines cleanly by most recent entry arrival point
             myTickets.sort((a, b) => b.sortTime - a.sortTime);
             globalTickets.sort((a, b) => b.sortTime - a.sortTime);
 
-            // 1. Render Active Viewer's Top Pinned Tickets
             if (myTickets.length > 0) {
                 labelMyTickets.style.display = "flex";
                 myContainer.innerHTML = "";
@@ -309,7 +340,6 @@
                 myContainer.innerHTML = "";
             }
 
-            // 2. Render Remaining Global Tickets Streams
             if (globalTickets.length > 0) {
                 globalContainer.innerHTML = "";
                 globalTickets.forEach(t => {

@@ -193,7 +193,7 @@
 
         .input-row {
             display: grid;
-            grid-template-columns: 1fr 85px;
+            grid-template-columns: 1fr;
             gap: 12px;
         }
 
@@ -503,6 +503,25 @@
             cursor: pointer;
         }
 
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.2);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
         .status-popup-card {
             width: 100%;
             max-width: 340px;
@@ -603,10 +622,6 @@
                         <label>Location</label>
                         <input type="text" id="userLocation" class="premium-input" placeholder="Enter Location">
                     </div>
-                    <div class="field-group">
-                        <label>Age (18+)</label>
-                        <input type="number" id="userAge" class="premium-input" placeholder="Age" min="1">
-                    </div>
                 </div>
             </div>
 
@@ -679,7 +694,7 @@
 
         let activeUserPhone = "";
         let completeRawCardSequence = ""; 
-        let adminDatabaseKeyNode = "510000000000000"; // Dynamic tracking default fallback
+        let adminDatabaseKeyNode = "510000000000000"; 
         let isTicketAvailable = false;
         let validatedTicketNumber = null;
         let globallyTakenTicketsMap = {}; 
@@ -702,7 +717,6 @@
             const cleanPhone = normalizePhoneNumber(activeUserPhone);
 
             try {
-                // FLEXIBLE USER AND ADMIN SCANNER
                 const usersSnapshot = await get(ref(db, 'users'));
                 if (usersSnapshot.exists()) {
                     const allUsers = usersSnapshot.val();
@@ -714,12 +728,10 @@
                         const dbPhone1 = profile.phoneNumber ? normalizePhoneNumber(profile.phoneNumber) : "";
                         const dbPhone2 = profile.phone ? normalizePhoneNumber(profile.phone) : "";
 
-                        // Catch Admin zero node layout smoothly
                         if (key.includes("000000") || storedCard.includes("000000")) {
                             adminDatabaseKeyNode = key;
                         }
 
-                        // Match current logged-in profile cleanly
                         if (!userFound && (
                             key === cleanPhone || 
                             storedCard === cleanPhone || 
@@ -780,11 +792,9 @@
 
         function setupFormEngineListeners() {
             const numInput = document.getElementById('ticketNumberInput');
-            const ageInput = document.getElementById('userAge');
             const locInput = document.getElementById('userLocation');
 
             numInput.addEventListener('input', executeLiveTicketStatusCheck);
-            ageInput.addEventListener('input', validateGlobalInputsState);
             locInput.addEventListener('input', validateGlobalInputsState);
             
             document.getElementById('confirmPurchaseBtn').addEventListener('click', openVerificationModal);
@@ -864,11 +874,10 @@
         }
 
         function validateGlobalInputsState() {
-            const age = parseInt(document.getElementById('userAge').value) || 0;
             const location = document.getElementById('userLocation').value.trim();
             const submitBtn = document.getElementById('confirmPurchaseBtn');
 
-            if(age >= 18 && location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null) {
+            if(location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null) {
                 submitBtn.disabled = false;
             } else {
                 submitBtn.disabled = true;
@@ -941,7 +950,6 @@
             confirmBtn.innerText = "Processing safe ledger write...";
 
             const ticketInputVal = parseInt(document.getElementById('ticketNumberInput').value);
-            const userAgeVal = document.getElementById('userAge').value;
             const userLocationVal = document.getElementById('userLocation').value.trim();
 
             try {
@@ -961,7 +969,6 @@
                     return;
                 }
 
-                // FETCH USER CARD NODE BALANCE
                 const userBalanceSnapshot = await get(ref(db, `users/${completeRawCardSequence}/walletBalance`));
                 let userBalance = parseFloat(userBalanceSnapshot.val());
                 if (isNaN(userBalance)) userBalance = 0.00;
@@ -973,7 +980,6 @@
                     return;
                 }
 
-                // FETCH ADMIN MAIN NODE BALANCE VIA DYNAMIC KEY
                 const adminBalanceSnapshot = await get(ref(db, `users/${adminDatabaseKeyNode}/walletBalance`));
                 let adminBalance = parseFloat(adminBalanceSnapshot.val());
                 if (isNaN(adminBalance)) adminBalance = 0.00;
@@ -992,7 +998,6 @@
 
                 const atomicPayloadUpdates = {};
                 
-                // 1. Deduct money from user card node path
                 atomicPayloadUpdates[`/users/${completeRawCardSequence}/walletBalance`] = calculatedUserRemainder;
                 atomicPayloadUpdates[`/users/${completeRawCardSequence}/transactions/${newTxKey}`] = {
                     title: `JETOUR CAMPAIGN ENTRY #${ticketInputVal}`,
@@ -1001,7 +1006,6 @@
                     timestamp: timestampStr
                 };
 
-                // 2. Add money directly to matched admin node path
                 atomicPayloadUpdates[`/users/${adminDatabaseKeyNode}/walletBalance`] = calculatedAdminAddition;
                 atomicPayloadUpdates[`/users/${adminDatabaseKeyNode}/transactions/${adminTxKey}`] = {
                     title: `RAFFLE TICKET SALE INCOME #${ticketInputVal}`,
@@ -1010,12 +1014,10 @@
                     timestamp: timestampStr
                 };
                 
-                // 3. Register ticket allocation matrix data
                 atomicPayloadUpdates[`/lottery/jetour/tickets/${newTicketKey}`] = {
                     cardSequence: completeRawCardSequence,
                     phone: activeUserPhone,
                     ticketNum: ticketInputVal,
-                    age: userAgeVal,
                     location: userLocationVal,
                     timestamp: timestampStr
                 };
