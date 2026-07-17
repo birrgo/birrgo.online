@@ -318,7 +318,7 @@
             font-weight: 600; 
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-between;
             padding: 0 20px;
             cursor: pointer;
             transition: transform 0.1s ease;
@@ -642,9 +642,10 @@
             const installedModal = document.getElementById('alreadyInstalledModal');
             const closeModalBtn = document.getElementById('closeInstalledModalBtn');
 
-            // HIDE top download banner completely if app is running in standalone icon mode
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-                if (pwaBanner) pwaBanner.style.display = 'none';
+            // Hybrid environment check
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (isStandalone) {
+                localStorage.setItem('birrgo_app_installed', 'true');
             }
 
             window.addEventListener('beforeinstallprompt', (e) => {
@@ -652,20 +653,28 @@
                 e.preventDefault();
                 // Save prompt event state
                 deferredPrompt = e;
+                // Since prompt fired, clear the flag to allow installation workflow
+                localStorage.removeItem('birrgo_app_installed');
             });
 
             if (pwaBtn) {
                 pwaBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        // Open native install wizard dialog menu 
+                    const isAlreadyInstalled = localStorage.getItem('birrgo_app_installed') === 'true' || isStandalone;
+
+                    // CHECK CONDITION: If already installed or browser blocks prompt because it exists
+                    if (isAlreadyInstalled || !deferredPrompt) {
+                        if (installedModal) installedModal.style.display = 'flex';
+                    } 
+                    // CHECK CONDITION: If not installed, trigger system prompt logic
+                    else {
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
                         console.log(`PWA Installation Selection Outcome: ${outcome}`);
+                        
+                        if (outcome === 'accepted') {
+                            localStorage.setItem('birrgo_app_installed', 'true');
+                        }
                         deferredPrompt = null;
-                        if (pwaBanner) pwaBanner.style.display = 'none';
-                    } else {
-                        // Triggers custom UI popup dialog overlay smoothly 
-                        if (installedModal) installedModal.style.display = 'flex';
                     }
                 });
             }
@@ -682,9 +691,13 @@
                 });
             }
 
+            // Handle successful installations
             window.addEventListener('appinstalled', () => {
                 console.log('BirrGo app successfully attached to system dashboard.');
-                if (pwaBanner) pwaBanner.style.display = 'none';
+                localStorage.setItem('birrgo_app_installed', 'true');
+                deferredPrompt = null;
+                // Instantly pop up confirmation without layout shifting
+                if (installedModal) installedModal.style.display = 'flex';
             });
         });
 
