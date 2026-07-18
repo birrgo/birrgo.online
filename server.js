@@ -4,8 +4,10 @@ const { BrevoClient } = require('@getbrevo/brevo');
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
+// You might need node-fetch if you're on an older Node version. Native fetch is available in Node 18+
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // 1. Enable CORS securely for your frontend
 app.use(cors({
@@ -44,7 +46,7 @@ if (BREVO_API_KEY) {
 
 // Simple health-check endpoint
 app.get('/', (req, res) => {
-  res.send('BirrGo OTP Backend is live and running!');
+  res.send('BirrGo Backend is live and running!');
 });
 
 // Helper function to generate a secure 6-digit OTP
@@ -57,7 +59,11 @@ function sanitizeEmail(email) {
   return email.toLowerCase().replace(/\./g, '_').replace(/@/g, '_at_');
 }
 
-// 4. Secure Endpoint to generate, save, and send OTP
+// ==========================================
+// 4. OTP ENDPOINTS
+// ==========================================
+
+// Endpoint to generate, save, and send OTP
 app.post('/send-otp', async (req, res) => {
   const { email } = req.body;
 
@@ -107,58 +113,106 @@ app.post('/send-otp', async (req, res) => {
       `
     };
 
-    const info = await brevo.sendTransacEmail(emailData);
-    console.log("OTP Email successfully sent.", info);
-    res.status(200).json({ success: true, message: 'OTP sent successfully.' });
+    // Assuming standard brevo client send method (adjust based on the exact wrapper you use)
+    await brevo.transactionalEmails.sendTransacEmail(emailData);
+
+    return res.status(200).json({ success: true, message: 'OTP sent successfully' });
+
   } catch (error) {
-    console.error("Error processing OTP:", error);
-    res.status(500).json({ error: 'Failed to process OTP request.' });
+    console.error("Error generating/sending OTP:", error);
+    return res.status(500).json({ error: 'Failed to process OTP request.' });
   }
 });
 
-// 5. NEW: Secure Endpoint to handle OneSignal Broadcasts
-app.post('/api/broadcast', async (req, res) => {
-  const { appId, restKey, title, message } = req.body;
+// Endpoint to verify the OTP
+app.post('/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ error: 'Email and OTP are required.' });
 
-  // Validate incoming data
-  if (!appId || !restKey || !title || !message) {
-    return res.status(400).json({ error: 'Missing required fields (appId, restKey, title, message).' });
+  try {
+    const db = getDatabase();
+    const sanitizedEmailKey = sanitizeEmail(email);
+    const otpRef = db.ref(`otps/${sanitizedEmailKey}`);
+    const snapshot = await otpRef.once('value');
+    
+    if (!snapshot.exists()) return res.status(400).json({ error: 'No OTP found for this email.' });
+
+    const data = snapshot.val();
+    
+    if (Date.now() > data.expiresAt) {
+      return res.status(400).json({ error: 'OTP has expired.' });
+    }
+
+    if (data.otp === otp) {
+      await otpRef.update({ verified: true });
+      return res.status(200).json({ success: true, message: 'OTP verified successfully.' });
+    } else {
+      return res.status(400).json({ error: 'Invalid OTP.' });
+    }
+  } catch (error) {
+    console.error("OTP Verification Error:", error);
+    return res.status(500).json({ error: 'Server error during verification.' });
+  }
+});
+
+// ==========================================
+// 5. ONESIGNAL NOTIFICATION ENDPOINT (Fixes your 404 Error)
+// ==========================================
+
+app.post('/send-push', async (req, res) => {
+  const { title, message } = req.body;
+
+  if (!title || !message) {
+    return res.status(400).json({ error: 'Notification title and message are required.' });
   }
 
   try {
-    // Send request to OneSignal API
+    const db = getDatabase();
+    
+    // Fetch OneSignal App ID and REST API Key from Firebase Config Node 
+    // (As mentioned in the "OneSignal Credentials Manager" UI in your screenshot)
+    const configSnapshot = await db.ref('config/onesignal').once('value');
+    const configData = configSnapshot.val();
+
+    // Fallback to environment variables if Firebase node is empty
+    const appId = (configData && configData.appId) ? configData.appId : process.env.ONESIGNAL_APP_ID;
+    const restApiKey = (configData && configData.restApiKey) ? configData.restApiKey : process.env.ONESIGNAL_REST_API_KEY;
+
+    if (!appId || !restApiKey) {
+      return res.status(500).json({ error: 'OneSignal credentials are not configured.' });
+    }
+
+    // Call the OneSignal REST API
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': `Basic ${restKey}`
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${restApiKey}`
       },
       body: JSON.stringify({
         app_id: appId,
         headings: { en: title },
         contents: { en: message },
-        included_segments: ['Subscribed Users'] // Targets all active subscribers
+        included_segments: ['Subscribed Users'] // Broadcasts to all active subscribers
       })
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
 
-    // Check if OneSignal accepted the notification
     if (response.ok) {
-      console.log("Push notification broadcasted successfully.");
-      res.status(200).json({ success: true, data });
+      return res.status(200).json({ success: true, data: responseData });
     } else {
-      console.error("OneSignal rejected the payload:", data);
-      res.status(response.status).json({ error: data.errors ? data.errors.join(', ') : 'OneSignal API Error' });
+      console.error("OneSignal API Error:", responseData);
+      return res.status(response.status).json({ error: 'Failed to dispatch via OneSignal', details: responseData });
     }
+
   } catch (error) {
-    console.error("OneSignal Broadcast Network Error:", error);
-    res.status(500).json({ error: 'Failed to communicate with OneSignal server.' });
+    console.error("Broadcast Notification Error:", error);
+    return res.status(500).json({ error: 'Server error while sending notification.' });
   }
 });
 
-// 6. Start the server
-const PORT = process.env.PORT || 10000;
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server is listening on port ${PORT}`);
 });
