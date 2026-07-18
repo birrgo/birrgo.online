@@ -1,5 +1,4 @@
 {
-  "id": "/",
   "name": "Birr Go - Mobile Wallet",
   "short_name": "Birr Go",
   "description": "Secure and premium mobile wallet and payment app.",
@@ -7,8 +6,7 @@
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#ffffff", /* CHANGED TO WHITE */
-  "orientation": "portrait-primary",
+  "theme_color": "#ffffff",
   "categories": ["finance", "utilities"],
   "icons": [
     {
