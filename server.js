@@ -2,14 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
 const admin = require('firebase-admin');
-const { cert } = require('firebase-admin/app'); // <-- FIXED: Clean direct import for credential logic
-const { getDatabase } = require('firebase-admin/database'); // <-- FIXED: Added correct modular import for Database
+const { cert } = require('firebase-admin/app'); 
+const { getDatabase } = require('firebase-admin/database'); 
 
 const app = express();
 
 // 1. Enable CORS securely for your frontend
 app.use(cors({
-  origin: '*', // Once live, you can replace '*' with your actual GitHub Pages URL
+  origin: '*', 
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -21,7 +21,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     admin.initializeApp({
-      credential: cert(serviceAccount), // <-- FIXED: Uses the secure in-memory credential setup (No files required!)
+      credential: cert(serviceAccount), 
       databaseURL: process.env.FIREBASE_DATABASE_URL
     });
     console.log("Firebase Admin securely connected!");
@@ -76,7 +76,6 @@ app.post('/send-otp', async (req, res) => {
     const sanitizedEmailKey = sanitizeEmail(email);
     const expiresAt = Date.now() + (5 * 60 * 1000); // 5 minutes expiration
 
-    // <-- FIXED: Replaced crashing admin.database() with modular getDatabase()
     const db = getDatabase();
     await db.ref(`otps/${sanitizedEmailKey}`).set({
       otp: secureOtp,
@@ -89,7 +88,7 @@ app.post('/send-otp', async (req, res) => {
       subject: "Your OTP Verification Code",
       sender: { 
         name: process.env.BREVO_SENDER_NAME || "BirrGo Support", 
-        email: process.env.BREVO_SENDER_EMAIL || "mail@birrgo.online" // Must be your authenticated Brevo domain
+        email: process.env.BREVO_SENDER_EMAIL || "mail@birrgo.online" 
       },
       to: [{ email: email.toLowerCase() }],
       htmlContent: `
@@ -108,7 +107,6 @@ app.post('/send-otp', async (req, res) => {
       `
     };
 
-    // If using custom Brevo Dashboard Templates
     if (process.env.BREVO_TEMPLATE_ID) {
       emailData.templateId = parseInt(process.env.BREVO_TEMPLATE_ID, 10);
       emailData.params = { otp: secureOtp };
@@ -124,6 +122,43 @@ app.post('/send-otp', async (req, res) => {
   } catch (error) {
     console.error("Process Failure:", error);
     return res.status(500).json({ error: 'Internal server error processing registration verification.' });
+  }
+});
+
+// 5. Secure Proxy Endpoint for OneSignal Broadcasts to Bypass Browser CORS Restrictions
+app.post('/api/send-push', async (req, res) => {
+  const { appId, restKey, title, message } = req.body;
+
+  if (!appId || !restKey || !title || !message) {
+    return res.status(400).json({ error: "Missing required properties from configuration." });
+  }
+
+  try {
+    const response = await fetch("https://onesignal.com/api/v1/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": `Basic ${restKey}`
+      },
+      body: JSON.stringify({
+        app_id: appId,
+        included_segments: ["Total Subscriptions"],
+        headings: { "en": title },
+        contents: { "en": message },
+        chrome_web_icon: "https://birrgo.online/icon.png",
+        firefox_icon: "https://birrgo.online/icon.png"
+      })
+    });
+
+    if (response.ok) {
+      return res.status(200).json({ success: true });
+    } else {
+      const errData = await response.json();
+      return res.status(500).json({ error: errData.errors ? errData.errors[0] : "OneSignal error occurred." });
+    }
+  } catch (err) {
+    console.error("OneSignal Server Error:", err);
+    return res.status(500).json({ error: "Failed to communicate with OneSignal server." });
   }
 });
 
