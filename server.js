@@ -107,61 +107,57 @@ app.post('/send-otp', async (req, res) => {
       `
     };
 
-    if (process.env.BREVO_TEMPLATE_ID) {
-      emailData.templateId = parseInt(process.env.BREVO_TEMPLATE_ID, 10);
-      emailData.params = { otp: secureOtp };
-      delete emailData.htmlContent;
-      delete emailData.subject;
-    }
-
-    const response = await brevo.transactionalEmails.sendTransacEmail(emailData);
-    console.log(`OTP Email successfully sent to ${email}. ID: ${response.messageId}`);
-    
-    return res.status(200).json({ success: true, message: 'OTP sent successfully.' });
-
+    const info = await brevo.sendTransacEmail(emailData);
+    console.log("OTP Email successfully sent.", info);
+    res.status(200).json({ success: true, message: 'OTP sent successfully.' });
   } catch (error) {
-    console.error("Process Failure:", error);
-    return res.status(500).json({ error: 'Internal server error processing registration verification.' });
+    console.error("Error processing OTP:", error);
+    res.status(500).json({ error: 'Failed to process OTP request.' });
   }
 });
 
-// 5. Secure Proxy Endpoint for OneSignal Broadcasts to Bypass Browser CORS Restrictions
-app.post('/api/send-push', async (req, res) => {
+// 5. NEW: Secure Endpoint to handle OneSignal Broadcasts
+app.post('/api/broadcast', async (req, res) => {
   const { appId, restKey, title, message } = req.body;
 
+  // Validate incoming data
   if (!appId || !restKey || !title || !message) {
-    return res.status(400).json({ error: "Missing required properties from configuration." });
+    return res.status(400).json({ error: 'Missing required fields (appId, restKey, title, message).' });
   }
 
   try {
-    const response = await fetch("https://onesignal.com/api/v1/notifications", {
-      method: "POST",
+    // Send request to OneSignal API
+    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": `Basic ${restKey}`
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Basic ${restKey}`
       },
       body: JSON.stringify({
         app_id: appId,
-        included_segments: ["Total Subscriptions"],
-        headings: { "en": title },
-        contents: { "en": message },
-        chrome_web_icon: "https://birrgo.online/icon.png",
-        firefox_icon: "https://birrgo.online/icon.png"
+        headings: { en: title },
+        contents: { en: message },
+        included_segments: ['Subscribed Users'] // Targets all active subscribers
       })
     });
 
+    const data = await response.json();
+
+    // Check if OneSignal accepted the notification
     if (response.ok) {
-      return res.status(200).json({ success: true });
+      console.log("Push notification broadcasted successfully.");
+      res.status(200).json({ success: true, data });
     } else {
-      const errData = await response.json();
-      return res.status(500).json({ error: errData.errors ? errData.errors[0] : "OneSignal error occurred." });
+      console.error("OneSignal rejected the payload:", data);
+      res.status(response.status).json({ error: data.errors ? data.errors.join(', ') : 'OneSignal API Error' });
     }
-  } catch (err) {
-    console.error("OneSignal Server Error:", err);
-    return res.status(500).json({ error: "Failed to communicate with OneSignal server." });
+  } catch (error) {
+    console.error("OneSignal Broadcast Network Error:", error);
+    res.status(500).json({ error: 'Failed to communicate with OneSignal server.' });
   }
 });
 
+// 6. Start the server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
