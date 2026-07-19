@@ -18,7 +18,7 @@
           notifyButton: {
             enable: false, 
           },
-          allowLocalhostAsSecureOrigin: true // Useful for local testing, ignored in real prod
+          allowLocalhostAsSecureOrigin: false // Disabled for production
         });
       });
     </script>
@@ -316,7 +316,6 @@
             opacity: 0.9;
         }
 
-        /* Modals & Popups System Layouts */
         .custom-popup-backdrop {
             position: fixed;
             top: 0;
@@ -703,10 +702,6 @@
             return `+251 ${clean}`; 
         }
 
-        // ==========================================
-        // PRODUCTION-READY NOTIFICATION LOGIC
-        // ==========================================
-
         function enableNotificationUI() {
             notificationsToggle.checked = true;
             notificationsStatusText.innerText = "Notifications Enabled";
@@ -736,7 +731,6 @@
                         const permissionGranted = await OneSignal.Notifications.requestPermission();
                         
                         if (permissionGranted) {
-                            // Link the device to the registered phone number in OneSignal dashboard
                             if (activeUserPhone) {
                                 OneSignal.login(activeUserPhone); 
                             }
@@ -759,12 +753,10 @@
             }
         }
 
-        // Trigger permission setup via clicking the Top Header Ring button icon
         notificationRingBtn.addEventListener('click', () => {
             triggerNotificationPrompt();
         });
 
-        // Trigger permission setup via clicking the settings list toggle switch row
         notificationsToggle.addEventListener('change', (e) => {
             if (notificationsToggle.checked) {
                 triggerNotificationPrompt();
@@ -790,14 +782,12 @@
 
             profilePhoneText.innerText = formatEthiopianPhone(activeUserPhone);
 
-            // Load Biometrics State
             const bioSettings = localStorage.getItem('biometrics_enabled');
             const isBioEnabled = bioSettings === 'true';
             biometricsToggle.checked = isBioEnabled;
             originalToggleState = isBioEnabled;
             biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
 
-            // Accurately Load Device Notification State from OneSignal v16
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(function(OneSignal) {
                     if (OneSignal.Notifications.hasPermission) {
@@ -813,10 +803,6 @@
 
             streamAccountData();
         });
-
-        // ==========================================
-        // BIOMETRICS & PASSWORD LOGIC
-        // ==========================================
 
         biometricsToggle.addEventListener('click', (e) => {
             e.preventDefault(); 
