@@ -14,11 +14,11 @@
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
-          appId: "YOUR_ONESIGNAL_APP_ID", // <-- Replace with your OneSignal App ID
+          appId: "afd5dff1-2571-4ac3-bbd9-14afe75c8474",
           notifyButton: {
-            enable: false, // Hidden because we use your custom BirrGo toggle switch instead
+            enable: false, 
           },
-          allowLocalhostAsSecureOrigin: true
+          allowLocalhostAsSecureOrigin: true // Useful for local testing, ignored in real prod
         });
       });
     </script>
@@ -704,7 +704,7 @@
         }
 
         // ==========================================
-        // ONE-SIGNAL DEVICE NOTIFICATION LOGIC
+        // PRODUCTION-READY NOTIFICATION LOGIC
         // ==========================================
 
         function enableNotificationUI() {
@@ -719,29 +719,43 @@
             notificationRingBtn.classList.add('disabled-badge');
         }
 
+        // NEW: Check if browser environment supports Push API
+        function isPushSupported() {
+            return 'serviceWorker' in navigator && 'PushManager' in window;
+        }
+
         async function triggerNotificationPrompt() {
-            // Use OneSignal to subscribe the device so it links with your backend broadcast
+            // Failsafe 1: Check environment support first
+            if (!isPushSupported()) {
+                showToast("Not Supported", "Push alerts are not supported by this browser.", "error");
+                disableNotificationUI();
+                return;
+            }
+
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
-                        await OneSignal.Slidedown.promptPush();
+                        // Failsafe 2: Native prompt and strict error enforcement
+                        const permissionGranted = await OneSignal.Notifications.requestPermission();
                         
-                        // Verify if the user accepted the device prompt
-                        if (OneSignal.Notifications.permission === "granted") {
+                        if (permissionGranted) {
                             enableNotificationUI();
                             showToast("Permission Granted", "Your device is now connected to alerts.", "success");
                         } else {
+                            // Enforce UI rejection if user clicks "X" or "Block"
                             disableNotificationUI();
-                            showToast("Permission Denied", "Notifications were blocked by the device.", "error");
+                            showToast("Permission Denied", "Alerts were blocked or closed.", "error");
                         }
                     } catch (error) {
-                        console.error("OneSignal Prompt Error:", error);
+                        console.error("OneSignal Setup Error:", error);
+                        // Enforce UI rejection if SSL/Worker fails
                         disableNotificationUI();
+                        showToast("Setup Failed", "Could not complete secure setup.", "error");
                     }
                 });
             } else {
-                showToast("System Error", "Notification services are currently loading. Try again.", "error");
                 disableNotificationUI();
+                showToast("System Error", "Notification services are offline.", "error");
             }
         }
 
@@ -751,14 +765,12 @@
         });
 
         // Trigger permission setup via clicking the settings list toggle switch row
-        notificationsToggle.addEventListener('change', () => {
+        notificationsToggle.addEventListener('change', (e) => {
             if (notificationsToggle.checked) {
                 triggerNotificationPrompt();
             } else {
-                // If user toggles off, they usually have to disable from browser settings. 
-                // We visually update the UI to reflect their intent.
                 disableNotificationUI();
-                showToast("Alerts Silenced", "Push alerts have been disabled locally.", "success");
+                showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
             }
         });
 
@@ -778,11 +790,10 @@
             originalToggleState = isBioEnabled;
             biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
 
-            // Accurately Load Device Notification State from OneSignal
+            // Accurately Load Device Notification State from OneSignal v16
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(function(OneSignal) {
-                    const isPushEnabled = OneSignal.Notifications.permission === "granted";
-                    if (isPushEnabled) {
+                    if (OneSignal.Notifications.hasPermission) {
                         enableNotificationUI();
                     } else {
                         disableNotificationUI();
@@ -794,7 +805,7 @@
         });
 
         // ==========================================
-        // BIOMETRICS & PASSWORD LOGIC (UNCHANGED)
+        // BIOMETRICS & PASSWORD LOGIC
         // ==========================================
 
         biometricsToggle.addEventListener('click', (e) => {
