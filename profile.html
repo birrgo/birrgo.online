@@ -728,9 +728,10 @@
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
-                        const permissionGranted = await OneSignal.Notifications.requestPermission();
+                        // FIXED: requestPermission() only triggers the prompt, we use .permission for status
+                        await OneSignal.Notifications.requestPermission();
                         
-                        if (permissionGranted) {
+                        if (OneSignal.Notifications.permission) {
                             if (activeUserPhone) {
                                 OneSignal.login(activeUserPhone); 
                             }
@@ -790,7 +791,8 @@
 
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(function(OneSignal) {
-                    if (OneSignal.Notifications.hasPermission) {
+                    // FIXED: Replaced legacy hasPermission with strictly v16 compliant property
+                    if (OneSignal.Notifications.permission) {
                         enableNotificationUI();
                         if (activeUserPhone) {
                             OneSignal.login(activeUserPhone);

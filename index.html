@@ -339,9 +339,10 @@
             });
         });
 
+        // FIXED: Registering the correct OneSignal SDK Worker for the PWA
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./of.js')
+                navigator.serviceWorker.register('./OneSignalSDKWorker.js')
                     .then(reg => console.log('SW connected', reg.scope))
                     .catch(err => console.log('SW failed', err));
             });

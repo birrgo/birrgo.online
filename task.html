@@ -251,7 +251,9 @@
                 card.innerHTML = `
                     <div class="list-item-left">
                         <div class="list-icon-box">
-                            <img src="33164.png" alt="20 Birr" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7152/7152349.png'">
+                            <img src="33164.png" alt="20 Birr" class="img-blur-fallback" 
+                                 onload="this.classList.remove('img-blur-fallback')" 
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=';">
                         </div>
                         <div class="list-item-info">
                             <h4>Task Video ${currentId}</h4>
@@ -327,7 +329,7 @@
 
         document.getElementById('shareBtn').onclick = () => {
             if (!activeAccountId) return;
-            const productionUrl = "https://birrgo.github.io/birrgo1.github.io/register.html";
+            const productionUrl = "https://birrgo.online/register.html";
             const link = productionUrl + "?ref=" + activeAccountId;
             
             secureCopy(link).then(() => {

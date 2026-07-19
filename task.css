@@ -197,6 +197,7 @@ html, body {
     align-items: center;
     justify-content: center;
     background-color: #fcf6f0;
+    overflow: hidden; /* Important for containing the blur effect */
 }
 
 .list-icon-box img {
@@ -204,6 +205,15 @@ html, body {
     height: 100%;
     object-fit: cover;
     border-radius: 14px;
+    transition: filter 0.3s ease;
+    color: transparent; /* Hides the broken image default text */
+}
+
+/* Applied dynamically when loading/low connection or on image error */
+.img-blur-fallback {
+    filter: blur(8px);
+    background-color: #e2e8f0;
+    transform: scale(1.1); /* Prevents blur bleed on the container edges */
 }
 
 .list-item-info h4 {
