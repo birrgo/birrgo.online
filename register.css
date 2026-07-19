@@ -20,19 +20,25 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* --- FIXED: Added structural layout rules to allow safe scrolling and block keyboard overlap --- */
 html, body {
     width: 100%;
-    height: 100dvh;
-    overflow: hidden; 
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
     background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
     position: relative;
+    overflow-x: hidden;
 }
 
 body {
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: flex-start; /* Removed center align so top fields don't get cut off on short screens */
 }
+/* ------------------------------------------------------------- */
 
 .bg-wave {
     position: absolute;
@@ -74,17 +80,20 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/* FIXED: Replaced fixed height and overflow to allow seamless expansion */
 .app-view {
     width: 100%;
-    height: 100dvh;
+    flex-grow: 1;
+    min-height: 100dvh;
     max-width: 450px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: calc(8vh + env(safe-area-inset-top)) 24px calc(8vh + env(safe-area-inset-bottom)) 24px;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: calc(11vh + env(safe-area-inset-top)) 24px calc(12vh + env(safe-area-inset-bottom)) 24px;
     position: relative;
     z-index: 1;
-    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .header-content {
@@ -294,8 +303,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* FIX: Add visibility hidden to completely prevent rendering engine blur issues on load */
     opacity: 0;
     visibility: hidden; 
     pointer-events: none;
@@ -444,8 +451,9 @@ body {
     cursor: not-allowed;
 }
 
+/* FIXED: Changed from fixed to absolute so it sits nicely at the bottom of the content stream */
 .login-redirect-footer {
-    position: fixed;
+    position: absolute;
     bottom: calc(4vh + env(safe-area-inset-bottom));
     left: 0;
     width: 100%;
@@ -481,22 +489,19 @@ body {
     text-align: center;
     width: 85%;
     max-width: 360px;
-    
-    /* FIX: Switch from display none to visibility to support smooth transitions without engine glitches */
     display: block;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Add this class via JS (e.g. toast.classList.add('active')) to display the toast safely */
 .toast-container.active {
     opacity: 1;
     visibility: visible;
 }
 
 @media (max-height: 650px) {
-    .app-view { padding-top: 60px; padding-bottom: 40px; }
+    .app-view { padding-top: 60px; padding-bottom: 60px; }
     .header-content h1 { font-size: 22px; }
     .btn-submit { height: 50px; }
     .step-indicator { margin-bottom: 1.5vh; }

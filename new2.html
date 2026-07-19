@@ -66,14 +66,18 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- SEAMLESS TRANSITION STYLES --- */
-        body {
+        /* --- FIXED: Added structural layout rules to lock the layout --- */
+        html, body {
             width: 100%;
-            min-height: 100vh; 
-            background-color: #f8f9fa;
-            position: relative;
             margin: 0;
             padding: 0;
+            min-height: 100vh; 
+            min-height: 100dvh; /* Adapts to modern mobile PWA safe areas */
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
             transition: filter 0.4s ease-out, opacity 0.4s ease-out;
         }
 
@@ -82,7 +86,7 @@
             opacity: 0.6;
             pointer-events: none; /* Prevents double-clicking while loading */
         }
-        /* ---------------------------------- */
+        /* ------------------------------------------------------------- */
 
         .bg-wave {
             position: absolute;
@@ -126,9 +130,10 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* FIXED: Added flex-grow and box-sizing so the container sizes perfectly */
         .app-view {
             width: 100%;
-            min-height: 100vh;
+            flex-grow: 1; 
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -136,6 +141,7 @@
             padding: calc(11vh + env(safe-area-inset-top)) 6% calc(12vh + env(safe-area-inset-bottom)) 6%;
             position: relative;
             z-index: 1;
+            box-sizing: border-box;
         }
 
         .app-content-wrapper {
@@ -376,7 +382,7 @@
         }
 
         .signup-redirect-footer {
-            position: fixed;
+            position: absolute;
             bottom: calc(4vh + env(safe-area-inset-bottom));
             left: 0;
             width: 100%;
