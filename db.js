@@ -1,5 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, get, onValue, runTransaction, push, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { 
+    getDatabase, 
+    ref, 
+    get, 
+    onValue, 
+    runTransaction, 
+    push, 
+    set, 
+    remove,
+    update // Added here
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -22,13 +32,11 @@ export const storage = getStorage(app);
 
 /**
  * Universal Utility: Generates a clean, strictly typed numerical Unix Epoch integer.
- * Use this whenever writing 'sortingTime' to Firebase across your admin panel scripts.
  * @returns {number}
  */
 export const getNumericTimestamp = () => Date.now();
 
 // Clean Module Re-Exports Framework
-// Explicitly exporting individual elements keeps GitHub Pages / browser engines stable
 export { 
     ref, 
     get, 
@@ -37,6 +45,7 @@ export {
     push, 
     set, 
     remove, 
+    update, // Added here
     storageRef, 
     uploadBytes, 
     getDownloadURL 

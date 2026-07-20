@@ -199,17 +199,6 @@
             text-transform: uppercase;
         }
 
-        .news-code-badge {
-            background: #f1f5f9;
-            color: #475569;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            border: 1px solid var(--border-light);
-        }
-        
         .spotlight-pill.system-badge { background: #f0f4f9; color: #2563eb; }
         .spotlight-pill.inline-ad-badge { background: #f0f4f9; color: #2563eb; font-weight: 800; }
 
@@ -224,6 +213,7 @@
             border: 1px solid var(--border-light);
             background: #f1f5f9;
             position: relative;
+            cursor: pointer;
         }
 
         .broadcast-image-frame img {
@@ -236,13 +226,16 @@
 
         .broadcast-image-frame img.loaded { filter: blur(0); }
 
+        .clickable-news-content {
+            cursor: pointer;
+        }
+
         .broadcast-title {
             font-size: 16px;
             font-weight: 800;
             color: var(--text-dark);
             line-height: 1.35;
             margin-bottom: 6px;
-            cursor: pointer;
         }
 
         .broadcast-body-text {
@@ -253,41 +246,17 @@
             white-space: pre-wrap;
         }
 
-        .action-buttons-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .view-full-news-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: var(--bg-light);
-            color: var(--primary-burgundy);
-            border: 1px solid rgba(128, 0, 32, 0.2);
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease, transform 0.1s ease;
-        }
-        .view-full-news-btn:active { transform: scale(0.96); }
-
         .redirect-link-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 8px 14px;
+            padding: 10px 14px;
             background: var(--primary-gradient);
             color: #ffffff;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
             box-shadow: 0 4px 12px var(--accent-glow);
             transition: transform 0.15s ease, opacity 0.2s;
@@ -808,16 +777,14 @@
             iframeDoc.close();
         }
 
-        /* Build Card Preview HTML */
+        /* Build Card Preview HTML (Only text, whole card content opens full article reader) */
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || "Platform Announcement";
             const fullContent = item.content || item.message || "";
             const category = item.category || "All Updates";
             const imageUrl = item.imageUrl || "";
-            const newsCode = item.newsCode || item.code || item.id || "";
-            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
 
-            // Truncate text for preview if it's long
+            // Truncate text for preview
             const maxPreviewLen = 120;
             const isLongText = fullContent.length > maxPreviewLen;
             const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
@@ -837,41 +804,20 @@
 
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0) {
-                imageHTML = `<div class="broadcast-image-frame"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
-            }
-
-            let codeBadgeHTML = "";
-            if (newsCode) {
-                codeBadgeHTML = `<span class="news-code-badge">CODE: ${newsCode}</span>`;
-            }
-
-            let redirectBtnHTML = "";
-            if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
-                redirectBtnHTML = `
-                    <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn">
-                        <span>Open Link</span>
-                        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                    </a>
-                `;
+                imageHTML = `<div class="broadcast-image-frame" onclick="openFullNewsReader('${item.id}')"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
             }
 
             return `
                 <div class="badge-meta-row">
                     <div style="display:flex; align-items:center; gap:6px;">
                         <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
-                        ${codeBadgeHTML}
                     </div>
                     <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
                 </div>
                 ${imageHTML}
-                <h2 class="broadcast-title" onclick="openFullNewsReader('${item.id}')">${headline}</h2>
-                <p class="broadcast-body-text">${previewContent}</p>
-                
-                <div class="action-buttons-group">
-                    <button class="view-full-news-btn" onclick="openFullNewsReader('${item.id}')">
-                        📖 Read Full News
-                    </button>
-                    ${redirectBtnHTML}
+                <div class="clickable-news-content" onclick="openFullNewsReader('${item.id}')">
+                    <h2 class="broadcast-title">${headline}</h2>
+                    <p class="broadcast-body-text">${previewContent}</p>
                 </div>
 
                 <div class="card-footer-branding-row">
@@ -894,8 +840,10 @@
             const fullContent = item.content || item.message || "";
             const category = item.category || "All Updates";
             const imageUrl = item.imageUrl || "";
-            const newsCode = item.newsCode || item.code || item.id || "";
             const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
+            
+            // Dynamic action button label configured from admin side
+            const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
 
             let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
             if (!numericalTime && item.date) {
@@ -917,8 +865,8 @@
             if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
                 redirectBtnHTML = `
                     <div style="margin-top:20px;">
-                        <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn" style="width:100%; justify-content:center; padding:12px;">
-                            <span>Visit External Source / Link</span>
+                        <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn" style="width:100%; justify-content:center;">
+                            <span>${customActionLabel}</span>
                             <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
                     </div>
@@ -929,7 +877,6 @@
                 <div class="reader-meta-bar">
                     <div style="display:flex; align-items:center; gap:6px;">
                         <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
-                        ${newsCode ? `<span class="news-code-badge">CODE: ${newsCode}</span>` : ''}
                     </div>
                     <span class="timestamp-log-text">${initialFormattedClock}</span>
                 </div>
@@ -1027,7 +974,7 @@
             });
         }
 
-        /* News Code Search Engine Logic */
+        /* News Code Search Engine Logic (Supports searching codes in background) */
         function setupSearchEngineControls() {
             const openBtn = document.getElementById('openSearchBtn');
             const closeBtn = document.getElementById('closeSearchDrawerBtn');
