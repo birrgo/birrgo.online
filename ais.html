@@ -41,7 +41,7 @@
             max-width: 480px;
             display: flex;
             justify-content: flex-start;
-            margin-bottom: 40px;
+            margin-bottom: 24px;
         }
 
         .btn-back {
@@ -67,6 +67,7 @@
             padding: 32px 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .admin-title {
@@ -140,6 +141,13 @@
         .status-success {
             color: #10b981;
         }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-light);
+            margin: 32px 0;
+        }
     </style>
 </head>
 <body>
@@ -149,26 +157,38 @@
     </div>
 
     <div class="admin-card">
-        <h2 class="admin-title">Update Gemini API Key</h2>
+        <h2 class="admin-title">BirrGo Control Panel</h2>
         
+        <!-- Global Verification Field -->
         <div class="form-group">
-            <label class="form-label">Admin Verification Token</label>
-            <input type="password" id="adminToken" class="form-input" autocomplete="new-password" placeholder="Enter your token">
+            <label class="form-label">Current Admin Verification Token</label>
+            <input type="password" id="adminToken" class="form-input" autocomplete="current-password" placeholder="Enter current token to authorize changes">
         </div>
 
+        <hr>
+
+        <!-- Section 1: Update Gemini Key -->
         <div class="form-group">
-            <label class="form-label">Google Gemini API Key</label>
+            <label class="form-label">New Google Gemini API Key</label>
             <input type="password" id="geminiKey" class="form-input" autocomplete="new-password" placeholder="AIzaSy...">
         </div>
+        <button class="btn-submit" id="saveKeyBtn">Update Gemini Key</button>
 
-        <button class="btn-submit" id="saveBtn">Save to Live Database</button>
+        <hr>
+
+        <!-- Section 2: Update Admin Token -->
+        <div class="form-group">
+            <label class="form-label">New Admin Verification Token</label>
+            <input type="password" id="newAdminToken" class="form-input" autocomplete="new-password" placeholder="Enter new secret token">
+        </div>
+        <button class="btn-submit" id="saveTokenBtn">Change Admin Token</button>
         
         <div class="status-message" id="statusMessage"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -184,12 +204,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // CONFIGURATION: Customize this to match your admin security code chain
-        const MASTER_ADMIN_TOKEN = "YOUR_SECRET_TOKEN"; 
+        // Fallback token if none exists in the database yet
+        const DEFAULT_MASTER_TOKEN = "YOUR_INITIAL_SECRET_TOKEN"; 
 
         const tokenInput = document.getElementById('adminToken');
         const keyInput = document.getElementById('geminiKey');
-        const saveBtn = document.getElementById('saveBtn');
+        const newTokenInput = document.getElementById('newAdminToken');
+        
+        const saveKeyBtn = document.getElementById('saveKeyBtn');
+        const saveTokenBtn = document.getElementById('saveTokenBtn');
         const statusMessage = document.getElementById('statusMessage');
 
         function showMessage(text, isError) {
@@ -198,39 +221,81 @@
             statusMessage.style.display = "block";
         }
 
-        saveBtn.addEventListener('click', async () => {
-            // Direct extraction logic bypasses browser-cached placeholders
-            const token = tokenInput.value.trim();
-            const geminiKey = keyInput.value.trim();
+        // Helper to verify current token against the database
+        async function verifyCurrentToken(enteredToken) {
+            if (!enteredToken) return false;
+            try {
+                const snapshot = await get(ref(db, 'secrets/admin_token'));
+                const activeToken = snapshot.exists() ? snapshot.val() : DEFAULT_MASTER_TOKEN;
+                return enteredToken === activeToken;
+            } catch (e) {
+                // If database read rules block reading the token directly, falls back to structural attempt
+                return enteredToken === DEFAULT_MASTER_TOKEN;
+            }
+        }
 
+        // Action 1: Save Gemini Key
+        saveKeyBtn.addEventListener('click', async () => {
+            const currentToken = tokenInput.value.trim();
+            const geminiKey = keyInput.value.trim();
             statusMessage.style.display = "none";
 
-            if (!token || !geminiKey) {
-                showMessage("All security sequence configuration parameters must be filled.", true);
+            if (!currentToken || !geminiKey) {
+                showMessage("Please fill out both the verification token and the new Gemini key.", true);
                 return;
             }
 
-            if (token !== MASTER_ADMIN_TOKEN) {
+            saveKeyBtn.disabled = true;
+            
+            const isAuthorized = await verifyCurrentToken(currentToken);
+            if (!isAuthorized) {
                 showMessage("Invalid Admin Verification Token. Action rejected.", true);
+                saveKeyBtn.disabled = false;
                 return;
             }
-
-            saveBtn.disabled = true;
-            saveBtn.innerText = "Synchronizing...";
 
             try {
-                // Pointing directly to your explicit database rule path: secrets/gemini_api_key
                 await set(ref(db, 'secrets/gemini_api_key'), geminiKey);
-                
-                showMessage("Gemini API Key successfully updated in live database structures.", false);
-                tokenInput.value = "";
+                showMessage("Gemini API Key successfully updated in live database.", false);
                 keyInput.value = "";
             } catch (error) {
                 console.error(error);
-                showMessage("Database security rules rejected write. Make sure '.write': true is published.", true);
+                showMessage("Database rejected write. Verify your rules permit updating 'secrets/gemini_api_key'.", true);
             } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "Save to Live Database";
+                saveKeyBtn.disabled = false;
+            }
+        });
+
+        // Action 2: Change/Update Admin Verification Token
+        saveTokenBtn.addEventListener('click', async () => {
+            const currentToken = tokenInput.value.trim();
+            const newToken = newTokenInput.value.trim();
+            statusMessage.style.display = "none";
+
+            if (!currentToken || !newToken) {
+                showMessage("Please fill out both the current token and the new token.", true);
+                return;
+            }
+
+            saveTokenBtn.disabled = true;
+
+            const isAuthorized = await verifyCurrentToken(currentToken);
+            if (!isAuthorized) {
+                showMessage("Invalid Current Admin Verification Token. Action rejected.", true);
+                saveTokenBtn.disabled = false;
+                return;
+            }
+
+            try {
+                await set(ref(db, 'secrets/admin_token'), newToken);
+                showMessage("Admin Verification Token updated successfully! Use the new token for future updates.", false);
+                tokenInput.value = "";
+                newTokenInput.value = "";
+            } catch (error) {
+                console.error(error);
+                showMessage("Database rejected write. Verify your rules permit updating 'secrets/admin_token'.", true);
+            } finally {
+                saveTokenBtn.disabled = false;
             }
         });
     </script>
