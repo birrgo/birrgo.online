@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
-const Groq = require('groq-sdk'); // Switched to Groq SDK
+const Groq = require('groq-sdk'); 
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // 1. Enable CORS securely for your frontend
 app.use(cors({
   origin: '*', 
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -101,10 +101,10 @@ app.post('/send-otp', async (req, res) => {
         <html>
           <body style="font-family: 'Inter', Arial, sans-serif; padding: 30px; background-color: #f9f9f9; color: #333;">
             <div style="max-width: 500px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; border: 1px solid #eee;">
-              <h2 style="color: #9A0019; margin-top: 0;">Confirm Your Email</h2>
+              <h2 style="color: #800020; margin-top: 0;">Confirm Your Email</h2>
               <p>Welcome to BirrGo! Use the 6-digit verification code below to complete your registration:</p>
               <div style="background: #f4f4f5; padding: 16px; text-align: center; border-radius: 6px; margin: 20px 0;">
-                <span style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #9A0019;">${secureOtp}</span>
+                <span style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #800020;">${secureOtp}</span>
               </div>
               <p style="font-size: 12px; color: #666;">This code is active for 5 minutes. If you did not sign up for an account, you can safely ignore this email.</p>
             </div>
@@ -155,13 +155,13 @@ app.post('/verify-otp', async (req, res) => {
 });
 
 // ==========================================
-// 5. ONESIGNAL NOTIFICATION ENDPOINT 
+// 5. ACTIVE ONESIGNAL NOTIFICATION ENDPOINT 
 // ==========================================
 
 app.post('/send-push', async (req, res) => {
   console.log("Received push notification request:", req.body); 
 
-  const { title, message } = req.body;
+  const { title, message, segments } = req.body;
 
   if (!title || !message) {
     return res.status(400).json({ error: 'Notification title and message are required.' });
@@ -170,6 +170,7 @@ app.post('/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
+    // Check config/onesignal node first, fallback to process.env variables
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val();
 
@@ -180,25 +181,42 @@ app.post('/send-push', async (req, res) => {
       return res.status(500).json({ error: 'OneSignal credentials are not configured.' });
     }
 
+    // Default target active users or custom segments provided by payload
+    const targetSegments = (segments && Array.isArray(segments)) 
+      ? segments 
+      : ['Subscribed Users', 'Total Subscriptions', 'All'];
+
+    const notificationPayload = {
+      app_id: appId,
+      headings: { en: title },
+      contents: { en: message },
+      included_segments: targetSegments
+    };
+
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${restApiKey}`
       },
-      body: JSON.stringify({
-        app_id: appId,
-        headings: { en: title },
-        contents: { en: message },
-        included_segments: ['Subscribed Users', 'Total Subscriptions'] 
-      })
+      body: JSON.stringify(notificationPayload)
     });
 
     const responseData = await response.json();
 
     if (response.ok) {
       console.log("OneSignal successfully accepted notification. ID:", responseData.id); 
-      return res.status(200).json({ success: true, data: responseData });
+
+      // Save record of active notification dispatch into Firebase
+      await db.ref('logs/notifications').push({
+        id: responseData.id || 'N/A',
+        title: title,
+        message: message,
+        recipientsCount: responseData.recipients || 0,
+        sentAt: Date.now()
+      });
+
+      return res.status(200).json({ success: true, active: true, data: responseData });
     } else {
       console.error("OneSignal API Error:", responseData);
       return res.status(response.status).json({ error: 'Failed to dispatch via OneSignal', details: responseData });
@@ -214,7 +232,7 @@ app.post('/send-push', async (req, res) => {
 // 6. GROQ AI CHAT & MANAGEMENT ENDPOINTS
 // ==========================================
 
-// Endpoint for admin dashboard (ais.html) to securely update the key inside the closed 'secrets' node
+// Endpoint for admin dashboard (ais.html) to securely update key inside the closed 'secrets' node
 app.post('/api/admin/apikey', async (req, res) => {
   const { apiKey } = req.body;
   const authHeader = req.headers.authorization;
@@ -230,7 +248,7 @@ app.post('/api/admin/apikey', async (req, res) => {
 
   try {
     const db = getDatabase();
-    // Written into the locked secrets node path
+    // Written into locked secrets node path
     await db.ref('secrets/groq_api_key').set(apiKey);
     return res.status(200).json({ success: true, message: 'API Key saved securely to Firebase.' });
   } catch (error) {
@@ -241,7 +259,6 @@ app.post('/api/admin/apikey', async (req, res) => {
 
 // Endpoint for user client assistant (ai.html) to chat securely via Groq
 app.post('/api/chat', async (req, res) => {
-  // Supports both 'prompt' or 'userMessage' parameters sent by frontend
   const userMessage = req.body.prompt || req.body.userMessage;
 
   if (!userMessage) {
@@ -250,7 +267,6 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     const db = getDatabase();
-    // Check Firebase for key first, fallback to process.env.GROQ_API_KEY
     const snapshot = await db.ref('secrets/groq_api_key').once('value');
     const activeApiKey = snapshot.val() || process.env.GROQ_API_KEY;
 
@@ -258,7 +274,6 @@ app.post('/api/chat', async (req, res) => {
       return res.status(503).json({ error: 'The AI assistant configuration is pending setup.' });
     }
 
-    // Initialize Groq Client with active API key
     const groq = new Groq({ apiKey: activeApiKey });
 
     const chatCompletion = await groq.chat.completions.create({
@@ -272,7 +287,7 @@ app.post('/api/chat', async (req, res) => {
           content: userMessage 
         }
       ],
-      model: "llama-3.1-8b-instant", // Ultra-fast Groq Llama model
+      model: "llama-3.1-8b-instant",
       temperature: 0.7,
       max_tokens: 400
     });
