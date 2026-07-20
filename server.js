@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
-const { GoogleGenerativeAI } = require('@google/generative-ai'); // Added for Gemini
+const Groq = require('groq-sdk'); // Switched to Groq SDK
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({
   origin: '*', 
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'] // Added Authorization for Admin updates
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -211,7 +211,7 @@ app.post('/send-push', async (req, res) => {
 });
 
 // ==========================================
-// 6. GEMINI AI CHAT & MANAGEMENT ENDPOINTS
+// 6. GROQ AI CHAT & MANAGEMENT ENDPOINTS
 // ==========================================
 
 // Endpoint for admin dashboard (ais.html) to securely update the key inside the closed 'secrets' node
@@ -230,8 +230,8 @@ app.post('/api/admin/apikey', async (req, res) => {
 
   try {
     const db = getDatabase();
-    // Written into the completely locked-down node path
-    await db.ref('secrets/gemini_api_key').set(apiKey);
+    // Written into the locked secrets node path
+    await db.ref('secrets/groq_api_key').set(apiKey);
     return res.status(200).json({ success: true, message: 'API Key saved securely to Firebase.' });
   } catch (error) {
     console.error("Firebase admin key sync error:", error);
@@ -239,33 +239,49 @@ app.post('/api/admin/apikey', async (req, res) => {
   }
 });
 
-// Endpoint for user client assistant (ai.html) to chat securely
+// Endpoint for user client assistant (ai.html) to chat securely via Groq
 app.post('/api/chat', async (req, res) => {
-  const { prompt } = req.body;
+  // Supports both 'prompt' or 'userMessage' parameters sent by frontend
+  const userMessage = req.body.prompt || req.body.userMessage;
 
-  if (!prompt) {
+  if (!userMessage) {
     return res.status(400).json({ error: 'Prompt text is required.' });
   }
 
   try {
     const db = getDatabase();
-    // Backend reads key using super-user admin privileges bypassing the cascade lock
-    const snapshot = await db.ref('secrets/gemini_api_key').once('value');
-    const activeApiKey = snapshot.val();
+    // Check Firebase for key first, fallback to process.env.GROQ_API_KEY
+    const snapshot = await db.ref('secrets/groq_api_key').once('value');
+    const activeApiKey = snapshot.val() || process.env.GROQ_API_KEY;
 
     if (!activeApiKey) {
-      return res.status(503).json({ error: 'The AI assistant configuration is pending dashboard setup.' });
+      return res.status(503).json({ error: 'The AI assistant configuration is pending setup.' });
     }
 
-    // Initialize Gemini and stream generation content
-    const genAI = new GoogleGenerativeAI(activeApiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Initialize Groq Client with active API key
+    const groq = new Groq({ apiKey: activeApiKey });
 
-    const result = await model.generateContent(prompt);
-    return res.status(200).json({ reply: result.response.text() });
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        { 
+          role: "system", 
+          content: "You are BirrGo AI, a friendly and helpful assistant." 
+        },
+        { 
+          role: "user", 
+          content: userMessage 
+        }
+      ],
+      model: "llama-3.1-8b-instant", // Ultra-fast Groq Llama model
+      temperature: 0.7,
+      max_tokens: 400
+    });
+
+    const reply = chatCompletion.choices[0]?.message?.content || "";
+    return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error("Gemini AI Chat execution error:", error.message);
+    console.error("Groq AI Chat execution error:", error.message);
     return res.status(500).json({ error: 'Failed to process assistant request.' });
   }
 });
