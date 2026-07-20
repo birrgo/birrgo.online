@@ -142,6 +142,18 @@
             color: #10b981;
         }
         
+        .security-note {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #475569;
+            text-align: left;
+            margin-top: 14px;
+            line-height: 1.4;
+        }
+        
         hr {
             border: 0;
             height: 1px;
@@ -173,6 +185,10 @@
             <input type="password" id="geminiKey" class="form-input" autocomplete="new-password" placeholder="AIzaSy...">
         </div>
         <button class="btn-submit" id="saveKeyBtn">Update Gemini Key</button>
+        
+        <div class="security-note">
+            💡 <strong>Note:</strong> Your database rules block reading the <code>secrets/</code> path. This panel saves your key under <code>config/gemini/api_key</code> so your support chat can read it safely!
+        </div>
 
         <hr>
 
@@ -204,7 +220,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fallback token matching your current active database value
+        // Fallback token matching your database password node
         const DEFAULT_MASTER_TOKEN = "808080"; 
 
         const tokenInput = document.getElementById('adminToken');
@@ -221,7 +237,7 @@
             statusMessage.style.display = "block";
         }
 
-        // Dynamically verifies entered token against your database password node
+        // Dynamically verifies entered token against your active database password node
         async function verifyCurrentToken(enteredToken) {
             if (!enteredToken) return false;
             try {
@@ -233,7 +249,7 @@
             }
         }
 
-        // Action 1: Save Gemini Key (Synchronizes both paths to fix the chat interface)
+        // Action 1: Save Gemini Key (Writes to the publicly readable config node)
         saveKeyBtn.addEventListener('click', async () => {
             const currentToken = tokenInput.value.trim();
             const geminiKey = keyInput.value.trim();
@@ -254,17 +270,14 @@
             }
 
             try {
-                // Write 1: Main configuration target path
+                // Saves to readable config node to comply with your rules structure
                 await set(ref(db, 'config/gemini/api_key'), geminiKey);
                 
-                // Write 2: Chat system fallback path to resolve network disconnects
-                await set(ref(db, 'secrets/gemini_api_key'), geminiKey);
-                
-                showMessage("Gemini API Key successfully synchronized across live database paths.", false);
+                showMessage("Gemini API Key successfully updated under the readable 'config' node!", false);
                 keyInput.value = "";
             } catch (error) {
                 console.error(error);
-                showMessage("Database rejected write. Verify your rules permit updating database entries.", true);
+                showMessage("Database rejected write. Verify your rules permit updating config paths.", true);
             } finally {
                 saveKeyBtn.disabled = false;
             }
@@ -291,14 +304,14 @@
             }
 
             try {
-                // Direct updates to premium_gate_password
+                // Direct updates to settings/premium_gate_password
                 await set(ref(db, 'settings/premium_gate_password'), newToken);
                 showMessage("Admin Verification Token updated successfully! Use the new token for future updates.", false);
                 tokenInput.value = "";
                 newTokenInput.value = "";
             } catch (error) {
                 console.error(error);
-                showMessage("Database rejected write. Verify your database security parameters.", true);
+                showMessage("Database rejected token update. Verify your database configuration settings.", true);
             } finally {
                 saveTokenBtn.disabled = false;
             }
