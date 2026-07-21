@@ -6,7 +6,7 @@
     <title>BirrGo - Like Video & Win 10 Birr</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -29,37 +29,63 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html {
             width: 100%;
-            height: 100dvh;
+            height: 100%;
             background-color: #f1f5f9;
         }
 
         body {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
+            perspective: 1000px;
         }
 
         .app-view {
             width: 100%;
+            height: 100vh;
             height: 100dvh;
             max-width: 450px;
             background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
             overflow: hidden;
+            transition: filter 0.3s ease;
+            transform-style: preserve-3d;
         }
 
-        /* Fixed Top Section - Height Slightly Reduced */
+        .tech-bg-pattern {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
+                radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px;
+        }
+
+        .app-view.network-offline-blur {
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        /* Fixed Top Section - Reduced Wave Curve Height */
         .top-wave-header {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(70px + env(safe-area-inset-top));
+            height: calc(60px + env(safe-area-inset-top, 0px));
             z-index: 10;
             pointer-events: none;
         }
@@ -68,11 +94,12 @@
             width: 100%;
             height: 100%;
             display: block;
+            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
         }
 
         .brand-header {
             position: absolute;
-            top: calc(10px + env(safe-area-inset-top));
+            top: calc(8px + env(safe-area-inset-top, 0px));
             left: 16px;
             right: 16px;
             z-index: 20;
@@ -82,19 +109,28 @@
         }
 
         .back-btn {
-            width: 36px;
-            height: 36px;
+            position: relative;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 900;
             color: var(--primary-burgundy);
             cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
+            transition: transform 0.15s, box-shadow 0.15s ease;
             z-index: 2;
+        }
+        .back-btn:active {
+            transform: translateY(2px) scale(0.94);
         }
 
         /* Title Inside Top Red Curve */
@@ -103,26 +139,40 @@
             left: 50%;
             transform: translateX(-50%);
             color: #ffffff;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 0.2px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             white-space: nowrap;
             text-align: center;
         }
 
         .logo-image {
-            height: 30px;
+            height: 28px;
             width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
+            transition: filter 0.3s ease, opacity 0.3s ease;
             z-index: 2;
         }
 
-        /* Fixed Bottom Curves & Ad Area */
+        .img-blur-loading {
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+
+        .img-blur-loaded {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        /* Fixed Bottom Wave Curve & Ad Space Container */
         .bottom-wave-header {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: calc(80px + env(safe-area-inset-bottom));
+            height: calc(65px + env(safe-area-inset-bottom, 0px));
             z-index: 10;
             pointer-events: none;
         }
@@ -135,68 +185,90 @@
 
         .ad-container {
             position: absolute;
-            bottom: calc(16px + env(safe-area-inset-bottom));
-            left: 16px;
-            right: 16px;
-            z-index: 20;
-            background: #ffffff;
+            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 360px;
+            height: 70px;
+            z-index: 15;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1.5px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 12px;
+            border-radius: var(--border-radius-md);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
         }
 
         .ad-tag {
             position: absolute;
-            top: 6px;
-            right: 10px;
+            top: 4px;
+            right: 6px;
             font-size: 9px;
             font-weight: 800;
             color: #94a3b8;
             background: #f1f5f9;
             padding: 2px 6px;
             border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .ad-icon {
-            font-size: 20px;
+            font-size: 16px;
             margin-bottom: 2px;
         }
 
         .ad-text {
             font-size: 11px;
             font-weight: 700;
-            color: #64748b;
+            color: #94a3b8;
         }
 
-        /* Main Content Container - Adjusted Padding for Reduced Header */
+        /* Scrollable Content Area - Dynamic Inset Margins */
         .app-content {
             flex: 1;
             overflow-y: auto;
-            padding: calc(75px + env(safe-area-inset-top)) 16px calc(115px + env(safe-area-inset-bottom)) 16px;
+            padding-top: calc(68px + env(safe-area-inset-top, 0px));
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px));
+            scrollbar-width: none;
+            position: relative;
             z-index: 2;
+            -webkit-overflow-scrolling: touch;
         }
+        .app-content::-webkit-scrollbar { display: none; }
 
         .task-container {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 12px;
-            margin-top: 10px;
+            margin-top: 4px;
         }
 
         .task-card {
+            width: 92%;
+            max-width: 360px;
             background: var(--card-tech-bg);
             border: 1.5px solid #e2e8f0;
             border-radius: var(--border-radius-md);
-            padding: 12px;
+            padding: 12px 14px;
             box-shadow: var(--blue-glow-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .task-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
         }
 
         .task-card.completed {
@@ -207,20 +279,21 @@
         .task-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .task-icon-badge {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .task-icon-badge img {
@@ -231,8 +304,9 @@
 
         .task-details h4 {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-dark);
+            margin-bottom: 2px;
         }
 
         .task-details p {
@@ -244,22 +318,30 @@
         .task-btn {
             border: none;
             border-radius: 100px;
-            padding: 6px 14px;
+            padding: 7px 14px;
             font-size: 11px;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
+            display: inline-block;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+
+        .task-btn:active {
+            transform: scale(0.95);
         }
 
         .btn-follow {
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #ffffff;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
         }
 
         .btn-verify {
             background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
             color: #ffffff;
+            box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
         }
 
         .status-checking {
@@ -269,11 +351,11 @@
         }
 
         .status-verified {
-            color: #64748b;
+            color: #059669;
             font-size: 11px;
             font-weight: 800;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
+            background: #dcfce7;
+            border: 1px solid #a7f3d0;
             padding: 5px 12px;
             border-radius: 100px;
         }
@@ -281,21 +363,36 @@
         .popup-backdrop {
             position: absolute;
             inset: 0;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(6px);
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 6000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .popup-card {
             background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 20px;
             padding: 24px 20px;
             width: 88%;
             max-width: 320px;
             text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            transform: scale(0.95);
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
         }
 
         .popup-btn {
@@ -305,33 +402,51 @@
             border-radius: 100px;
             padding: 12px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             color: white;
             cursor: pointer;
             margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.10s ease;
+        }
+
+        .popup-btn:active {
+            transform: scale(0.97);
         }
     </style>
 </head>
 <body>
 
-    <div class="app-view">
+    <div class="app-view" id="appView">
+        <div class="tech-bg-pattern"></div>
+
         <!-- Top Fixed Bar -->
         <div class="brand-header">
-            <button class="back-btn" id="backToGiveBtn">←</button>
+            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
             <h2 class="top-title">Like Video & Win 10 Birr</h2>
-            <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+            <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
         
-        <!-- Slightly Reduced Top Curve Height -->
+        <!-- Reduced Top Curve Height -->
         <div class="top-wave-header">
-            <svg viewBox="0 0 375 75" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V48C250 72 125 35 0 55V0Z" fill="#800020"/>
+            <svg viewBox="0 0 375 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V38C250 58 125 28 0 45V0Z" fill="url(#brandGradientTop)"/>
+                <defs>
+                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="60" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
             </svg>
         </div>
 
         <!-- Scrollable Content -->
         <div class="app-content">
-            <div class="task-container" id="socialTasksContainer"></div>
+            <div class="task-container" id="socialTasksContainer">
+                <div style="text-align: center; padding: 20px; color: #64748b; font-size: 13px;">
+                    Loading video tasks...
+                </div>
+            </div>
         </div>
 
         <!-- Bottom Fixed Ad Space Container -->
@@ -344,7 +459,13 @@
         <!-- Bottom Fixed Wave Curve -->
         <div class="bottom-wave-header">
             <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 30C125 10 250 50 375 25V80H0V30Z" fill="#800020"/>
+                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
+                <defs>
+                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
             </svg>
         </div>
 
@@ -363,11 +484,35 @@
         import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const activeUserPhone = localStorage.getItem('auth_session_phone');
-            if (!activeUserPhone) {
+            const rawPhone = localStorage.getItem('auth_session_phone');
+            if (!rawPhone) {
                 window.location.replace("new2.html");
                 return;
             }
+
+            const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
+
+            const mainLogo = document.getElementById('mainLogo');
+            if (mainLogo) {
+                if (mainLogo.complete) {
+                    mainLogo.classList.remove('img-blur-loading');
+                    mainLogo.classList.add('img-blur-loaded');
+                } else {
+                    mainLogo.addEventListener('load', () => {
+                        mainLogo.classList.remove('img-blur-loading');
+                        mainLogo.classList.add('img-blur-loaded');
+                    });
+                }
+            }
+
+            const appView = document.getElementById('appView');
+            const handleNetworkChange = () => {
+                if (!navigator.onLine) appView.classList.add('network-offline-blur');
+                else appView.classList.remove('network-offline-blur');
+            };
+            window.addEventListener('offline', handleNetworkChange);
+            window.addEventListener('online', handleNetworkChange);
+            handleNetworkChange();
 
             const firebaseConfig = {
                 apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -471,7 +616,7 @@
                                 </div>
                             </div>
                             <div>
-                                <span class="status-verified">Claimed</span>
+                                <span class="status-verified">Claimed ✔</span>
                             </div>
                         `;
                     } else {
@@ -550,7 +695,7 @@
                                 detailsP.style.color = '#64748b';
                                 detailsP.innerText = 'Completed & Claimed';
                             }
-                            node.innerHTML = `<span class="status-verified">Claimed</span>`;
+                            node.innerHTML = `<span class="status-verified">Claimed ✔</span>`;
                             document.getElementById('completionPopup').style.display = 'flex';
 
                         } catch (err) {

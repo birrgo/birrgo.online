@@ -35,13 +35,17 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html {
             width: 100%;
-            height: 100dvh;
+            height: 100%;
             background-color: #f1f5f9;
         }
 
         body {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -50,6 +54,7 @@
 
         .app-view {
             width: 100%;
+            height: 100vh;
             height: 100dvh;
             max-width: 450px;
             background-color: var(--bg-light);
@@ -87,7 +92,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(82px + env(safe-area-inset-top));
+            height: calc(82px + env(safe-area-inset-top, 0px));
             z-index: 10;
             pointer-events: none;
         }
@@ -104,7 +109,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: calc(75px + env(safe-area-inset-bottom, 0px));
             z-index: 1;
             pointer-events: none;
         }
@@ -118,7 +123,7 @@
         /* Brand Header positioned strictly ON TOP of the Red Wave */
         .brand-header {
             position: absolute;
-            top: calc(10px + env(safe-area-inset-top));
+            top: calc(10px + env(safe-area-inset-top, 0px));
             left: 16px;
             right: 16px;
             z-index: 20;
@@ -212,10 +217,14 @@
         .app-content {
             flex: 1;
             overflow-y: auto;
-            padding: calc(78px + env(safe-area-inset-top)) 16px calc(130px + env(safe-area-inset-bottom)) 16px;
+            padding-top: calc(78px + env(safe-area-inset-top, 0px));
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px));
             scrollbar-width: none;
             position: relative;
             z-index: 2;
+            -webkit-overflow-scrolling: touch;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
@@ -367,23 +376,24 @@
             display: inline-block;
         }
 
-        /* Fixed Unmovable Advertisement Container over Bottom Curve */
+        /* Safe Advertisement Container above Mobile Navigation Bar */
         .ad-container {
             position: absolute;
-            bottom: calc(14px + env(safe-area-inset-bottom));
+            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
             left: 16px;
             right: 16px;
             z-index: 15;
             background: #ffffff;
             border: 1.5px dashed #cbd5e1;
             border-radius: var(--border-radius-lg);
-            padding: 16px;
+            padding: 10px 16px;
             text-align: center;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: 70px;
             pointer-events: auto;
         }
 
@@ -401,12 +411,12 @@
         }
 
         .ad-icon {
-            font-size: 24px;
-            margin-bottom: 4px;
+            font-size: 20px;
+            margin-bottom: 2px;
         }
 
         .ad-text {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #94a3b8;
         }
@@ -482,13 +492,7 @@
             </div>
         </div>
 
-        <!-- Fixed Advertisement Space Over Bottom Wave -->
-        <div class="ad-container">
-            <span class="ad-badge">AD</span>
-            <div class="ad-icon">📢</div>
-            <div class="ad-text">Advertisement Space</div>
-        </div>
-
+        <!-- Bottom Wave Graphic Background -->
         <div class="bottom-wave-footer">
             <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
@@ -499,6 +503,13 @@
                     </linearGradient>
                 </defs>
             </svg>
+        </div>
+
+        <!-- Fixed Advertisement Space Over Bottom Wave -->
+        <div class="ad-container">
+            <span class="ad-badge">AD</span>
+            <div class="ad-icon">📢</div>
+            <div class="ad-text">Advertisement Space</div>
         </div>
 
         <div class="popup-backdrop" id="completionPopup">
