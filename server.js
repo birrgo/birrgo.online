@@ -208,9 +208,20 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    const db = getDatabase();
-    const snapshot = await db.ref('secrets/openrouter_api_key').once('value');
-    const activeApiKey = snapshot.val() || process.env.OPENROUTER_API_KEY;
+    let activeApiKey = process.env.OPENROUTER_API_KEY;
+
+    // Check Firebase for database key override if admin configured it
+    if (admin.apps.length) {
+      try {
+        const db = getDatabase();
+        const snapshot = await db.ref('secrets/openrouter_api_key').once('value');
+        if (snapshot.exists() && snapshot.val()) {
+          activeApiKey = snapshot.val();
+        }
+      } catch (dbErr) {
+        console.warn("Could not retrieve key from Firebase, falling back to process.env:", dbErr.message);
+      }
+    }
 
     if (!activeApiKey) {
       return res.status(503).json({ error: 'The AI assistant configuration is pending setup.' });
@@ -545,7 +556,8 @@ KNOWLEDGE BASE:
         "X-Title": "BirrGo Assistant"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.3-70b-instruct:free",
+        // Automatically picks an active free model on OpenRouter to avoid slug errors
+        model: "openrouter/free", 
         messages: [
           { 
             role: "system", 
@@ -571,7 +583,7 @@ KNOWLEDGE BASE:
       return res.status(response.status).json({ error: data.error?.message || 'AI service error.' });
     }
 
-    const reply = data.choices[0]?.message?.content || "";
+    const reply = data.choices?.[0]?.message?.content || "";
     return res.status(200).json({ reply });
 
   } catch (error) {
