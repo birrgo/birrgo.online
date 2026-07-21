@@ -645,9 +645,3 @@ KNOWLEDGE BASE:
 app.listen(PORT, () => {
   console.log(`🚀 Server is listening on port ${PORT}`);
 });
-
-
-Separate ai server from code and make
-
-Main server.js
-And aiserver.js
