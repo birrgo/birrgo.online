@@ -147,10 +147,13 @@
     const messagesContainer = document.getElementById('chat-messages');
     const closeBtn = document.getElementById('close-window-btn');
 
-    // Automatically points to relative URL or local development port
-    const API_ENDPOINT = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    // Render Backend Service Base Domain
+    const BACKEND_BASE_URL = 'https://birrgo-otp-backend.onrender.com';
+
+    // Points directly to Render backend when live, or localhost when testing locally
+    const API_ENDPOINT = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:3000/api/chat'
-      : '/api/chat';
+      : `${BACKEND_BASE_URL}/api/chat`;
 
     closeBtn.addEventListener('click', () => {
       if (window.history.length > 1) {
