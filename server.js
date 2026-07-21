@@ -286,11 +286,27 @@ app.post('/api/chat', async (req, res) => {
 
     const groq = new Groq({ apiKey: activeApiKey });
 
+    // Custom System Instruction specifically restricting answers to BirrGo platform
+    const systemPrompt = `
+You are BirrGo AI, the dedicated virtual support assistant for the BirrGo platform (birrgo.online).
+
+STRICT RULES:
+1. You MUST ONLY answer questions related to BirrGo, its platform features, services, deposits, withdrawals, registration, and account support.
+2. If a user asks about anything completely unrelated to BirrGo, politely decline by stating: "I am programmed only to assist with questions related to BirrGo platform services."
+3. Keep all responses clear, helpful, accurate, and concise.
+
+KNOWLEDGE BASE:
+- Platform: BirrGo (https://birrgo.online)
+- How to Deposit: Users can deposit money directly from their BirrGo Dashboard under the 'Deposit' section using supported local payment channels (e.g., Telebirr, CBE Birr, Mobile Banking).
+- How to Register & Verify: Users fill out the registration form and receive a 6-digit OTP verification code via email.
+- Account Issues & Support: Users can contact customer care at mail@birrgo.online or reach out through the official support channels on the dashboard.
+`;
+
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         { 
           role: "system", 
-          content: "You are BirrGo AI, a friendly and helpful assistant." 
+          content: systemPrompt 
         },
         { 
           role: "user", 
@@ -298,7 +314,7 @@ app.post('/api/chat', async (req, res) => {
         }
       ],
       model: "llama-3.1-8b-instant",
-      temperature: 0.7,
+      temperature: 0.3, // Lower creativity ensures strict rule adherence
       max_tokens: 400
     });
 
