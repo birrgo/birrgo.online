@@ -5,18 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BirrGo - Push Notification Dashboard</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .top-nav { width: 100%; max-width: 400px; display: flex; justify-content: flex-start; margin-bottom: 15px; box-sizing: border-box; }
-        .back-btn { background: #555; color: white; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; transition: background 0.2s; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: #f4f6f9; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .top-nav { 
+            width: 100%; 
+            max-width: 400px; 
+            display: flex; 
+            justify-content: flex-start; 
+            margin-bottom: 15px; 
+            box-sizing: border-box; 
+        }
+        .back-btn { 
+            background: #555; 
+            color: white; 
+            text-decoration: none; 
+            padding: 8px 14px; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            font-weight: bold; 
+            display: inline-flex; 
+            align-items: center; 
+            transition: background 0.2s; 
+        }
         .back-btn:hover { background: #333; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; border-top: 5px solid #8B0000; margin-bottom: 20px; box-sizing: border-box; }
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            width: 100%; 
+            max-width: 400px; 
+            border-top: 5px solid #8B0000; 
+            margin-bottom: 20px; 
+            box-sizing: border-box; 
+        }
         h2 { color: #8B0000; margin-top: 0; font-size: 22px; }
         label { font-weight: bold; display: block; margin: 12px 0 5px; color: #333; font-size: 14px; }
-        input, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; margin-bottom: 5px;}
-        button { background: #8B0000; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; transition: background 0.2s;}
+        input, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            margin-bottom: 5px;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color: #8B0000; outline: none; }
+        button { 
+            background: #8B0000; 
+            color: white; 
+            width: 100%; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            cursor: pointer; 
+            transition: background 0.2s, opacity 0.2s;
+        }
         button:hover { background: #660000; }
-        button:disabled { background: #999; cursor: not-allowed; }
-        #status { margin-top: 12px; font-weight: bold; text-align: center; font-size: 14px; word-break: break-word; }
+        button:disabled { background: #999; cursor: not-allowed; opacity: 0.7; }
+        #status { 
+            margin-top: 15px; 
+            font-weight: 600; 
+            text-align: center; 
+            font-size: 14px; 
+            word-break: break-word; 
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -29,12 +93,12 @@
     <h2>BirrGo Notification Panel</h2>
     <p style="font-size: 14px; color: #555;">Broadcast a live message to your active subscribers:</p>
     
-    <form id="push-form" onsubmit="sendPush(event)">
+    <form id="push-form" onsubmit="sendPush(event)" autocomplete="off">
         <label for="title">Notification Title</label>
-        <input type="text" id="title" placeholder="e.g., Cash Received! 💰" required>
+        <input type="text" id="title" placeholder="e.g., Cash Received! 💰" maxlength="100" required>
 
         <label for="message">Message Body</label>
-        <textarea id="message" rows="3" placeholder="e.g., You received 500 Birr." required></textarea>
+        <textarea id="message" rows="3" placeholder="e.g., You received 500 Birr." maxlength="250" required></textarea>
 
         <label for="imageUrl">Image URL (Optional)</label>
         <input type="url" id="imageUrl" placeholder="https://birrgo.online/banner.jpg">
@@ -49,21 +113,27 @@
   async function sendPush(event) {
       event.preventDefault();
 
-      const title = document.getElementById('title').value.trim();
-      const message = document.getElementById('message').value.trim();
-      const imageUrl = document.getElementById('imageUrl').value.trim();
+      const titleInput = document.getElementById('title');
+      const messageInput = document.getElementById('message');
+      const imageInput = document.getElementById('imageUrl');
       const statusDiv = document.getElementById('status');
       const sendBtn = document.getElementById('send-btn');
 
+      const title = titleInput.value.trim();
+      const message = messageInput.value.trim();
+      const rawImageUrl = imageInput.value.trim();
+
       if (!title || !message) {
-          statusDiv.style.color = '#d9534f';
-          statusDiv.innerText = 'Title and Message are required!';
+          showStatus('Title and Message are required fields!', '#d9534f');
           return;
       }
 
-      statusDiv.style.color = '#f59e0b';
-      statusDiv.innerText = 'Broadcasting via Vercel Microservice...';
-      sendBtn.disabled = true;
+      // Ensure imageUrl is a valid non-empty string or null
+      const imageUrl = (rawImageUrl && rawImageUrl.startsWith('http')) ? rawImageUrl : null;
+
+      // Disable inputs during network request
+      toggleFormState(true);
+      showStatus('Broadcasting via backend microservice...', '#f59e0b');
 
       try {
           const response = await fetch("/api/send-push", {
@@ -74,29 +144,46 @@
               body: JSON.stringify({
                   title: title,
                   message: message,
-                  imageUrl: imageUrl || null,
+                  imageUrl: imageUrl,
                   url: "https://birrgo.online"
               })
           });
 
+          // Safeguard: Verify response is JSON (catches Vercel 404/500 HTML pages)
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+              throw new Error(`Server returned non-JSON response (HTTP ${response.status}). Verify /api/send-push deployment.`);
+          }
+
           const responseData = await response.json();
 
-          if (response.ok && responseData.success) {
-              statusDiv.style.color = '#10b981';
-              statusDiv.innerText = `🚀 Success! Sent to ${responseData.recipients || 0} recipients.`;
+          if (response.ok && (responseData.success || responseData.active)) {
+              const count = responseData.recipients ?? responseData.data?.recipients ?? 0;
+              showStatus(`🚀 Success! Sent to ${count} recipient${count === 1 ? '' : 's'}.`, '#10b981');
               document.getElementById('push-form').reset();
           } else {
-              let errorMsg = responseData.error || responseData.message || `Status ${response.status}`;
-              statusDiv.style.color = '#d9534f';
-              statusDiv.innerText = 'Error: ' + errorMsg;
+              let errorMsg = responseData.error || responseData.message || `Server Error (${response.status})`;
+              showStatus(`Broadcast failed: ${errorMsg}`, '#d9534f');
           }
       } catch (error) {
-          console.error("Push Service Error:", error);
-          statusDiv.style.color = '#d9534f';
-          statusDiv.innerText = 'Network error: ' + error.message;
+          console.error("Push Dispatch Error:", error);
+          showStatus(`Network Error: ${error.message}`, '#d9534f');
       } finally {
-          sendBtn.disabled = false;
+          toggleFormState(false);
       }
+  }
+
+  function showStatus(text, color) {
+      const statusDiv = document.getElementById('status');
+      statusDiv.style.color = color;
+      statusDiv.innerText = text;
+  }
+
+  function toggleFormState(disabled) {
+      document.getElementById('title').disabled = disabled;
+      document.getElementById('message').disabled = disabled;
+      document.getElementById('imageUrl').disabled = disabled;
+      document.getElementById('send-btn').disabled = disabled;
   }
 </script>
 
