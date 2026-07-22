@@ -38,7 +38,8 @@ module.exports = async (req, res) => {
 
   try {
     const body = req.body || {};
-    const { title, message, segments, url, imageUrl } = body;
+    // Extracted 'badgeUrl' and 'badge' for status bar customization
+    const { title, message, segments, url, imageUrl, badgeUrl, badge } = body;
 
     if (!title || !message) {
       return res.status(400).json({ success: false, error: 'Notification title and message are required.' });
@@ -47,17 +48,21 @@ module.exports = async (req, res) => {
     // Check environment variables first
     let appId = process.env.ONESIGNAL_APP_ID;
     let restApiKey = process.env.ONESIGNAL_REST_KEY || process.env.ONESIGNAL_REST_API_KEY;
+    let defaultBadge = process.env.ONESIGNAL_DEFAULT_BADGE;
+    let defaultIcon = process.env.ONESIGNAL_DEFAULT_ICON;
 
-    // Fetch dynamic config from Firebase Realtime DB if env vars are missing
-    if ((!appId || !restApiKey) && admin.apps.length) {
+    // Fetch dynamic config from Firebase Realtime DB if missing or to augment defaults
+    if (admin.apps.length) {
       try {
         const db = admin.database();
         const configSnapshot = await db.ref('config/onesignal').once('value');
         const configData = configSnapshot.val();
 
         if (configData) {
-          if (configData.appId) appId = configData.appId;
-          if (configData.restApiKey) restApiKey = configData.restApiKey;
+          if (configData.appId && !appId) appId = configData.appId;
+          if (configData.restApiKey && !restApiKey) restApiKey = configData.restApiKey;
+          if (configData.defaultBadge) defaultBadge = configData.defaultBadge;
+          if (configData.defaultIcon) defaultIcon = configData.defaultIcon;
         }
       } catch (dbErr) {
         console.error("Failed to read OneSignal config from Firebase:", dbErr.message);
@@ -72,7 +77,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Target segments setup (Use single reliable segment fallback)
+    // Target segments setup
     const targetSegments = (Array.isArray(segments) && segments.length > 0)
       ? segments
       : ['Total Subscriptions'];
@@ -88,12 +93,22 @@ module.exports = async (req, res) => {
       priority: 10
     };
 
-    // Attach images if valid URL provided
-    if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '') {
-      const cleanImg = imageUrl.trim();
-      notificationPayload.big_picture = cleanImg;
-      notificationPayload.chrome_web_image = cleanImg;
-      notificationPayload.firefox_icon = cleanImg;
+    // Attach status bar badge icon (Monochrome White PNG)
+    const activeBadge = badgeUrl || badge || defaultBadge;
+    if (activeBadge && typeof activeBadge === 'string' && activeBadge.trim() !== '') {
+      notificationPayload.chrome_web_badge = activeBadge.trim();
+    }
+
+    // Attach large panel icon / images if valid URL provided
+    const activeImage = (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '') 
+      ? imageUrl.trim() 
+      : defaultIcon;
+
+    if (activeImage) {
+      notificationPayload.big_picture = activeImage;
+      notificationPayload.chrome_web_image = activeImage;
+      notificationPayload.chrome_web_icon = activeImage;
+      notificationPayload.firefox_icon = activeImage;
     }
 
     // Call OneSignal API
