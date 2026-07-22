@@ -59,7 +59,7 @@ app.post('/api/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
-    // Fetch live OneSignal credentials and default icon configs from Firebase
+    // Fetch live OneSignal credentials and default icon configs from Firebase 'config/onesignal' path
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val() || {};
 
@@ -70,7 +70,7 @@ app.post('/api/send-push', async (req, res) => {
       return res.status(500).json({ error: 'OneSignal API credentials not configured in Firebase.' });
     }
 
-    // Determine final icons using payload parameters first, then Firebase config, then env variables
+    // Determine icons using payload parameters first, then Firebase config, then env variables
     const finalIcon = imageUrl || iconUrl || configData.defaultIcon || process.env.ONESIGNAL_DEFAULT_ICON || undefined;
     const finalBadge = badgeUrl || badge || configData.defaultBadge || process.env.ONESIGNAL_DEFAULT_BADGE || undefined;
 
@@ -84,14 +84,14 @@ app.post('/api/send-push', async (req, res) => {
       ttl: 86400,
       priority: 10,
       
-      // Large preview image inside notification panel
+      // Large preview image inside the notification panel
       big_picture: imageUrl || undefined,
       
-      // Main app/brand icon inside notification drawer
+      // Main app logo icon inside the notification panel
       chrome_web_icon: finalIcon,
       firefox_icon: finalIcon,
       
-      // Android status bar small icon (Monochrome white PNG)
+      // ANDROID STATUS BAR ICON (White-on-transparent PNG)
       chrome_web_badge: finalBadge
     };
 
@@ -107,7 +107,7 @@ app.post('/api/send-push', async (req, res) => {
     const responseData = await response.json();
 
     if (response.ok && responseData.id) {
-      // Log broadcast to Firebase
+      // Log broadcast event to Firebase Realtime Database
       await db.ref('logs/notifications').push({
         id: responseData.id,
         title: title,
