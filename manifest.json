@@ -8,6 +8,7 @@
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "categories": ["finance", "utilities"],
+  "badge": "badge-icon.png",
   "icons": [
     {
       "src": "icon.png",
