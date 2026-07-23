@@ -8,25 +8,33 @@
         Birrgo Team
     </author>
 
-    <!-- Point the app launch source directly to your new domain -->
+    <!-- Point the app launch source directly to your domain -->
     <content src="https://test.birrgo.online" />
 
-    <!-- Icon Configuration -->
-    <!-- This tells Cordova to use your icon.png from the root directory -->
+    <!-- Default App Launcher Icon -->
     <icon src="icon.png" />
 
     <platform name="android">
         <!-- Main launcher icon mapping -->
         <icon src="icon.png" />
 
-        <!-- Notification status bar icon -->
+        <!-- Generic / Firebase Notification status bar icon -->
         <resource-file src="badge-icon.png" target="app/src/main/res/drawable/ic_stat_notification.png" />
 
-        <!-- Firebase / Push Plugin default notification icon fallback -->
+        <!-- OneSignal Native SDK default status bar icon -->
+        <resource-file src="badge-icon.png" target="app/src/main/res/drawable/ic_stat_onesignal_default.png" />
+
+        <!-- Android Manifest Configuration for Firebase & OneSignal Defaults -->
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <!-- Default Firebase Notification Icon -->
             <meta-data 
                 android:name="com.google.firebase.messaging.default_notification_icon" 
                 android:resource="@drawable/ic_stat_notification" />
+
+            <!-- Default OneSignal Notification Icon -->
+            <meta-data 
+                android:name="com.onesignal.NotificationIcon.Default" 
+                android:value="ic_stat_onesignal_default" />
         </config-file>
     </platform>
 
