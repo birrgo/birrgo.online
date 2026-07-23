@@ -420,15 +420,26 @@ html, body {
     margin-bottom: 14px;
 }
 
+/* PRESERVE ORIGINAL PICTURE DIMENSIONS & ASPECT RATIO IN FULL ARTICLE */
 .reader-image-frame {
     width: 100%;
-    max-height: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 14px;
     overflow: hidden;
     margin-bottom: 16px;
     border: 1px solid var(--border-light);
+    background: #f8fafc;
 }
-.reader-image-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+.reader-image-frame img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
+}
 
 .reader-full-body {
     font-size: 15px;
