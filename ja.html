@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo | JETOUR Activity Tracking (Admin Mode)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-burgundy: #6B001B;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f1f5f9; display: flex; justify-content: center; min-height: 100vh; }
+        .app-view { width: 100%; max-width: 450px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .header { background: var(--primary-burgundy); color: white; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .btn-back { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        .header-title { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; }
+        .gateway-status { font-size: 10px; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 12px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .content { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+        .title-box { text-align: center; }
+        .title-box h1 { font-size: 16px; color: var(--text-dark); font-weight: 800; }
+        .title-box p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        .tab-bar { display: flex; background: #f1f5f9; padding: 4px; border-radius: 30px; gap: 4px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 8px 12px; border: none; background: transparent; font-size: 11px; font-weight: 700; color: var(--text-muted); border-radius: 20px; cursor: pointer; white-space: nowrap; text-align: center; }
+        .tab-btn.active { background: var(--primary-burgundy); color: white; }
+
+        .activity-list { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .activity-card { border: 1px solid var(--border-light); border-radius: var(--border-radius); padding: 12px; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .ticket-badge { background: #f1f5f9; font-size: 11px; font-weight: 800; color: var(--text-dark); padding: 3px 8px; border-radius: 6px; }
+        .status-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; }
+        .status-unpaid { background: #fee2e2; color: #ef4444; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #10b981; }
+        .status-declined { background: #f3f4f6; color: #6b7280; }
+        
+        .card-body { font-size: 11px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
+        .card-body span { font-weight: 600; color: var(--text-dark); }
+        .card-actions { margin-top: 10px; display: flex; gap: 8px; }
+        .btn-pay { flex: 1; height: 34px; background: var(--primary-burgundy); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+        .btn-cancel { height: 34px; padding: 0 12px; background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; }
+
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 12px; padding: 40px 20px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-view">
+        <div class="header">
+            <a href="nj.html" class="btn-back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <div class="header-title">JETOUR ACTIVITY</div>
+            <span class="gateway-status">Gateway: Online</span>
+        </div>
+
+        <div class="content">
+            <div class="title-box">
+                <h1>Track JETOUR Payments</h1>
+                <p>All-system overview for open, pending, approved, or declined deposit orders</p>
+            </div>
+
+            <div class="tab-bar">
+                <button class="tab-btn active" data-filter="unpaid">Unpaid (<span id="count-unpaid">0</span>)</button>
+                <button class="tab-btn" data-filter="pending">Pending (<span id="count-pending">0</span>)</button>
+                <button class="tab-btn" data-filter="approved">Approved (<span id="count-approved">0</span>)</button>
+                <button class="tab-btn" data-filter="declined">Declined (<span id="count-declined">0</span>)</button>
+            </div>
+
+            <div class="activity-list" id="activityList">
+                <div class="empty-state">Loading activity...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeTabFilter = 'unpaid';
+        let allTickets = [];
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            let clean = phoneStr.toString().replace(/\D/g, '');
+            if (clean.startsWith('09') && clean.length === 10) {
+                return '251' + clean.substring(1);
+            }
+            return clean;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupTabs();
+            listenToAllTickets();
+        });
+
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('.tab-btn');
+                    if (!targetBtn) return;
+
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    targetBtn.classList.add('active');
+                    activeTabFilter = targetBtn.getAttribute('data-filter');
+                    renderTickets();
+                });
+            });
+        }
+
+        function listenToAllTickets() {
+            // Source of Truth: /lottery/jetour/tickets
+            const ticketsRef = ref(db, 'lottery/jetour/tickets');
+            onValue(ticketsRef, (snapshot) => {
+                allTickets = [];
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.entries(data).forEach(([key, ticket]) => {
+                        allTickets.push({ key, ...ticket });
+                    });
+                }
+                updateTabCounts();
+                renderTickets();
+            });
+        }
+
+        function updateTabCounts() {
+            let counts = { unpaid: 0, pending: 0, approved: 0, declined: 0 };
+
+            allTickets.forEach(item => {
+                const st = (item.status || 'unpaid').toLowerCase().trim();
+                if (st === 'unpaid') counts.unpaid++;
+                else if (st === 'pending' || st === 'pending approval' || st === 'review') counts.pending++;
+                else if (st === 'approved' || st === 'paid') counts.approved++;
+                else if (st === 'declined' || st === 'cancelled' || st === 'rejected') counts.declined++;
+            });
+
+            document.getElementById('count-unpaid').innerText = counts.unpaid;
+            document.getElementById('count-pending').innerText = counts.pending;
+            document.getElementById('count-approved').innerText = counts.approved;
+            document.getElementById('count-declined').innerText = counts.declined;
+        }
+
+        function renderTickets() {
+            const container = document.getElementById('activityList');
+            container.innerHTML = '';
+
+            const filtered = allTickets.filter(item => {
+                const st = (item.status || 'unpaid').toLowerCase().trim();
+                if (activeTabFilter === 'unpaid') return st === 'unpaid';
+                if (activeTabFilter === 'pending') return st === 'pending' || st === 'pending approval' || st === 'review';
+                if (activeTabFilter === 'approved') return st === 'approved' || st === 'paid';
+                if (activeTabFilter === 'declined') return st === 'declined' || st === 'cancelled' || st === 'rejected';
+                return false;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">No ${activeTabFilter} JETOUR activity found.</div>`;
+                return;
+            }
+
+            filtered.reverse().forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'activity-card';
+
+                const st = (item.status || 'unpaid').toLowerCase().trim();
+                let statusClass = 'status-unpaid';
+                if (st === 'pending' || st === 'pending approval' || st === 'review') statusClass = 'status-pending';
+                else if (st === 'approved' || st === 'paid') statusClass = 'status-approved';
+                else if (st === 'declined' || st === 'cancelled' || st === 'rejected') statusClass = 'status-declined';
+
+                const userPhone = item.phone || item.cardSequence || item.userId || 'N/A';
+                const displayRef = item.orderRef || item.depositRef || 'N/A';
+
+                let actionButtons = '';
+                if (st === 'unpaid') {
+                    actionButtons = `
+                        <div class="card-actions">
+                            <button class="btn-cancel" onclick="cancelOrder('${item.key}', '${displayRef}', '${userPhone}')">Cancel</button>
+                            <button class="btn-pay" onclick="payOrder('${displayRef}', '${item.ticketNum || ''}', '${item.location || ''}', '${item.key}')">Pay Now</button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <span class="ticket-badge">Position #${item.ticketNum || '---'}</span>
+                        <span class="status-tag ${statusClass}">${item.status || 'Unpaid'}</span>
+                    </div>
+                    <div class="card-body">
+                        <div>Client Phone: <span>${userPhone}</span></div>
+                        <div>Order Ref: <span>${displayRef}</span></div>
+                        <div>Location: <span>${item.location || 'N/A'}</span></div>
+                        <div>Date / Time: <span>${item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A'}</span></div>
+                        ${item.reject_reason ? `<div style="color:#ef4444;">Reason: <span>${item.reject_reason}</span></div>` : ''}
+                    </div>
+                    ${actionButtons}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.payOrder = function(orderRef, ticketNum, location, ticketKey) {
+            localStorage.setItem('pending_jetour_orderRef', orderRef);
+            localStorage.setItem('pending_jetour_ticketNum', ticketNum);
+            localStorage.setItem('pending_jetour_location', location);
+            localStorage.setItem('pending_jetour_ticketKey', ticketKey);
+            window.location.href = "jl.html";
+        };
+
+        window.cancelOrder = async function(ticketKey, orderRef, phone) {
+            if (!confirm("Are you sure you want to cancel this ticket reservation?")) return;
+
+            const normalizedPhone = normalizePhoneNumber(phone);
+            const updates = {};
+            
+            updates[`/lottery/jetour/tickets/${ticketKey}`] = null;
+            if (orderRef && orderRef !== 'N/A') {
+                updates[`/new_jetour/${orderRef}`] = null;
+            }
+
+            try {
+                await update(ref(db), updates);
+            } catch (err) {
+                console.error("Cancellation failed:", err);
+                alert("Failed to cancel order. Please check connection.");
+            }
+        };
+    </script>
+</body>
+</html>

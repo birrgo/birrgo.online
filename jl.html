@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo Premium — Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    
+    <style>
+        :root {
+            --brand-color: #77051c;
+            --brand-gradient: linear-gradient(135deg, #77051c 0%, #4a0311 100%);
+            --bg-body: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1e293b;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .top-curve-header {
+            background: var(--brand-gradient);
+            width: 100%;
+            padding: 12px 16px 28px 16px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(119, 5, 28, 0.18);
+            position: relative;
+        }
+
+        .top-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .top-header-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .top-header-back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .top-header-back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .app-view {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 0 16px 24px 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 60px);
+            justify-content: space-between;
+        }
+
+        .main-content-wrap {
+            width: 100%;
+            margin-top: -14px;
+        }
+
+        .centered-popup-card.payment-gateway-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px 18px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .drawer-step-light-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .bank-details-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13.5px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .detail-val {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .account-number-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-copy-acc {
+            background: #ede9fe;
+            color: var(--brand-color);
+            border: none;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-copy-acc:hover {
+            background: #ddd6fe;
+        }
+
+        .upload-receipt-card {
+            border: 2px dashed #cbd5e1;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+            cursor: pointer;
+        }
+
+        .upload-receipt-card:hover {
+            border-color: var(--brand-color);
+            background: #fff1f2;
+        }
+
+        .receipt-thumbnail {
+            max-width: 100%;
+            height: 110px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .upload-receipt-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .upload-receipt-sub {
+            font-size: 11.5px;
+            color: #64748b;
+        }
+
+        .btn-drawer-submit {
+            width: 100%;
+            background: var(--brand-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(119, 5, 28, 0.2);
+            transition: transform 0.1s ease;
+        }
+
+        .btn-drawer-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-drawer-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cancel-trigger-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-3d-cancel {
+            width: 100%;
+            background: linear-gradient(145deg, #ef4444, #dc2626);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 5px 0 #b91c1c, 0 8px 12px rgba(220, 38, 38, 0.2);
+            transition: all 0.15s ease;
+        }
+
+        .btn-3d-cancel:hover {
+            background: linear-gradient(145deg, #f87171, #ef4444);
+            transform: translateY(-2px);
+        }
+
+        .btn-3d-cancel:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #b91c1c, 0 3px 5px rgba(220, 38, 38, 0.2);
+        }
+
+        .icon-3d-box {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bottom-ad-box {
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 18px;
+            position: relative;
+            width: 100%;
+        }
+
+        .bottom-ad-box::after {
+            content: "AD";
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 8.5px;
+            font-weight: 800;
+            color: #94a3b8;
+        }
+
+        .ad-icon-wrapper {
+            color: var(--brand-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .ad-text-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .modal-overlay {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(3px);
+            z-index: 9999;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex !important;
+        }
+
+        .centered-popup-card {
+            background: #fff;
+            width: 100%;
+            max-width: 380px;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex !important;
+        }
+
+        .loading-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 18px;
+            text-align: center;
+            max-width: 260px;
+            width: 85%;
+            box-shadow: 0 15px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        .spinner-ring {
+            width: 38px;
+            height: 38px;
+            border: 3.5px solid #f1f5f9;
+            border-top: 3.5px solid var(--brand-color);
+            border-radius: 50%;
+            margin: 0 auto 12px auto;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .loading-subtitle {
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-curve-header">
+        <div class="top-header-content">
+            <button type="button" class="top-header-back-btn" id="headerCloseBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="top-header-title">BirrGo Premium</div>
+            <div style="width: 32px;"></div>
+        </div>
+    </header>
+
+    <div class="app-view">
+        <div class="main-content-wrap">
+            <div class="centered-popup-card payment-gateway-card">
+                <div class="drawer-step active" id="drawerStepDetails">
+                    <div class="drawer-step-light-title">COPY AND PAID</div>
+
+                    <div class="bank-details-box" style="background: #fff7ed; border-color: #ffedd5;">
+                        <div class="detail-row">
+                            <span class="detail-label">Raffle Position:</span>
+                            <span class="detail-val" id="dispTicketNum" style="font-weight: 800; color: var(--brand-color);">#---</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">City / Location:</span>
+                            <span class="detail-val" id="dispCity">---</span>
+                        </div>
+                    </div>
+
+                    <div class="bank-details-box">
+                        <div class="detail-row">
+                            <span class="detail-label">Order Ref:</span>
+                            <span class="detail-val" id="drawerDispRef">BG-000000</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Merchant Name:</span>
+                            <span class="detail-val" id="drawerDispMerchant">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Account No:</span>
+                            <div class="account-number-wrapper">
+                                <span class="detail-val" id="drawerDispAccount">Loading...</span>
+                                <button type="button" class="btn-copy-acc" id="copyAccBtn">
+                                    <span id="copyBtnText">Copy</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label" style="color:var(--brand-color);">Amount:</span>
+                            <span class="detail-val" style="color:var(--brand-color);">3,000 Birr</span>
+                        </div>
+                    </div>
+
+                    <div class="upload-receipt-card" id="uploadAreaCard">
+                        <img id="imagePreview" class="receipt-thumbnail" src="" alt="Receipt Preview" style="display:none;">
+                        <span class="upload-receipt-title" id="receipt-title">Upload Transfer Receipt</span>
+                        <p class="upload-receipt-sub" id="receipt-sub">Click to select screenshot (Auto Verify)</p>
+                        <input type="file" id="receipt-file" accept="image/png, image/jpeg, image/jpg, image/*" style="display:none;">
+                    </div>
+
+                    <button type="button" class="btn-drawer-submit" id="submitDepositReceiptBtn">Submit Deposit Receipt</button>
+                    
+                    <div class="cancel-trigger-wrapper">
+                        <button type="button" class="btn-3d-cancel" id="cancelTicketTriggerBtn">
+                            <div class="icon-3d-box">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </div>
+                            <span>Cancel Ticket & Erase Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-ad-box">
+            <div class="ad-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <span class="ad-text-label">Advertisement Space</span>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-card">
+            <div class="spinner-ring"></div>
+            <div class="loading-title" id="loadingTitleText">Verifying Receipt</div>
+            <div class="loading-subtitle" id="loadingSubText">Scanning image in background...</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="statusAlertModal">
+        <div class="centered-popup-card" id="statusAlertCard">
+            <div class="status-icon-circle" id="statusAlertIcon" style="width:46px; height:46px; margin:0 auto 12px auto; border-radius:50%; display:flex; align-items:center; justify-content:center;"></div>
+            <div class="status-msg-title" id="statusAlertTitle" style="font-size:16px; font-weight:700; margin-bottom:6px; color:#0f172a;">Notification</div>
+            <div class="status-msg-desc" id="statusAlertMessage" style="font-size:13px; color:#64748b; margin-bottom:18px;">Details...</div>
+            <button type="button" class="btn-status-close" id="statusAlertCloseBtn" style="width:100%; padding:11px; background:var(--brand-gradient); color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer;">OK</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="cancelModal">
+        <div class="centered-popup-card">
+            <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Cancel & Erase Ticket</div>
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 14px;">Please select the reason why you are cancelling this ticket:</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; text-align: left;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer; font-weight: 500;">
+                    <input type="radio" name="cancelReason" value="I do not want to buy" checked style="accent-color: var(--brand-color); width: 15px; height: 15px;"> I do not want to buy
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer; font-weight: 500;">
+                    <input type="radio" name="cancelReason" value="Change ticket number" style="accent-color: var(--brand-color); width: 15px; height: 15px;"> Change ticket number
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer; font-weight: 500;">
+                    <input type="radio" name="cancelReason" value="System error" style="accent-color: var(--brand-color); width: 15px; height: 15px;"> System error
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer; font-weight: 500;">
+                    <input type="radio" name="cancelReason" value="Found alternative payment method" style="accent-color: var(--brand-color); width: 15px; height: 15px;"> Found alternative payment method
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="button" id="cancelModalBackBtn" style="flex: 1; padding: 11px; background: #f1f5f9; border: none; border-radius: 10px; font-weight: 600; color: #475569; cursor: pointer;">Back</button>
+                <button type="button" id="confirmCancelBtn" style="flex: 1; padding: 11px; background: #dc2626; border: none; border-radius: 10px; font-weight: 600; color: #fff; cursor: pointer;">Confirm & Erase</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="ocrCanvas" style="display:none;"></canvas>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let completeRawCardSequence = "";
+        
+        let selectedFileBlob = null;
+        let extractedOcrText = ""; 
+        let backgroundExtractedTxnRef = "";
+        let isReceiptValidImage = false;
+        let isOcrProcessing = false;
+
+        let dynamicAdminAccounts = {};
+        const selectedMethodKey = localStorage.getItem('pending_jetour_selectedMethod') || 'cbe';
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentOrderRef = urlParams.get('ref') || localStorage.getItem('pending_jetour_orderRef') || 'BG-' + Math.floor(100000 + Math.random() * 900000);
+        let ticketKey = urlParams.get('ticketKey') || localStorage.getItem('pending_jetour_ticketKey');
+        const txKey = urlParams.get('depositRef') || localStorage.getItem('pending_jetour_txKey');
+        const userCity = localStorage.getItem('pending_jetour_location') || 'Not specified';
+        let validatedTicketNumber = '---';
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            let clean = phoneStr.toString().replace(/\D/g, '');
+            if (clean.startsWith('09') && clean.length === 10) {
+                return '251' + clean.substring(1);
+            }
+            return clean;
+        }
+
+        function cleanTxnStr(str) {
+            if (!str) return "";
+            return str.toString().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        }
+
+        function clearReceiptBox() {
+            const imgPreview = document.getElementById('imagePreview');
+            imgPreview.src = "";
+            imgPreview.style.display = "none";
+            document.getElementById('receipt-title').innerText = "Upload Transfer Receipt";
+            document.getElementById('receipt-sub').innerText = "Click to select screenshot (Auto Verify)";
+            document.getElementById('receipt-file').value = "";
+            
+            selectedFileBlob = null;
+            extractedOcrText = "";
+            backgroundExtractedTxnRef = "";
+            isReceiptValidImage = false;
+            isOcrProcessing = false;
+        }
+
+        function showPopupState(type, title, message) {
+            const modal = document.getElementById('statusAlertModal');
+            const icon = document.getElementById('statusAlertIcon');
+            
+            document.getElementById('statusAlertTitle').innerText = title;
+            document.getElementById('statusAlertMessage').innerText = message;
+
+            if (type === 'success') {
+                icon.style.background = "#e6f4ea";
+                icon.style.color = "#0d5c3a";
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                icon.style.background = "#fef2f2";
+                icon.style.color = "#dc2626";
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function showLoading(show, title = "Verifying Receipt", subtitle = "Analyzing receipt details in background...") {
+            const overlay = document.getElementById('loadingOverlay');
+            document.getElementById('loadingTitleText').innerText = title;
+            document.getElementById('loadingSubText').innerText = subtitle;
+            if (show) overlay.classList.add('active');
+            else overlay.classList.remove('active');
+        }
+
+        function openCancelModal() {
+            const cancelModal = document.getElementById('cancelModal');
+            if (cancelModal) cancelModal.classList.add('active');
+        }
+
+        function closeCancelModal() {
+            const cancelModal = document.getElementById('cancelModal');
+            if (cancelModal) cancelModal.classList.remove('active');
+        }
+
+        async function confirmCancelTicket() {
+            const selectedReasonEl = document.querySelector('input[name="cancelReason"]:checked');
+            const selectedReason = selectedReasonEl ? selectedReasonEl.value : "I do not want to buy";
+            const confirmBtn = document.getElementById('confirmCancelBtn');
+            
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = 'Erasing Data...';
+
+            try {
+                const atomicUpdates = {};
+
+                if (ticketKey) {
+                    atomicUpdates[`/lottery/jetour/tickets/${ticketKey}`] = null;
+                    atomicUpdates[`/new_jetour/tickets/${ticketKey}`] = null;
+                }
+
+                if (txKey && completeRawCardSequence) {
+                    atomicUpdates[`/users/${completeRawCardSequence}/transactions/${txKey}`] = null;
+                    atomicUpdates[`/new_jetour/users/${completeRawCardSequence}/transactions/${txKey}`] = null;
+                }
+
+                const ticketPathsToSearch = ['lottery/jetour/tickets', 'new_jetour/tickets'];
+                for (const path of ticketPathsToSearch) {
+                    try {
+                        const snap = await get(ref(db, path));
+                        if (snap.exists()) {
+                            const data = snap.val();
+                            for (const k in data) {
+                                const item = data[k];
+                                const userMatch = normalizePhoneNumber(item.cardSequence || item.phone || item.userId) === completeRawCardSequence;
+                                const refMatch = currentOrderRef && (item.orderRef === currentOrderRef || item.ref === currentOrderRef);
+                                if (refMatch || (userMatch && (item.status || '').toLowerCase() === 'unpaid')) {
+                                    atomicUpdates[`/${path}/${k}`] = null;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(`Search error at ${path}:`, e);
+                    }
+                }
+
+                try {
+                    const depositsSnap = await get(ref(db, 'new_jetour/deposits'));
+                    if (depositsSnap.exists()) {
+                        const deposits = depositsSnap.val();
+                        for (const depKey in deposits) {
+                            const dep = deposits[depKey];
+                            if ((currentOrderRef && (dep.ref === currentOrderRef || dep.orderRef === currentOrderRef)) ||
+                                (completeRawCardSequence && normalizePhoneNumber(dep.userId) === completeRawCardSequence)) {
+                                atomicUpdates[`/new_jetour/deposits/${depKey}`] = null;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Deposit search error:", e);
+                }
+
+                try {
+                    const notifsSnap = await get(ref(db, 'new_jetour/notifications'));
+                    if (notifsSnap.exists()) {
+                        const notifs = notifsSnap.val();
+                        for (const notifKey in notifs) {
+                            const n = notifs[notifKey];
+                            if ((currentOrderRef && n.orderRef === currentOrderRef) || 
+                                (completeRawCardSequence && normalizePhoneNumber(n.userPhone) === completeRawCardSequence)) {
+                                atomicUpdates[`/new_jetour/notifications/${notifKey}`] = null;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Notifications search error:", e);
+                }
+
+                if (currentOrderRef) {
+                    atomicUpdates[`/new_jetour/${currentOrderRef}`] = null;
+                    atomicUpdates[`/lottery/jetour/${currentOrderRef}`] = null;
+                }
+
+                await update(ref(db), atomicUpdates);
+
+                localStorage.removeItem('pending_jetour_ticketNum');
+                localStorage.removeItem('pending_jetour_ticketKey');
+                localStorage.removeItem('pending_jetour_txKey');
+                localStorage.removeItem('pending_jetour_orderRef');
+                localStorage.removeItem('pending_jetour_selectedMethod');
+                localStorage.removeItem('pending_jetour_location');
+                localStorage.removeItem('pending_jetour_depositRef');
+
+                window.location.href = 'ja.html';
+            } catch (err) {
+                console.error("Error erasing ticket data:", err);
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = 'Confirm & Erase';
+                closeCancelModal();
+                showPopupState("invalid", "Erasure Error", "Could not remove ticket record from database. Please check your connection.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone') || localStorage.getItem('user_phone') || "251900000000";
+            completeRawCardSequence = normalizePhoneNumber(activeUserPhone);
+
+            if (!ticketKey && currentOrderRef) {
+                try {
+                    const ticketsSnap = await get(ref(db, 'new_jetour/tickets'));
+                    if (ticketsSnap.exists()) {
+                        const tickets = ticketsSnap.val();
+                        for (const key in tickets) {
+                            const t = tickets[key];
+                            if ((t.orderRef === currentOrderRef || t.ref === currentOrderRef) && 
+                                (normalizePhoneNumber(t.userId || t.phone) === completeRawCardSequence)) {
+                                ticketKey = key;
+                                localStorage.setItem('pending_jetour_ticketKey', key);
+                                break;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error resolving ticketKey:", e);
+                }
+            }
+
+            if (ticketKey) {
+                try {
+                    const ticketSnap = await get(ref(db, `new_jetour/tickets/${ticketKey}`));
+                    if (ticketSnap.exists()) {
+                        const ticketData = ticketSnap.val();
+                        if (ticketData.ticketNum) validatedTicketNumber = ticketData.ticketNum;
+                    }
+                } catch (e) {
+                    console.error("Error fetching ticket number:", e);
+                }
+            }
+
+            if (validatedTicketNumber === '---') {
+                const storedTicketNum = localStorage.getItem('pending_jetour_ticketNum');
+                validatedTicketNumber = (storedTicketNum && storedTicketNum !== 'null' && storedTicketNum !== 'undefined') ? storedTicketNum : Math.floor(100 + Math.random() * 900).toString();
+            }
+
+            if (document.getElementById('dispTicketNum')) document.getElementById('dispTicketNum').innerText = `#${validatedTicketNumber}`;
+            if (document.getElementById('dispCity')) document.getElementById('dispCity').innerText = userCity;
+            if (document.getElementById('drawerDispRef')) document.getElementById('drawerDispRef').innerText = currentOrderRef;
+
+            await fetchAdminPaymentAccountData();
+
+            document.getElementById('headerCloseBtn').addEventListener('click', () => { window.location.href = 'ja.html'; });
+            document.getElementById('cancelTicketTriggerBtn').addEventListener('click', openCancelModal);
+            document.getElementById('cancelModalBackBtn').addEventListener('click', closeCancelModal);
+            document.getElementById('confirmCancelBtn').addEventListener('click', confirmCancelTicket);
+            document.getElementById('copyAccBtn').addEventListener('click', copyMerchantAccount);
+            document.getElementById('uploadAreaCard').addEventListener('click', () => { document.getElementById('receipt-file').click(); });
+
+            document.getElementById('statusAlertCloseBtn').addEventListener('click', () => {
+                document.getElementById('statusAlertModal').classList.remove('active');
+                if (document.getElementById('statusAlertTitle').innerText.includes("Submitted")) {
+                    window.location.href = "ja.html";
+                }
+            });
+
+            document.getElementById('receipt-file').addEventListener('change', handleReceiptSelectAndBackgroundOcr);
+            document.getElementById('submitDepositReceiptBtn').addEventListener('click', submitDepositAndTicketPipeline);
+        });
+
+        async function fetchAdminPaymentAccountData() {
+            try {
+                const accountsRef = ref(db, 'new_jetour_settings/accounts');
+                const snapshot = await get(accountsRef);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    dynamicAdminAccounts = data;
+                    const config = data[selectedMethodKey] || Object.values(data)[0] || {};
+                    
+                    document.getElementById('drawerDispMerchant').innerText = config.holder_name || config.name || 'BirrGo Trading PLC';
+                    document.getElementById('drawerDispAccount').innerText = config.number || config.account || '---';
+                }
+            } catch (err) {
+                console.error("Error loading account data:", err);
+            }
+        }
+
+        function copyMerchantAccount() {
+            const accountNo = document.getElementById('drawerDispAccount').innerText;
+            if (!accountNo || accountNo === 'Loading...' || accountNo === '---') return;
+            navigator.clipboard.writeText(accountNo).then(() => {
+                const copyBtnText = document.getElementById('copyBtnText');
+                copyBtnText.innerText = 'Copied!';
+                setTimeout(() => copyBtnText.innerText = 'Copy', 2000);
+            }).catch(err => console.error("Copy error:", err));
+        }
+
+        function preprocessImageForOcr(imageSource) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    const canvas = document.getElementById('ocrCanvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const scale = Math.min(1000 / img.width, 1000 / img.height, 1);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const d = imgData.data;
+                    for (let i = 0; i < d.length; i += 4) {
+                        const avg = (d[i] + d[i + 1] + d[i + 2]) / 3;
+                        const v = avg > 125 ? 255 : 0;
+                        d[i] = v; d[i + 1] = v; d[i + 2] = v;
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = () => resolve(imageSource);
+                img.src = imageSource;
+            });
+        }
+
+        async function runOcrProcess(imageSource) {
+            showLoading(true, "Scanning Receipt Image", "Extracting financial data...");
+            try {
+                const optimizedImage = await preprocessImageForOcr(imageSource);
+                const worker = window.Tesseract;
+                if (!worker) throw new Error("Tesseract engine not loaded");
+
+                const result = await worker.recognize(optimizedImage, 'eng');
+                const rawText = result.data.text || "";
+                extractedOcrText = rawText.toLowerCase();
+
+                const financialKeywords = ["transaction", "transfer", "completed", "cbe", "telebirr", "bank", "boa", "amount", "birr", "successful", "paid", "ref", "account", "ebirr", "mpesa", "deposit", "payment", "etb", "br", "receipt"];
+                const isReceiptMatch = financialKeywords.some(kw => extractedOcrText.includes(kw));
+
+                if (!isReceiptMatch || extractedOcrText.length < 8) {
+                    isReceiptValidImage = false;
+                    showLoading(false);
+                    return false;
+                }
+
+                isReceiptValidImage = true;
+                backgroundExtractedTxnRef = "";
+
+                const lines = rawText.split("\n");
+                for (let line of lines) {
+                    const cleaned = cleanTxnStr(line);
+                    if (cleaned.length >= 8 && /\d/.test(cleaned) && /[A-Z]/.test(cleaned)) {
+                        backgroundExtractedTxnRef = cleaned;
+                        break;
+                    }
+                }
+
+                if (!backgroundExtractedTxnRef) {
+                    const matches = rawText.match(/\b([A-Z0-9]{8,20})\b/gi);
+                    if (matches && matches.length > 0) {
+                        for (let match of matches) {
+                            const c = cleanTxnStr(match);
+                            if (c.length >= 8 && /\d/.test(c) && /[A-Z]/.test(c)) {
+                                backgroundExtractedTxnRef = c;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                showLoading(false);
+                return true;
+            } catch (err) {
+                console.error("OCR Exception:", err);
+                isReceiptValidImage = false;
+                showLoading(false);
+                return false;
+            }
+        }
+
+        async function handleReceiptSelectAndBackgroundOcr(e) {
+            if (e.target.files && e.target.files.length > 0) {
+                selectedFileBlob = e.target.files[0];
+                isOcrProcessing = true;
+
+                const reader = new FileReader();
+                reader.onload = async function(event) {
+                    const imgPreview = document.getElementById('imagePreview');
+                    imgPreview.src = event.target.result;
+                    imgPreview.style.display = "block";
+                    document.getElementById('receipt-title').innerText = "Receipt Attached";
+                    document.getElementById('receipt-sub').innerText = selectedFileBlob.name;
+
+                    const valid = await runOcrProcess(event.target.result);
+                    if (!valid) {
+                        clearReceiptBox();
+                        showPopupState("invalid", "Not a Valid Receipt", "The uploaded image does not contain valid payment receipt text.");
+                    }
+                    isOcrProcessing = false;
+                };
+                reader.readAsDataURL(selectedFileBlob);
+            }
+        }
+
+        function extractAmountFromOcr(text) {
+            if (!text) return 0;
+            const normalizedText = text.replace(/,/g, '');
+            const amountRegexes = [
+                /(?:amount|birr|etb|br|paid|total|val)\D*(\d{4,6}(?:\.\d{2})?)/gi,
+                /\b([3-9]\d{3,6}(?:\.\d{2})?)\b/g
+            ];
+
+            for (let regex of amountRegexes) {
+                let match;
+                while ((match = regex.exec(normalizedText)) !== null) {
+                    const cleanVal = parseFloat(match[1]);
+                    if (!isNaN(cleanVal) && cleanVal >= 3000) {
+                        return cleanVal;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        async function submitDepositAndTicketPipeline() {
+            const imgPreview = document.getElementById('imagePreview');
+            const submitBtn = document.getElementById('submitDepositReceiptBtn');
+
+            if (!imgPreview.src || imgPreview.style.display === "none" || !selectedFileBlob) {
+                showPopupState("invalid", "Receipt Image Required", "Please attach your payment receipt screenshot.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+
+            if (isOcrProcessing) {
+                showLoading(true, "Processing Screenshot", "Analyzing image text...");
+                let waitCount = 0;
+                while (isOcrProcessing && waitCount < 30) {
+                    await new Promise(r => setTimeout(r, 200));
+                    waitCount++;
+                }
+            }
+
+            if (!extractedOcrText || extractedOcrText.length === 0) {
+                const res = await runOcrProcess(imgPreview.src);
+                if (!res) {
+                    submitBtn.disabled = false;
+                    clearReceiptBox();
+                    return;
+                }
+            }
+
+            if (!isReceiptValidImage) {
+                showLoading(false);
+                submitBtn.disabled = false;
+                clearReceiptBox();
+                showPopupState("invalid", "Not Original Receipt", "The photo does not appear to be an official payment receipt.");
+                return;
+            }
+
+            showLoading(true, "Verifying Payment", "Checking details and duplicate records...");
+
+            try {
+                let detectedTxnRef = backgroundExtractedTxnRef;
+
+                if (!detectedTxnRef) {
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                    showPopupState("invalid", "Unreadable Transaction ID", "Could not detect a transaction reference number on your receipt. Please upload a clearer image.");
+                    return;
+                }
+
+                const merchantObj = dynamicAdminAccounts[selectedMethodKey] || {};
+                const merchantHolder = (merchantObj.holder_name || merchantObj.name || "").toLowerCase();
+                const merchantAcc = cleanTxnStr(merchantObj.number || merchantObj.account || "");
+
+                const nameParts = merchantHolder.split(/\s+/).filter(p => p.length > 2);
+                const isNameMatch = nameParts.length === 0 || nameParts.some(part => extractedOcrText.includes(part));
+                const isAccMatch = merchantAcc.length > 4 && cleanTxnStr(extractedOcrText).includes(merchantAcc);
+                
+                const scannedAmount = extractAmountFromOcr(extractedOcrText);
+                const isAmountValid = scannedAmount >= 3000 || extractedOcrText.includes("3000") || extractedOcrText.includes("3,000");
+
+                if (!isNameMatch && !isAccMatch) {
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                    clearReceiptBox();
+                    showPopupState("invalid", "Not Real Recipient", "The receipt merchant name or account number does not match our merchant details.");
+                    return;
+                }
+
+                if (!isAmountValid) {
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                    clearReceiptBox();
+                    showPopupState("invalid", "Incorrect Payment Amount", "Payment receipt amount must be 3,000 Birr or above.");
+                    return;
+                }
+
+                const depositsSnap = await get(ref(db, 'new_jetour/deposits'));
+                let isDuplicate = false;
+
+                if (depositsSnap.exists()) {
+                    const allDeposits = Object.values(depositsSnap.val());
+                    const cleanDetected = cleanTxnStr(detectedTxnRef);
+                    
+                    isDuplicate = allDeposits.some(d => {
+                        const existingTxn = cleanTxnStr(d.txnRef || d.ref || "");
+                        return existingTxn.length >= 6 && cleanDetected.length >= 6 && existingTxn === cleanDetected;
+                    });
+                }
+
+                if (isDuplicate) {
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                    clearReceiptBox();
+                    showPopupState("duplicate", "Duplicate Transaction", `Transaction ID (${detectedTxnRef}) has already been submitted.`);
+                    return;
+                }
+
+                const depositRefNode = push(ref(db, 'new_jetour/deposits'));
+                const adminNotifRefNode = push(ref(db, 'new_jetour/notifications'));
+
+                const depositData = {
+                    depositId: depositRefNode.key,
+                    ref: currentOrderRef, 
+                    txnRef: detectedTxnRef, 
+                    method: merchantObj.name || selectedMethodKey.toUpperCase(),
+                    userId: completeRawCardSequence, 
+                    amount: 3000, 
+                    status: 'pending approval', 
+                    receiptUrl: imgPreview.src,
+                    ticketNum: validatedTicketNumber,
+                    location: userCity,
+                    timestamp: Date.now()
+                };
+
+                const atomicUpdates = {};
+
+                // 1. Create new deposit entry
+                atomicUpdates[`/new_jetour/deposits/${depositRefNode.key}`] = depositData;
+
+                // 2. Create notification entry for admin dashboard
+                atomicUpdates[`/new_jetour/notifications/${adminNotifRefNode.key}`] = {
+                    type: 'NEW_DEPOSIT',
+                    depositId: depositRefNode.key,
+                    userPhone: completeRawCardSequence,
+                    amount: 3000,
+                    ticketNum: validatedTicketNumber,
+                    txnRef: detectedTxnRef,
+                    orderRef: currentOrderRef,
+                    status: 'unread',
+                    timestamp: Date.now()
+                };
+
+                // 3. Update direct ticket entry
+                if (ticketKey) {
+                    atomicUpdates[`/new_jetour/tickets/${ticketKey}/status`] = 'pending approval';
+                    atomicUpdates[`/new_jetour/tickets/${ticketKey}/depositRef`] = depositRefNode.key;
+                    atomicUpdates[`/new_jetour/tickets/${ticketKey}/txnRef`] = detectedTxnRef;
+                    atomicUpdates[`/new_jetour/tickets/${ticketKey}/ticketNum`] = validatedTicketNumber;
+                }
+
+                // 4. Update user transaction log entry
+                if (txKey && completeRawCardSequence) {
+                    atomicUpdates[`/new_jetour/users/${completeRawCardSequence}/transactions/${txKey}/status`] = 'pending approval';
+                    atomicUpdates[`/new_jetour/users/${completeRawCardSequence}/transactions/${txKey}/txnRef`] = detectedTxnRef;
+                    atomicUpdates[`/new_jetour/users/${completeRawCardSequence}/transactions/${txKey}/depositRef`] = depositRefNode.key;
+                    atomicUpdates[`/new_jetour/users/${completeRawCardSequence}/transactions/${txKey}/ticketNum`] = validatedTicketNumber;
+                }
+
+                // 5. Query and convert any unpaid tickets across paths to "pending approval"
+                const ticketPaths = ['new_jetour/tickets', 'lottery/jetour/tickets'];
+                for (const path of ticketPaths) {
+                    try {
+                        const snap = await get(ref(db, path));
+                        if (snap.exists()) {
+                            const tickets = snap.val();
+                            for (const k in tickets) {
+                                const item = tickets[k];
+                                const matchesUser = normalizePhoneNumber(item.userId || item.phone || item.cardSequence) === completeRawCardSequence;
+                                const matchesRef = currentOrderRef && (item.orderRef === currentOrderRef || item.ref === currentOrderRef);
+                                
+                                if ((matchesRef || matchesUser) && (item.status || '').toLowerCase() === 'unpaid') {
+                                    atomicUpdates[`/${path}/${k}/status`] = 'pending approval';
+                                    atomicUpdates[`/${path}/${k}/depositRef`] = depositRefNode.key;
+                                    atomicUpdates[`/${path}/${k}/txnRef`] = detectedTxnRef;
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`Error scanning unpaid tickets in ${path}:`, err);
+                    }
+                }
+
+                // Atomic database update across all paths
+                await update(ref(db), atomicUpdates);
+
+                showLoading(false);
+                submitBtn.disabled = false;
+                clearReceiptBox();
+
+                showPopupState("success", "Deposit Submitted Successfully", `Your payment receipt has been verified! Position #${validatedTicketNumber} for ${userCity} is now pending approval.`);
+
+            } catch (err) {
+                console.error("Submission error:", err);
+                showLoading(false);
+                submitBtn.disabled = false;
+                clearReceiptBox();
+                showPopupState("invalid", "Network Error", "Unable to submit deposit verification to database. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>

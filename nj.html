@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo Premium — Jetour Luxury Raffle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #6B001B;
+            --primary-gradient: linear-gradient(135deg, #7A001E 0%, #3F000E 100%);
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --warning-gold: #f59e0b;
+            --border-radius-lg: 16px;
+            --border-radius-md: 10px;
+            --font-family-pwa: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family-pwa); letter-spacing: -0.01em; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; height: 100dvh; overflow: hidden; background-color: #f1f5f9; }
+        body { display: flex; justify-content: center; align-items: center; }
+
+        .app-view { width: 100%; height: 100dvh; max-width: 450px; background-color: #ffffff; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 40px -12px rgba(0,0,0,0.08); overflow: hidden; }
+
+        .app-header { background: var(--primary-burgundy); padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px 16px; display: flex; align-items: center; justify-content: space-between; color: #ffffff; flex-shrink: 0; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .btn-back { width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; cursor: pointer; }
+        .header-title h2 { font-size: 15px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .header-right-tools { display: flex; align-items: center; gap: 10px; }
+        .btn-notif-bell { position: relative; background: rgba(255, 255, 255, 0.15); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; cursor: pointer; }
+        .notif-badge-count { position: absolute; top: 2px; right: 2px; background: var(--danger-red); color: white; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 10px; }
+        .birrgo-badge-icon { width: 28px; height: 28px; background: #ffffff; color: var(--primary-burgundy); font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+        .app-content { flex: 1; overflow-y: auto; background-color: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none; }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; }
+        .stat-card { background: #ffffff; border: 1px solid var(--border-light); padding: 10px 12px; border-radius: var(--border-radius-md); box-shadow: var(--card-shadow); }
+        .stat-card p { font-size: 9px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card h3 { font-size: 16px; font-weight: 800; color: var(--text-dark); }
+        .stat-card.remain h3 { color: var(--success-green); }
+
+        .premium-card-box { background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 12px 14px; flex-shrink: 0; box-shadow: var(--card-shadow); }
+        .form-heading { font-size: 11px; font-weight: 700; color: var(--text-dark); }
+        .field-group { display: flex; flex-direction: column; gap: 3px; }
+        .premium-input { height: 38px; border-radius: var(--border-radius-md); border: 1px solid var(--border-light); padding: 0 10px; font-size: 13px; font-weight: 700; color: var(--text-dark); outline: none; background: var(--bg-light); width: 100%; }
+        .premium-input:focus { border-color: var(--primary-burgundy); background: #ffffff; }
+
+        .search-engine-box { background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 12px; text-align: center; flex-shrink: 0; box-shadow: var(--card-shadow); }
+        .search-engine-box h3 { font-size: 11px; font-weight: 800; color: var(--text-dark); letter-spacing: 0.5px; text-transform: uppercase; }
+        .search-engine-box p { font-size: 9px; color: var(--text-muted); margin-bottom: 4px; }
+        .large-number-input { width: 100%; height: 42px; font-size: 18px; font-weight: 800; text-align: center; border-radius: 8px; border: 1px solid var(--border-light); color: var(--text-dark); background: var(--bg-light); outline: none; margin: 4px 0; }
+        .large-number-input:focus { border-color: var(--primary-burgundy); background: #ffffff; }
+
+        .status-feedback { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 4px; display: none; }
+        .status-feedback.available { display: inline-block; background-color: rgba(16, 185, 129, 0.12); color: var(--success-green); }
+        .status-feedback.taken { display: inline-block; background-color: rgba(239, 68, 68, 0.12); color: var(--danger-red); }
+
+        .live-feed-panel { background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 12px 14px; flex: 1; min-height: 120px; display: flex; flex-direction: column; box-shadow: var(--card-shadow); }
+        #liveOrdersFeed { flex: 1; overflow-y: auto; scrollbar-width: none; }
+        #liveOrdersFeed::-webkit-scrollbar { display: none; }
+
+        .feed-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light); font-size: 11px; }
+        .feed-row:last-child { border-bottom: none; }
+        .buyer-id { font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 5px; }
+        .buyer-id::before { content: ''; width: 6px; height: 6px; background: var(--success-green); border-radius: 50%; }
+        .buyer-ticket { background: var(--bg-light); color: var(--text-dark); font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 10px; border: 1px solid var(--border-light); }
+
+        .action-container { padding: 10px 12px 14px 12px; background: #ffffff; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .btn-submit-booking { background: var(--primary-gradient); color: white; border: none; height: 44px; font-size: 0.88rem; font-weight: 800; border-radius: var(--border-radius-md); cursor: pointer; width: 100%; box-shadow: 0 4px 10px rgba(107, 0, 27, 0.2); transition: background 0.2s; }
+        .btn-submit-booking:disabled { background: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
+        .btn-secondary-link { text-align: center; font-size: 11px; font-weight: 700; color: var(--primary-burgundy); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+        .advertisement-banner-box { height: 38px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; display: flex; align-items: center; justify-content: center; position: relative; }
+        .ad-tag-label { position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800; color: #94a3b8; }
+        .ad-content-inner { font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
+
+        .modal-overlay { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); z-index: 5000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .centered-popup-card { background: #ffffff; width: 100%; max-width: 360px; border-radius: var(--border-radius-lg); padding: 20px 18px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .popup-icon { width: 44px; height: 44px; margin: 0 auto 10px auto; border-radius: 50%; background: rgba(107, 0, 27, 0.1); color: var(--primary-burgundy); display: flex; align-items: center; justify-content: center; }
+        .danger-icon-box { background: rgba(239, 68, 68, 0.1); color: var(--danger-red); }
+        .warning-icon-box { background: rgba(245, 158, 11, 0.1); color: var(--warning-gold); }
+        .popup-title { font-size: 1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
+        .popup-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4; font-weight: 600; }
+        .password-input-field { width: 100%; height: 42px; background: var(--bg-light); border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 0 10px; font-size: 16px; font-weight: 800; outline: none; text-align: center; letter-spacing: 6px; margin-bottom: 14px; }
+        .popup-action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-popup-cancel { height: 40px; background: #f1f5f9; color: var(--text-dark); border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-confirm { height: 40px; background: var(--primary-gradient); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-danger { height: 40px; background: var(--danger-red); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+
+        .payment-gateway-card { text-align: left; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .drawer-title { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); }
+        .drawer-close-btn { background: none; border: none; font-size: 20px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+        .drawer-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+        .p2p-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+        .p2p-card { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); background: var(--bg-light); cursor: pointer; transition: border-color 0.15s; }
+        .p2p-card:hover { border-color: var(--primary-burgundy); }
+        .p2p-info { display: flex; align-items: center; gap: 10px; }
+        .p2p-icon-img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
+        .p2p-name { font-size: 12px; font-weight: 800; color: var(--text-dark); }
+        .p2p-limits { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+        .btn-card-action { font-size: 10px; font-weight: 800; color: var(--primary-burgundy); background: #ffffff; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-light); }
+
+        .p2p-card.recommended { background: #fff8f9; border: 1.5px solid var(--primary-burgundy); position: relative; }
+        .rec-badge { position: absolute; top: -8px; right: 10px; background: var(--primary-burgundy); color: #ffffff; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .wallet-balance-highlight { font-size: 11px; font-weight: 800; color: var(--success-green); }
+        .wallet-balance-insufficient { font-size: 11px; font-weight: 800; color: var(--danger-red); }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-back" onclick="window.location.href='lottery.html'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="header-title">
+                    <h2>Jetour Campaign</h2>
+                </div>
+            </div>
+            
+            <div class="header-right-tools">
+                <button class="btn-notif-bell" id="notifBellBtn" onclick="window.location.href='ja.html'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notif-badge-count" id="notifCountBadge" style="display:none;">0</span>
+                </button>
+
+                <div class="birrgo-logo-container">
+                    <div class="birrgo-badge-icon">B</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-content">
+            <div class="transaction-stats-section">
+                <div class="analytics-grid">
+                    <div class="stat-card sold">
+                        <p id="statSoldLabel">TOTAL DISTRIBUTED</p>
+                        <h3 id="statSold">0</h3>
+                    </div>
+                    <div class="stat-card remain">
+                        <p id="statRemainingLabel">AVAILABLE POOLS</p>
+                        <h3 id="statRemaining">3501</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-dashboard-section">
+                <div class="premium-card-box">
+                    <div class="form-heading" style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); font-weight: 700;">Participant Verification</div>
+                    <div class="field-group" style="margin-top: 4px;">
+                        <label style="font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;">LOCATION</label>
+                        <input type="text" id="userLocation" class="premium-input" placeholder="Enter Location">
+                    </div>
+                </div>
+
+                <div class="search-engine-box">
+                    <h3>SELECT RAFFLE POSITION</h3>
+                    <p>Enter code sequence interval (0 - 3500)</p>
+                    <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="3500">
+                    <div id="feedbackBadge" class="status-feedback"></div>
+                </div>
+            </div>
+
+            <div class="transaction-stats-section" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="live-feed-panel">
+                    <div class="form-heading" style="margin-bottom: 8px; font-size: 12px; font-weight: 700; color: var(--text-dark);">Live Allocation Stream</div>
+                    <div id="liveOrdersFeed"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-container">
+            <button class="btn-submit-booking" id="confirmPurchaseBtn" disabled>Authorize Placement (5,000 Br)</button>
+            <a href="ndash.html" class="btn-secondary-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                View Real-time Metrics Matrix
+            </a>
+            
+            <div class="advertisement-banner-box">
+                <div class="ad-tag-label">AD</div>
+                <div class="ad-content-inner">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Advertisement Space</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="unpaidOrderModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon warning-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="popup-title">Unpaid Order Pending</div>
+                <div class="popup-subtitle" id="unpaidOrderText">You have an active unpaid ticket reservation. Please complete or cancel your payment first.</div>
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="cancelUnpaidOrderBtn">Cancel Order</button>
+                    <button class="btn-popup-confirm" id="payUnpaidOrderBtn">Pay Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="cancelConfirmModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon danger-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="14" y2="17"></line><line x1="14" y1="11" x2="10" y2="17"></line></svg>
+                </div>
+                <div class="popup-title">Cancel Reservation?</div>
+                <div class="popup-subtitle">This action will permanently remove your active sequence assignment and release the slot back to the public pool.</div>
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="abortCancelBtn">Keep Order</button>
+                    <button class="btn-popup-danger" id="proceedCancelBtn">Yes, Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="paymentMethodModal">
+            <div class="centered-popup-card payment-gateway-card">
+                <div class="drawer-header">
+                    <div class="drawer-title">Jetour Ticket Payment (5,000 Br)</div>
+                    <button class="drawer-close-btn" id="closePaymentModalBtn">&times;</button>
+                </div>
+                <div class="drawer-step active">
+                    <p class="drawer-subtitle">Select your preferred payment method:</p>
+                    <div class="p2p-list" id="adminPaymentMethodsList">
+                        <p style="font-size:12px; color:var(--text-muted); text-align:center; padding: 20px;">Loading Methods & Balance...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="passwordModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div class="popup-title">Security Gateway</div>
+                <div class="popup-subtitle">Please enter your 6-digit security PIN to authorize this booking.</div>
+                <input type="password" id="transactionPin" maxlength="6" inputmode="numeric" class="password-input-field" placeholder="••••••">
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="closeModalBtn">Decline</button>
+                    <button class="btn-popup-confirm" id="submitPasswordBtn">Authorize</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="errorModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon danger-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="popup-title">Action Failed</div>
+                <div class="popup-subtitle" id="errorMessageText">Please check your inputs and try again.</div>
+                <div class="popup-action-row" style="grid-template-columns: 1fr;">
+                    <button class="btn-popup-danger" id="closeErrorModalBtn">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let completeRawCardSequence = ""; 
+        let userMatchedDbKey = ""; 
+        let isTicketAvailable = false;
+        let validatedTicketNumber = null;
+        let globallyTakenTicketsMap = {}; 
+        let userDailyTicketCount = 0;
+        let dynamicAdminAccounts = {};
+        let selectedMethodKey = "";
+        let activeUnpaidOrder = null;
+        let userWalletBalance = 0;
+        
+        const ticketPrice = 5000;
+        const maxDailyTicketsLimit = 5;
+        const totalPoolCount = 3501;
+
+        const paymentImages = {
+            birrgo_wallet: 'b1.jpg',
+            cbe: 'c2.jpg',
+            telebirr: 't1.jpg',
+            boa: 'a1.jpg',
+            cbebirr: 'c1.jpg',
+            mpesa: 'm1.jpg'
+        };
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            let clean = phoneStr.toString().replace(/\D/g, '');
+            if (clean.startsWith('09') && clean.length === 10) {
+                return '251' + clean.substring(1);
+            }
+            if (clean.startsWith('07') && clean.length === 10) {
+                return '251' + clean.substring(1);
+            }
+            if ((clean.startsWith('9') || clean.startsWith('7')) && clean.length === 9) {
+                return '251' + clean;
+            }
+            return clean;
+        }
+
+        function getStoredUserKey() {
+            const keysToTry = ['auth_session_phone', 'user_phone', 'phone', 'user_id', 'cardSequence', 'account_number'];
+            for (let k of keysToTry) {
+                let val = localStorage.getItem(k);
+                if (val && val.trim() !== '') return val.trim();
+            }
+            return "";
+        }
+
+        function showCustomError(message) {
+            document.getElementById('errorMessageText').innerText = message;
+            document.getElementById('errorModal').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const rawStoredPhone = getStoredUserKey();
+            activeUserPhone = rawStoredPhone;
+            completeRawCardSequence = normalizePhoneNumber(rawStoredPhone) || rawStoredPhone;
+
+            await scanAndResolveUserNode();
+            attachRealtimeDatabaseListeners();
+            listenToUserWalletBalance();
+            setupFormEngineListeners();
+            listenToAdminPaymentAccounts();
+
+            document.getElementById('closeErrorModalBtn').addEventListener('click', () => {
+                document.getElementById('errorModal').classList.remove('active');
+            });
+        });
+
+        async function scanAndResolveUserNode() {
+            const cleanTarget = normalizePhoneNumber(completeRawCardSequence) || completeRawCardSequence;
+            try {
+                const usersSnap = await get(ref(db, 'users'));
+                if (usersSnap.exists()) {
+                    const allUsers = usersSnap.val();
+                    let matchFound = false;
+
+                    Object.keys(allUsers).forEach(key => {
+                        if (matchFound) return;
+                        const profile = allUsers[key] || {};
+                        const storedCard = normalizePhoneNumber(profile.cardNumber || profile.cardSequence || '');
+                        const p1 = normalizePhoneNumber(profile.phoneNumber || '');
+                        const p2 = normalizePhoneNumber(profile.phone || '');
+
+                        if (
+                            key === cleanTarget || 
+                            key === completeRawCardSequence || 
+                            storedCard === cleanTarget ||
+                            (p1 && p1.includes(cleanTarget)) || 
+                            (p2 && p2.includes(cleanTarget))
+                        ) {
+                            userMatchedDbKey = key;
+                            matchFound = true;
+                        }
+                    });
+
+                    if (!matchFound) {
+                        userMatchedDbKey = completeRawCardSequence;
+                    }
+                } else {
+                    userMatchedDbKey = completeRawCardSequence;
+                }
+            } catch (err) {
+                console.warn("Scan resolve exception:", err);
+                userMatchedDbKey = completeRawCardSequence;
+            }
+        }
+
+        function extractValAsNumber(data) {
+            if (data === null || data === undefined) return null;
+            if (typeof data === 'number') return data;
+            if (typeof data === 'string' && !isNaN(Number(data)) && data.trim() !== '') return Number(data);
+            if (typeof data === 'object') {
+                const fieldsToInspect = ['balance', 'wallet', 'walletBalance', 'account_balance', 'currentBalance', 'totalBalance', 'amount'];
+                for (let field of fieldsToInspect) {
+                    if (field in data) {
+                        let parsed = extractValAsNumber(data[field]);
+                        if (parsed !== null) return parsed;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function listenToUserWalletBalance() {
+            const rawKeysList = [
+                userMatchedDbKey,
+                completeRawCardSequence,
+                activeUserPhone,
+                localStorage.getItem('user_id'),
+                localStorage.getItem('auth_session_phone')
+            ].filter(k => k && k.trim() !== '');
+
+            const uniqueKeys = new Set();
+            rawKeysList.forEach(k => {
+                const trimmed = k.trim();
+                uniqueKeys.add(trimmed);
+                const norm = normalizePhoneNumber(trimmed);
+                if (norm) {
+                    uniqueKeys.add(norm);
+                    if (norm.startsWith('251')) {
+                        uniqueKeys.add('0' + norm.substring(3));
+                    }
+                }
+            });
+
+            uniqueKeys.forEach(userKey => {
+                onValue(ref(db, `users/${userKey}`), (snapshot) => {
+                    if (snapshot.exists()) {
+                        let parsed = extractValAsNumber(snapshot.val());
+                        if (parsed !== null && parsed >= 0) {
+                            userWalletBalance = parsed;
+                            renderPaymentMethodsList();
+                        }
+                    }
+                });
+
+                onValue(ref(db, `wallets/${userKey}`), (snapshot) => {
+                    if (snapshot.exists()) {
+                        let parsed = extractValAsNumber(snapshot.val());
+                        if (parsed !== null && parsed >= 0) {
+                            userWalletBalance = parsed;
+                            renderPaymentMethodsList();
+                        }
+                    }
+                });
+            });
+        }
+
+        function attachRealtimeDatabaseListeners() {
+            const ticketsRef = ref(db, 'lottery/jetour/tickets');
+            onValue(ticketsRef, (snapshot) => {
+                globallyTakenTicketsMap = snapshot.val() || {};
+                const takenEntries = Object.entries(globallyTakenTicketsMap);
+                
+                let pendingCount = 0;
+                let approvedCount = 0;
+                activeUnpaidOrder = null;
+
+                takenEntries.forEach(([ticketKey, entry]) => {
+                    if (!entry) return;
+                    const st = (entry.status || '').toLowerCase().trim();
+                    const entryCard = normalizePhoneNumber(entry.cardSequence || entry.phone || '');
+                    const isUserMatch = (entryCard && (entryCard === completeRawCardSequence || entryCard === userMatchedDbKey));
+
+                    if (isUserMatch && st === 'unpaid') {
+                        activeUnpaidOrder = { key: ticketKey, ...entry };
+                    }
+
+                    if (st === 'pending' || st === 'pending approval') {
+                        pendingCount++;
+                    } else if (st === 'approved' || st === 'paid') {
+                        approvedCount++;
+                    }
+                });
+
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderText').innerText = `You have an active unpaid reservation (Position #${activeUnpaidOrder.ticketNum}). Please complete or cancel your payment first.`;
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                } else {
+                    document.getElementById('unpaidOrderModal').classList.remove('active');
+                }
+
+                const paidTotal = pendingCount + approvedCount;
+                const totalLeft = totalPoolCount - paidTotal;
+                
+                document.getElementById('statSold').innerText = paidTotal;
+                document.getElementById('statRemaining').innerText = totalLeft >= 0 ? totalLeft : 0;
+                
+                calculateUserDailyTicketCount();
+                executeLiveTicketStatusCheck();
+                renderLiveOrdersFeed(globallyTakenTicketsMap);
+            });
+        }
+
+        function calculateUserDailyTicketCount() {
+            const todayDateStr = new Date().toLocaleDateString();
+            userDailyTicketCount = 0;
+
+            Object.values(globallyTakenTicketsMap).forEach(entry => {
+                if (!entry) return;
+                const entryCard = normalizePhoneNumber(entry.cardSequence || entry.phone || '');
+                if (entryCard && (entryCard === completeRawCardSequence || entryCard === userMatchedDbKey) && entry.timestamp) {
+                    const entryDateStr = new Date(entry.timestamp).toLocaleDateString();
+                    if (entryDateStr === todayDateStr) {
+                        userDailyTicketCount++;
+                    }
+                }
+            });
+        }
+
+        function listenToAdminPaymentAccounts() {
+            const accountsRef = ref(db, 'new_jetour_settings/accounts');
+            onValue(accountsRef, (snapshot) => {
+                dynamicAdminAccounts = {};
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.keys(data).forEach(key => {
+                        const accountObj = data[key];
+                        if (accountObj && (accountObj.number || accountObj.account)) {
+                            dynamicAdminAccounts[key] = {
+                                name: accountObj.name || key.toUpperCase(),
+                                account: accountObj.number || accountObj.account,
+                                holder_name: accountObj.holder_name || accountObj.name || 'BirrGo Trading PLC',
+                                image: paymentImages[key] || 'c2.jpg'
+                            };
+                        }
+                    });
+                    renderPaymentMethodsList();
+                } else {
+                    const fallbackRef = ref(db, 'jetour_settings/accounts');
+                    onValue(fallbackRef, (fSnap) => {
+                        if (fSnap.exists()) {
+                            const fData = fSnap.val();
+                            Object.keys(fData).forEach(key => {
+                                const accountObj = fData[key];
+                                if (accountObj && (accountObj.number || accountObj.account)) {
+                                    dynamicAdminAccounts[key] = {
+                                        name: accountObj.name || key.toUpperCase(),
+                                        account: accountObj.number || accountObj.account,
+                                        holder_name: accountObj.holder_name || accountObj.name || 'BirrGo Trading PLC',
+                                        image: paymentImages[key] || 'c2.jpg'
+                                    };
+                                }
+                            });
+                        }
+                        renderPaymentMethodsList();
+                    }, { onlyOnce: true });
+                }
+            });
+        }
+
+        function renderPaymentMethodsList() {
+            const methodsContainer = document.getElementById('adminPaymentMethodsList');
+            if (!methodsContainer) return;
+            methodsContainer.innerHTML = '';
+
+            const walletCard = document.createElement('div');
+            walletCard.className = 'p2p-card recommended';
+            const isSufficient = userWalletBalance >= ticketPrice;
+            const balanceStyleClass = isSufficient ? 'wallet-balance-highlight' : 'wallet-balance-insufficient';
+            
+            walletCard.onclick = () => {
+                if (!isSufficient) {
+                    showCustomError(`Insufficient BirrGo Wallet Balance (${userWalletBalance.toLocaleString()} Br). You need ${ticketPrice.toLocaleString()} Br to complete this booking.`);
+                    return;
+                }
+                selectedMethodKey = 'birrgo_wallet';
+                document.getElementById('paymentMethodModal').classList.remove('active');
+                document.getElementById('transactionPin').value = '';
+                document.getElementById('passwordModal').classList.add('active');
+                document.getElementById('transactionPin').focus();
+            };
+
+            walletCard.innerHTML = `
+                <div class="rec-badge">Recommended • Instant</div>
+                <div class="p2p-info">
+                    <div class="birrgo-badge-icon" style="width:32px; height:32px; background:var(--primary-burgundy); color:#fff; font-size:16px;">B</div>
+                    <div>
+                        <div class="p2p-name">BirrGo Wallet</div>
+                        <div class="p2p-limits ${balanceStyleClass}">
+                            Available: ${userWalletBalance.toLocaleString()} Birr
+                        </div>
+                    </div>
+                </div>
+                <span class="btn-card-action" style="background:${isSufficient ? 'var(--primary-burgundy)' : '#ef4444'}; color:#fff; border:none;">
+                    ${isSufficient ? 'Pay Instant' : 'Insufficient'}
+                </span>
+            `;
+            methodsContainer.appendChild(walletCard);
+
+            const keys = Object.keys(dynamicAdminAccounts);
+            if (keys.length > 0) {
+                keys.forEach(key => {
+                    const acc = dynamicAdminAccounts[key];
+                    const card = document.createElement('div');
+                    card.className = 'p2p-card';
+                    card.onclick = () => {
+                        selectedMethodKey = key;
+                        document.getElementById('paymentMethodModal').classList.remove('active');
+                        document.getElementById('transactionPin').value = '';
+                        document.getElementById('passwordModal').classList.add('active');
+                        document.getElementById('transactionPin').focus();
+                    };
+                    card.innerHTML = `
+                        <div class="p2p-info">
+                            <img src="${acc.image}" class="p2p-icon-img" alt="${key}">
+                            <div>
+                                <div class="p2p-name">${acc.name}</div>
+                                <div class="p2p-limits">Manual Transfer (${ticketPrice.toLocaleString()} Br)</div>
+                            </div>
+                        </div>
+                        <span class="btn-card-action">Select</span>
+                    `;
+                    methodsContainer.appendChild(card);
+                });
+            }
+        }
+
+        function setupFormEngineListeners() {
+            const numInput = document.getElementById('ticketNumberInput');
+            const locInput = document.getElementById('userLocation');
+
+            numInput.addEventListener('input', executeLiveTicketStatusCheck);
+            locInput.addEventListener('input', validateGlobalInputsState);
+            
+            document.getElementById('confirmPurchaseBtn').addEventListener('click', () => {
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                    return;
+                }
+                if (userDailyTicketCount >= maxDailyTicketsLimit) {
+                    showCustomError(`Daily Limit Reached. Each participant can only reserve a maximum of ${maxDailyTicketsLimit} tickets per day.`);
+                    return;
+                }
+                if (!completeRawCardSequence) {
+                    showCustomError("Authentication Error: Please sign in to secure a reservation.");
+                    return;
+                }
+                renderPaymentMethodsList();
+                document.getElementById('paymentMethodModal').classList.add('active');
+            });
+
+            document.getElementById('cancelUnpaidOrderBtn').addEventListener('click', () => {
+                if (!activeUnpaidOrder) return;
+                document.getElementById('unpaidOrderModal').classList.remove('active');
+                document.getElementById('cancelConfirmModal').classList.add('active');
+            });
+
+            document.getElementById('abortCancelBtn').addEventListener('click', () => {
+                document.getElementById('cancelConfirmModal').classList.remove('active');
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                }
+            });
+
+            document.getElementById('proceedCancelBtn').addEventListener('click', async () => {
+                if (!activeUnpaidOrder) return;
+                const ticketKey = activeUnpaidOrder.key;
+                const txKey = activeUnpaidOrder.txKey;
+                const orderRef = activeUnpaidOrder.orderRef;
+
+                const targetNode = userMatchedDbKey || completeRawCardSequence;
+                const updates = {};
+                updates[`/lottery/jetour/tickets/${ticketKey}`] = null;
+                if (orderRef) updates[`/new_jetour/${orderRef}`] = null;
+                if (txKey && targetNode) {
+                    updates[`/users/${targetNode}/transactions/${txKey}`] = null;
+                }
+
+                try {
+                    await update(ref(db), updates);
+                } catch (e) {
+                    console.error("Cancel order error:", e);
+                }
+                document.getElementById('cancelConfirmModal').classList.remove('active');
+                activeUnpaidOrder = null;
+            });
+
+            document.getElementById('payUnpaidOrderBtn').addEventListener('click', () => {
+                if (!activeUnpaidOrder) {
+                    showCustomError("No active unpaid order found to process.");
+                    return;
+                }
+                localStorage.setItem('pending_jetour_orderRef', activeUnpaidOrder.orderRef);
+                localStorage.setItem('pending_jetour_ticketNum', activeUnpaidOrder.ticketNum);
+                localStorage.setItem('pending_jetour_location', activeUnpaidOrder.location);
+                localStorage.setItem('pending_jetour_ticketKey', activeUnpaidOrder.key);
+                window.location.href = "jl.html";
+            });
+
+            document.getElementById('closePaymentModalBtn').addEventListener('click', () => {
+                document.getElementById('paymentMethodModal').classList.remove('active');
+            });
+
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                document.getElementById('passwordModal').classList.remove('active');
+            });
+
+            document.getElementById('submitPasswordBtn').addEventListener('click', processPinVerification);
+        }
+
+        function executeLiveTicketStatusCheck() {
+            if (activeUnpaidOrder) return;
+
+            const inputField = document.getElementById('ticketNumberInput');
+            const feedback = document.getElementById('feedbackBadge');
+            const targetNum = parseInt(inputField.value, 10);
+
+            if (userDailyTicketCount >= maxDailyTicketsLimit) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = `DAILY LIMIT REACHED (${maxDailyTicketsLimit}/${maxDailyTicketsLimit})`;
+                feedback.style.display = "inline-block";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            if(inputField.value.trim() === "" || isNaN(targetNum)) {
+                feedback.style.display = "none";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            if(targetNum < 0 || targetNum > 3500) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = "OUT OF RANGE (0-3500)";
+                feedback.style.display = "inline-block";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            let isTaken = false;
+            Object.values(globallyTakenTicketsMap).forEach(entry => {
+                if(entry && parseInt(entry.ticketNum, 10) === targetNum) isTaken = true;
+            });
+
+            if(isTaken) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = `POSITION #${targetNum} TAKEN`;
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+            } else {
+                feedback.className = "status-feedback available";
+                feedback.innerText = `POSITION #${targetNum} OPEN`;
+                isTicketAvailable = true;
+                validatedTicketNumber = targetNum;
+            }
+            feedback.style.display = "inline-block";
+            validateGlobalInputsState();
+        }
+
+        function validateGlobalInputsState() {
+            const location = document.getElementById('userLocation').value.trim();
+            const submitBtn = document.getElementById('confirmPurchaseBtn');
+            if(location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null && userDailyTicketCount < maxDailyTicketsLimit && !activeUnpaidOrder) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function renderLiveOrdersFeed(data) {
+            const container = document.getElementById('liveOrdersFeed');
+            container.innerHTML = '';
+            
+            const validEntries = Object.values(data).filter(tx => {
+                if (!tx) return false;
+                const st = (tx.status || '').toLowerCase().trim();
+                return st === 'approved' || st === 'paid' || st === 'pending' || st === 'pending approval';
+            });
+
+            if(validEntries.length === 0) {
+                container.innerHTML = `<div style="text-align:center;font-size:11px;color:var(--text-muted);padding:15px;">NO ACTIVE ALLOCATIONS.</div>`;
+                return;
+            }
+
+            validEntries.reverse().slice(0, 6).forEach(tx => {
+                const row = document.createElement('div');
+                row.className = 'feed-row';
+                const rawCard = tx.cardSequence || tx.phone || "0000000000";
+                const hiddenCard = rawCard.length > 8 ? rawCard.substring(0, 4) + "••••" + rawCard.slice(-4) : rawCard;
+                row.innerHTML = `<span class="buyer-id">CARD ID ${hiddenCard}</span><span class="buyer-ticket">POS #${tx.ticketNum}</span>`;
+                container.appendChild(row);
+            });
+        }
+
+        async function processPinVerification() {
+            const pinInput = document.getElementById('transactionPin').value.trim();
+            const userCity = document.getElementById('userLocation').value.trim();
+            const rawInputVal = document.getElementById('ticketNumberInput').value.trim();
+            
+            const finalTicketNum = (validatedTicketNumber !== null && validatedTicketNumber !== undefined) ? validatedTicketNumber : (rawInputVal !== "" ? parseInt(rawInputVal, 10) : null);
+
+            if (!completeRawCardSequence && !userMatchedDbKey) {
+                showCustomError("Session error. Please log in to your account first.");
+                document.getElementById('passwordModal').classList.remove('active');
+                return;
+            }
+
+            if (pinInput.length !== 6) {
+                showCustomError("Please enter a valid 6-digit security PIN.");
+                return;
+            }
+            if (!userCity) {
+                showCustomError("Please enter your current location/city.");
+                return;
+            }
+            if (finalTicketNum === null || finalTicketNum === undefined || isNaN(finalTicketNum)) {
+                showCustomError("Please enter a valid ticket position number.");
+                return;
+            }
+
+            let userData = null;
+            let resolvedNodeKey = userMatchedDbKey || completeRawCardSequence;
+
+            try {
+                if (userMatchedDbKey) {
+                    const directSnap = await get(ref(db, `users/${userMatchedDbKey}`));
+                    if (directSnap.exists()) userData = directSnap.val();
+                }
+
+                if (!userData) {
+                    const fallbackSnap = await get(ref(db, `users/${completeRawCardSequence}`));
+                    if (fallbackSnap.exists()) {
+                        userData = fallbackSnap.val();
+                        resolvedNodeKey = completeRawCardSequence;
+                    }
+                }
+
+                if (!userData) {
+                    await scanAndResolveUserNode();
+                    if (userMatchedDbKey) {
+                        const finalSnap = await get(ref(db, `users/${userMatchedDbKey}`));
+                        if (finalSnap.exists()) {
+                            userData = finalSnap.val();
+                            resolvedNodeKey = userMatchedDbKey;
+                        }
+                    }
+                }
+
+                if (!userData) {
+                    showCustomError("User account verification failed. Please try logging in again.");
+                    return;
+                }
+
+                const storedPin = userData.securityPin || userData.pin || userData.password;
+                if (!storedPin || storedPin.toString() !== pinInput) {
+                    showCustomError("Incorrect security PIN. Please try again.");
+                    return;
+                }
+
+            } catch (err) {
+                console.error("Error verifying PIN:", err);
+                showCustomError("Failed to verify PIN. Check your network.");
+                return;
+            }
+
+            document.getElementById('passwordModal').classList.remove('active');
+
+            const timestampStr = new Date().toLocaleString();
+            const currentOrderRef = 'JT-' + Math.floor(100000 + Math.random() * 900000);
+
+            const ticketRefNode = push(ref(db, 'lottery/jetour/tickets'));
+            const userTxRefNode = push(ref(db, `users/${resolvedNodeKey}/transactions`));
+            const globalTxRefNode = push(ref(db, 'transactions'));
+
+            const currentTicketKey = ticketRefNode.key;
+            const currentTxKey = userTxRefNode.key;
+            const globalTxKey = globalTxRefNode.key;
+
+            const atomicUpdates = {};
+
+            if (selectedMethodKey === 'birrgo_wallet') {
+                let latestBalance = userWalletBalance;
+
+                if (latestBalance < ticketPrice) {
+                    showCustomError(`Insufficient wallet balance. Available: ${latestBalance.toLocaleString()} Br.`);
+                    return;
+                }
+
+                const newWalletBalance = latestBalance - ticketPrice;
+                
+                atomicUpdates[`/users/${resolvedNodeKey}/balance`] = newWalletBalance;
+                atomicUpdates[`/users/${resolvedNodeKey}/wallet`] = newWalletBalance;
+                atomicUpdates[`/users/${resolvedNodeKey}/walletBalance`] = newWalletBalance;
+                atomicUpdates[`/wallets/${resolvedNodeKey}/balance`] = newWalletBalance;
+                
+                const paidPayload = {
+                    cardSequence: resolvedNodeKey, 
+                    phone: activeUserPhone, 
+                    ticketNum: finalTicketNum,
+                    location: userCity, 
+                    timestamp: timestampStr, 
+                    status: 'paid',
+                    paymentMethod: 'BirrGo Wallet',
+                    orderRef: currentOrderRef,
+                    txKey: currentTxKey
+                };
+
+                const txPayload = {
+                    title: `🎟️ Jetour Raffle Ticket #${finalTicketNum}`, 
+                    amount: ticketPrice, 
+                    type: 'ticket', 
+                    status: 'paid',
+                    paymentMethod: 'BirrGo Wallet',
+                    campaign: 'Jetour Luxury', 
+                    ticketNum: finalTicketNum, 
+                    location: userCity,
+                    orderRef: currentOrderRef, 
+                    timestamp: timestampStr,
+                    cardSequence: resolvedNodeKey
+                };
+
+                atomicUpdates[`/lottery/jetour/tickets/${currentTicketKey}`] = paidPayload;
+                atomicUpdates[`/users/${resolvedNodeKey}/transactions/${currentTxKey}`] = txPayload;
+                atomicUpdates[`/transactions/${globalTxKey}`] = txPayload;
+                atomicUpdates[`/new_jetour/${currentOrderRef}`] = {
+                    ...paidPayload,
+                    amount: ticketPrice,
+                    createdAt: timestampStr
+                };
+
+                try {
+                    await update(ref(db), atomicUpdates);
+                    userWalletBalance = newWalletBalance;
+                    alert(`Order Successful! Ticket #${finalTicketNum} has been purchased using your BirrGo Wallet.`);
+                    
+                    document.getElementById('ticketNumberInput').value = '';
+                    document.getElementById('feedbackBadge').style.display = 'none';
+                    validateGlobalInputsState();
+                } catch (err) {
+                    console.error("Wallet transaction failed:", err);
+                    showCustomError("Transaction failed to process. Please check your network connection.");
+                }
+            } else {
+                const unpaidPayload = {
+                    cardSequence: resolvedNodeKey, 
+                    phone: activeUserPhone, 
+                    ticketNum: finalTicketNum,
+                    location: userCity, 
+                    timestamp: timestampStr, 
+                    status: 'unpaid',
+                    paymentMethod: selectedMethodKey,
+                    orderRef: currentOrderRef,
+                    txKey: currentTxKey
+                };
+
+                const unpaidTxPayload = {
+                    title: `🎟️ Jetour Raffle Ticket #${finalTicketNum}`, 
+                    amount: ticketPrice, 
+                    type: 'ticket', 
+                    status: 'unpaid',
+                    paymentMethod: selectedMethodKey,
+                    campaign: 'Jetour Luxury', 
+                    ticketNum: finalTicketNum, 
+                    location: userCity,
+                    orderRef: currentOrderRef, 
+                    timestamp: timestampStr,
+                    cardSequence: resolvedNodeKey
+                };
+
+                atomicUpdates[`/lottery/jetour/tickets/${currentTicketKey}`] = unpaidPayload;
+                atomicUpdates[`/users/${resolvedNodeKey}/transactions/${currentTxKey}`] = unpaidTxPayload;
+                atomicUpdates[`/transactions/${globalTxKey}`] = unpaidTxPayload;
+                atomicUpdates[`/new_jetour/${currentOrderRef}`] = {
+                    ...unpaidPayload,
+                    amount: ticketPrice,
+                    createdAt: timestampStr
+                };
+
+                try {
+                    await update(ref(db), atomicUpdates);
+
+                    localStorage.setItem('pending_jetour_orderRef', currentOrderRef);
+                    localStorage.setItem('pending_jetour_ticketNum', finalTicketNum);
+                    localStorage.setItem('pending_jetour_location', userCity);
+                    localStorage.setItem('pending_jetour_ticketKey', currentTicketKey);
+                    localStorage.setItem('pending_jetour_txKey', currentTxKey);
+                    localStorage.setItem('pending_jetour_selectedMethod', selectedMethodKey);
+
+                    window.location.href = "jl.html";
+                } catch (err) {
+                    console.error("Manual order creation failed:", err);
+                    showCustomError("Failed to initiate manual reservation. Please try again.");
+                }
+            }
+        }
+    </script>
+</body>
+</html>

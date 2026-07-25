@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirrGo - JETOUR Admin Dashboard</title>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-hover: #6a0010;
+            --bg-light: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding-bottom: 80px;
+        }
+
+        /* Top Header */
+        header {
+            background-color: var(--primary-burgundy);
+            color: #fff;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn, .nav-link-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover, .nav-link-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Nav Badges */
+        .nav-badge {
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .nav-badge.zero {
+            display: none;
+        }
+
+        /* Navigation Tabs */
+        .tab-bar {
+            display: flex;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 57px;
+            z-index: 90;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-burgundy);
+            border-bottom-color: var(--primary-burgundy);
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Transaction Card Styling */
+        .mobile-tx-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tx-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .tx-ref {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .tx-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .tx-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-action-mobile {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action-mobile:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal / Slip Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-card img {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Toast Notification */
+        #system-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            transition: transform 0.3s ease;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        #system-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Support Chat Overlay */
+        .chat-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+        }
+
+        .chat-overlay.active {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .chat-drawer {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: var(--primary-burgundy);
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .chat-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .chat-list-item:hover {
+            background: var(--bg-light);
+        }
+
+        .user-badge {
+            background: var(--primary-burgundy);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        .chat-room {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-room.active {
+            display: flex;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--bg-light);
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .bubble.sent {
+            align-self: flex-end;
+            background: var(--primary-burgundy);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .bubble.received {
+            align-self: flex-start;
+            background: white;
+            color: var(--text-dark);
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: white;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .chat-input-area button {
+            background: var(--primary-burgundy);
+            color: white;
+            border: none;
+            padding: 0 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-title-group">
+            <!-- Back Button -->
+            <a href="new.html" class="nav-link-btn" title="Back to New">
+                &#8592; Back
+            </a>
+            <h1>BirrGo Admin (JETOUR)</h1>
+        </div>
+        
+        <div class="header-actions">
+            <button class="icon-btn" onclick="toggleChatOverlay()">
+                💬 Support
+                <span id="header-chat-badge" class="nav-badge zero">0</span>
+            </button>
+
+            <!-- Forward Button -->
+            <a href="jal.html" class="nav-link-btn" title="Go to JAL">
+                Forward &#8594;
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('pending-panel', this)">
+            Review Pending
+            <span id="tab-badge-pending" class="nav-badge zero">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('unpaid-panel', this)">
+            Unpaid Orders
+            <span id="tab-badge-unpaid" class="nav-badge zero">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('history-panel', this)">
+            History
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Pending Review Panel -->
+        <div id="pending-panel" class="tab-panel active">
+            <div id="tx-cards-container">
+                <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">Loading tickets...</p>
+            </div>
+        </div>
+
+        <!-- Unpaid Orders Panel -->
+        <div id="unpaid-panel" class="tab-panel">
+            <div id="unpaid-cards-container">
+                <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">Loading unpaid tickets...</p>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div id="history-panel" class="tab-panel">
+            <div id="history-cards-container">
+                <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">Loading history...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Slip Modal -->
+    <div id="slipModal" class="modal-overlay" onclick="closeSlip()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeSlip()">&times;</button>
+            <img id="slipImg" src="" alt="Payment Receipt Slip" />
+        </div>
+    </div>
+
+    <!-- Support Chat Drawer Overlay -->
+    <div id="chat-overlay" class="chat-overlay" onclick="closeChatOverlayOnOuterClick(event)">
+        <div class="chat-drawer">
+            <!-- Chat User List -->
+            <div id="chat-list-view">
+                <div class="chat-header">
+                    <h3 style="font-size: 15px;">Active Client Chats</h3>
+                    <button class="icon-btn" onclick="toggleChatOverlay()">✕</button>
+                </div>
+                <div id="chat-users-container" class="chat-list">
+                    <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">Loading chats...</p>
+                </div>
+            </div>
+
+            <!-- Single Chat Room -->
+            <div id="chat-room-view" class="chat-room">
+                <div class="chat-header">
+                    <button class="icon-btn" onclick="exitChatRoom()">← Back</button>
+                    <span id="active-user-title" style="font-weight: 700; font-size: 13px;">Chat</span>
+                    <button class="icon-btn" onclick="toggleChatOverlay()">✕</button>
+                </div>
+                <div id="chat-messages-box" class="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-msg-input" placeholder="Type reply..." />
+                    <button id="send-chat-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="system-toast">
+        <span class="toast-icon">✅</span>
+        <span id="toast-message">Action successful</span>
+    </div>
+
+    <!-- Floating Chat Notification Badge (for background visibility) -->
+    <div id="floating-chat-badge" class="nav-badge" style="display:none; position: fixed; bottom: 20px; right: 20px; padding: 10px 14px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer;" onclick="toggleChatOverlay()">💬 Support</div>
+
+    <!-- Firebase SDK Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeOrderId = '';
+
+        window.toggleChatOverlay = function() {
+            const overlay = document.getElementById('chat-overlay');
+            overlay.classList.toggle('active');
+        };
+
+        window.closeChatOverlayOnOuterClick = function(e) {
+            if (e.target.id === 'chat-overlay') {
+                window.toggleChatOverlay();
+            }
+        };
+
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('system-toast');
+            const textEl = document.getElementById('toast-message');
+            
+            textEl.innerText = message;
+            if (type === 'success') {
+                toast.style.borderTop = "5px solid #10b981";
+                toast.querySelector('.toast-icon').innerText = '✅';
+            } else if (type === 'error') {
+                toast.style.borderTop = "5px solid #ef4444";
+                toast.querySelector('.toast-icon').innerText = '❌';
+            } else {
+                toast.style.borderTop = "5px solid #f59e0b";
+                toast.querySelector('.toast-icon').innerText = '🔔';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        };
+
+        window.switchTab = function(tabId, button) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            button.classList.add('active');
+        };
+
+        window.exitChatRoom = function() {
+            activeOrderId = '';
+            document.getElementById('chat-room-view').classList.remove('active');
+            document.getElementById('chat-list-view').classList.remove('hidden');
+        };
+
+        window.closeSlip = function() {
+            document.getElementById('slipModal').style.display = 'none';
+        };
+
+        window.viewSlip = function(receiptUrl, fallbackRef) {
+            const imgEl = document.getElementById('slipImg');
+            imgEl.src = receiptUrl || `https://placehold.co/400x600/f3f4f6/8b0015?text=${fallbackRef}+Receipt`;
+            document.getElementById('slipModal').style.display = 'flex';
+        };
+
+        function sendEmailNotification(subjectText, txDetails = {}) {
+            get(ref(db, 'new_jetour_settings/email_config')).then((snapshot) => {
+                const config = snapshot.val();
+                if (!config) return;
+
+                const targetEmail = config.alert_email_target;
+                const publicKey = config.emailjs_public_key;
+                const serviceId = config.emailjs_service_id;
+                const templateId = config.emailjs_template_id;
+
+                const emailjsInstance = window.emailjs;
+
+                if (emailjsInstance && publicKey && serviceId && templateId && targetEmail) {
+                    emailjsInstance.init({ publicKey: publicKey });
+                    const templateParams = {
+                        name: txDetails.name || txDetails.userId || 'Guest Client',
+                        email: txDetails.email || txDetails.userId || 'N/A',
+                        amount: txDetails.amount || '3000',
+                        subject: `⚠️ [BirrGo JETOUR Alert] ${subjectText}`, 
+                        method: txDetails.method || 'JETOUR Payment',
+                        ref: txDetails.ref || 'N/A',
+                        status: txDetails.status || 'Pending',
+                        reason: txDetails.reason || 'None given'
+                    };
+                    emailjsInstance.send(serviceId, templateId, templateParams);
+                }
+            });
+        }
+
+        function listenToJETOURNodes() {
+            const pendingContainer = document.getElementById('tx-cards-container'); 
+            const unpaidContainer = document.getElementById('unpaid-cards-container'); 
+            const historyContainer = document.getElementById('history-cards-container'); 
+            
+            const topMenuPendingBadge = document.getElementById('tab-badge-pending');
+            const topMenuUnpaidBadge = document.getElementById('tab-badge-unpaid');
+
+            // Listening directly to lottery/jetour/tickets
+            onValue(ref(db, 'lottery/jetour/tickets'), (ticketsSnap) => {
+                const ticketsData = ticketsSnap.val() || {};
+                
+                get(ref(db, 'new_jetour/deposits')).then((depositsSnap) => {
+                    const depositsData = depositsSnap.val() || {};
+
+                    let pendingCount = 0;
+                    let unpaidCount = 0;
+                    
+                    pendingContainer.innerHTML = '';
+                    unpaidContainer.innerHTML = '';
+                    historyContainer.innerHTML = '';
+
+                    let totalUnpaidRendered = 0;
+                    let totalPendingRendered = 0;
+                    let totalHistoryRendered = 0;
+
+                    const ticketKeys = Object.keys(ticketsData).reverse();
+
+                    ticketKeys.forEach((ticketKey) => {
+                        const ticket = ticketsData[ticketKey];
+                        if (!ticket) return;
+
+                        const depKey = ticket.depositRef || ticket.orderRef;
+                        const dep = depKey ? depositsData[depKey] : null;
+
+                        const rawStatus = (ticket.status || 'unpaid').toString().trim().toLowerCase();
+
+                        const isUnpaidCard = rawStatus === 'unpaid';
+                        const isPendingCard = rawStatus === 'pending' || rawStatus === 'pending approval' || rawStatus === 'review';
+                        const isApprovedCard = rawStatus === 'approved' || rawStatus === 'paid';
+                        const isRejectedCard = rawStatus === 'rejected' || rawStatus === 'declined' || rawStatus === 'cancelled';
+
+                        if (isUnpaidCard) unpaidCount++;
+                        if (isPendingCard) pendingCount++;
+
+                        const card = document.createElement('div');
+                        card.className = 'mobile-tx-card';
+                        card.id = `card-${ticketKey}`;
+                        
+                        let badgeStyle = '';
+                        if (isPendingCard) {
+                            badgeStyle = 'background:#fef3c7; color:#d97706;';
+                        } else if (isUnpaidCard) {
+                            badgeStyle = 'background:rgba(245, 158, 11, 0.15); color:#f59e0b;';
+                        } else if (isApprovedCard) {
+                            badgeStyle = 'background:#d1fae5; color:#059669;';
+                        } else if (isRejectedCard) {
+                            badgeStyle = 'background:#fee2e2; color:#dc2626;';
+                        }
+
+                        let reasonDisplay = ticket.reject_reason ? `<div class="tx-row" style="color:#ef4444;"><span style="font-weight:600;">Reason:</span> <span>${ticket.reject_reason}</span></div>` : '';
+
+                        const receiptUrl = ticket.receiptUrl || (dep && dep.receiptUrl);
+                        const slipActionHtml = !receiptUrl
+                            ? `<button class="btn-action-mobile" style="background:#f3f4f6; color:#9ca3af; cursor: not-allowed;" disabled>No Receipt</button>`
+                            : `<button class="btn-action-mobile" style="background:#f3f4f6; color:#111;" id="view-slip-${ticketKey}">View Receipt</button>`;
+
+                        let actionPanelHtml = '';
+                        if (isPendingCard) {
+                            actionPanelHtml = `
+                                <div class="tx-actions">
+                                    ${slipActionHtml}
+                                    <button class="btn-action-mobile" style="background:var(--success-color, #10b981); color:white;" id="approve-${ticketKey}">Approve</button>
+                                    <button class="btn-action-mobile" style="background:var(--danger-color, #ef4444); color:white;" id="reject-${ticketKey}">Reject</button>
+                                </div>
+                            `;
+                        } else {
+                            actionPanelHtml = `
+                                <div class="tx-actions">
+                                    ${slipActionHtml}
+                                </div>
+                            `;
+                        }
+
+                        const displayRef = ticket.orderRef || (dep ? dep.ref : 'JT-ORDER');
+                        const clientPhone = ticket.phone || ticket.cardSequence || ticket.userId || 'N/A';
+
+                        card.innerHTML = `
+                            <div class="tx-header">
+                                <span class="tx-ref">Ref: ${displayRef} | Position #${ticket.ticketNum || '---'}</span>
+                                <span style="font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; ${badgeStyle}">${ticket.status || 'Unpaid'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Gateway / Method:</span>
+                                <span style="font-weight:600;">${dep ? dep.method : 'Awaiting Payment'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Client Phone:</span>
+                                <span style="font-weight:600;">${clientPhone}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">City / Location:</span>
+                                <span style="font-weight:600;">${ticket.location || 'N/A'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Transfer Amount:</span>
+                                <span style="font-weight:800; color:var(--primary-burgundy, #8b0015);">3,000 ETB</span>
+                            </div>
+                            ${dep && dep.txnRef ? `<div class="tx-row"><span style="color:var(--text-muted);">Txn Ref:</span><span style="font-weight:700;">${dep.txnRef}</span></div>` : ''}
+                            ${reasonDisplay}
+                            ${actionPanelHtml}
+                        `;
+
+                        if (isUnpaidCard) {
+                            unpaidContainer.appendChild(card);
+                            totalUnpaidRendered++;
+                        } else if (isPendingCard) {
+                            pendingContainer.appendChild(card);
+                            totalPendingRendered++;
+                        } else {
+                            historyContainer.appendChild(card);
+                            totalHistoryRendered++;
+                        }
+
+                        if (receiptUrl) {
+                            const viewBtn = document.getElementById(`view-slip-${ticketKey}`);
+                            if (viewBtn) {
+                                viewBtn.onclick = () => window.viewSlip(receiptUrl, displayRef || ticketKey);
+                            }
+                        }
+                        
+                        if (isPendingCard) {
+                            const approveBtn = document.getElementById(`approve-${ticketKey}`);
+                            if (approveBtn) {
+                                approveBtn.onclick = async () => {
+                                    await updateJETOUROrderStatus(ticketKey, depKey, clientPhone, 'approved', '');
+                                    window.showToast("JETOUR Ticket Approved Successfully!");
+                                };
+                            }
+
+                            const rejectBtn = document.getElementById(`reject-${ticketKey}`);
+                            if (rejectBtn) {
+                                rejectBtn.onclick = async () => {
+                                    const reason = prompt("Why are you rejecting this JETOUR order?");
+                                    if (reason === null) return; 
+                                    
+                                    await updateJETOUROrderStatus(ticketKey, depKey, clientPhone, 'rejected', reason.trim() || 'Invalid transfer details');
+                                    window.showToast("JETOUR Order Rejected!", "error");
+                                };
+                            }
+                        }
+                    });
+
+                    if (totalUnpaidRendered === 0) {
+                        unpaidContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No unpaid JETOUR tickets found.</p>`;
+                    }
+                    if (totalPendingRendered === 0) {
+                        pendingContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No pending deposit reviews.</p>`;
+                    }
+                    if (totalHistoryRendered === 0) {
+                        historyContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No transaction history available.</p>`;
+                    }
+
+                    topMenuPendingBadge.innerText = pendingCount;
+                    if (pendingCount > 0) topMenuPendingBadge.classList.remove('zero');
+                    else topMenuPendingBadge.classList.add('zero');
+
+                    topMenuUnpaidBadge.innerText = unpaidCount;
+                    if (unpaidCount > 0) topMenuUnpaidBadge.classList.remove('zero');
+                    else topMenuUnpaidBadge.classList.add('zero');
+                });
+            });
+        }
+
+        async function updateJETOUROrderStatus(ticketKey, depositKey, userId, newStatus, reason = '') {
+            const updates = {};
+
+            updates[`/lottery/jetour/tickets/${ticketKey}/status`] = newStatus;
+            updates[`/lottery/jetour/tickets/${ticketKey}/userRead`] = false;
+            if (reason) updates[`/lottery/jetour/tickets/${ticketKey}/reject_reason`] = reason;
+
+            if (depositKey) {
+                updates[`/new_jetour/deposits/${depositKey}/status`] = newStatus;
+                updates[`/new_jetour/deposits/${depositKey}/userRead`] = false;
+                if (reason) updates[`/new_jetour/deposits/${depositKey}/reject_reason`] = reason;
+            }
+
+            if (userId) {
+                const userTxSnap = await get(ref(db, `users/${userId}/transactions`));
+                if (userTxSnap.exists()) {
+                    const userTxs = userTxSnap.val();
+                    Object.keys(userTxs).forEach(txKey => {
+                        if (userTxs[txKey].ticketKey === ticketKey || userTxs[txKey].depositRef === depositKey) {
+                            updates[`/users/${userId}/transactions/${txKey}/status`] = newStatus;
+                            if (reason) updates[`/users/${userId}/transactions/${txKey}/reason`] = reason;
+                        }
+                    });
+                }
+            }
+
+            await update(ref(db), updates);
+
+            sendEmailNotification(`JETOUR Order ${newStatus.toUpperCase()}`, {
+                name: userId,
+                userId: userId,
+                amount: '3000',
+                status: newStatus,
+                reason: reason || 'N/A'
+            });
+        }
+
+        function listenToChatUsers() {
+            const listContainer = document.getElementById('chat-users-container');
+            const headerChatBadge = document.getElementById('header-chat-badge');
+            const floatingChatBadge = document.getElementById('floating-chat-badge');
+            
+            onValue(ref(db, 'lottery/jetour/tickets'), (snapshot) => {
+                listContainer.innerHTML = '';
+                const jetourData = snapshot.val() || {};
+                const orderIds = Object.keys(jetourData);
+                let totalUnreadCount = 0;
+                let activeChatsCount = 0;
+
+                orderIds.forEach(orderId => {
+                    const orderObj = jetourData[orderId];
+                    if (orderObj && orderObj.messages) {
+                        activeChatsCount++;
+                        const messages = orderObj.messages || {};
+                        let orderUnreadCount = 0;
+
+                        Object.keys(messages).forEach(msgKey => {
+                            const msg = messages[msgKey];
+                            if (msg.sender === 'user' && msg.read !== true) {
+                                orderUnreadCount++;
+                            }
+                        });
+                        totalUnreadCount += orderUnreadCount;
+
+                        const item = document.createElement('div');
+                        item.className = 'chat-list-item';
+                        item.onclick = () => openChatRoom(orderId);
+                        
+                        const unreadBadgeHtml = orderUnreadCount > 0 
+                            ? `<span class="nav-badge" style="margin-left: auto; margin-right: 12px; display: inline-block;">${orderUnreadCount}</span>` 
+                            : '';
+
+                        item.innerHTML = `
+                            <div class="user-badge">${orderId.slice(-3).toUpperCase()}</div>
+                            <div style="flex-grow: 1;">
+                                <h4 style="font-size:14px; font-weight:800;">Position #${orderObj.ticketNum || orderId}</h4>
+                                <p style="font-size:11px; color:var(--text-muted);">${orderUnreadCount > 0 ? '💬 New client message' : 'Client: ' + (orderObj.phone || orderObj.userId || 'Guest')}</p>
+                            </div>
+                            ${unreadBadgeHtml}
+                        `;
+                        listContainer.appendChild(item);
+
+                        if (activeOrderId === orderId && orderUnreadCount > 0) {
+                            clearUnreadMessages(orderId, messages);
+                        }
+                    }
+                });
+
+                if (activeChatsCount === 0) {
+                    listContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No active JETOUR support chats.</p>`;
+                }
+
+                headerChatBadge.innerText = totalUnreadCount;
+                if (totalUnreadCount > 0) headerChatBadge.classList.remove('zero');
+                else headerChatBadge.classList.add('zero');
+
+                if (totalUnreadCount > 0) {
+                    floatingChatBadge.innerText = `💬 Support (${totalUnreadCount})`;
+                    floatingChatBadge.style.display = 'block';
+                } else {
+                    floatingChatBadge.style.display = 'none';
+                }
+            });
+        }
+
+        function clearUnreadMessages(orderId, messages) {
+            Object.keys(messages).forEach(msgKey => {
+                const msg = messages[msgKey];
+                if (msg.sender === 'user' && msg.read !== true) {
+                    set(ref(db, `lottery/jetour/tickets/${orderId}/messages/${msgKey}/read`), true);
+                }
+            });
+        }
+
+        function openChatRoom(orderId) {
+            activeOrderId = orderId;
+            document.getElementById('chat-list-view').classList.add('hidden');
+            document.getElementById('chat-room-view').classList.add('active');
+            document.getElementById('active-user-title').innerText = `Ticket Ref: ${orderId}`;
+
+            const chatBox = document.getElementById('chat-messages-box');
+            onValue(ref(db, `lottery/jetour/tickets/${orderId}/messages`), (snapshot) => {
+                chatBox.innerHTML = '';
+                const msgs = snapshot.val() || {};
+                
+                Object.keys(msgs).forEach(msgKey => {
+                    const msg = msgs[msgKey];
+                    const bubble = document.createElement('div');
+                    bubble.className = `bubble ${msg.sender === 'user' ? 'received' : 'sent'}`;
+                    bubble.innerText = msg.text;
+                    chatBox.appendChild(bubble);
+
+                    if (msg.sender === 'user' && msg.read !== true) {
+                        set(ref(db, `lottery/jetour/tickets/${orderId}/messages/${msgKey}/read`), true);
+                    }
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        function submitAdminMessage() {
+            const input = document.getElementById('chat-msg-input');
+            const val = input.value.trim();
+            if (!val || !activeOrderId) return;
+
+            const newMsgRef = push(ref(db, `lottery/jetour/tickets/${activeOrderId}/messages`));
+            set(newMsgRef, {
+                sender: 'admin',
+                text: val,
+                timestamp: Date.now(),
+                read: true
+            }).then(() => {
+                input.value = '';
+            });
+        }
+
+        document.getElementById('send-chat-btn').onclick = submitAdminMessage;
+        document.getElementById('chat-msg-input').onkeydown = (e) => {
+            if (e.key === 'Enter') submitAdminMessage();
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            listenToJETOURNodes();
+            listenToChatUsers();
+        });
+    </script>
+</body>
+</html>
