@@ -4,7 +4,7 @@
   "short_name": "App News",
   "description": "Latest news, sports, entertainment, and tech updates on Birr Go.",
   "start_url": "/AppNews.html",
-  "scope": "/",
+  "scope": "/AppNews.html",
   "display": "standalone",
   "display_override": [
     "standalone",
