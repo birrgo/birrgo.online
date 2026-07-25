@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>App News Dashboard</title>
+
+  <!-- Absolute Path PWA Meta & Manifest Link -->
+  <link rel="manifest" href="/news-manifest.json">
+  <meta name="theme-color" content="#8B0018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="App News">
+  <link rel="apple-touch-icon" href="/icon.png">
+
   <style>
     :root {
       --bg-light: #F8F9FA;
@@ -51,11 +60,11 @@
       position: relative;
     }
 
-    /* --- Precise 3-Menu Overlay (Nudged slightly top & left) --- */
+    /* --- Precise 3-Menu Overlay --- */
     .back-button-blocker {
       position: absolute;
-      top: 10px;          /* Nudged up slightly */
-      left: 10px;         /* Nudged left slightly */
+      top: 10px;
+      left: 10px;
       width: 36px;        
       height: 36px;       
       background-color: rgba(255, 255, 255, 0.2);
@@ -63,14 +72,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 50;        /* Covers back button inside frame */
-      pointer-events: auto; /* Intercepts clicks */
+      z-index: 50;        
+      pointer-events: auto;
       cursor: default;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(4px);
     }
 
-    /* 3-Menu Icon (Hamburger Lines) */
+    /* 3-Menu Icon */
     .menu-icon {
       width: 15px;
       height: 12px;
@@ -219,6 +228,15 @@
       const icon = element.querySelector('svg');
       const text = element.querySelector('span').innerText;
       element.innerHTML = `<div class="icon-bg">${icon.outerHTML}</div><span>${text}</span>`;
+    }
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('News PWA Service Worker Registered!'))
+          .catch(err => console.log('SW Registration failed: ', err));
+      });
     }
   </script>
 </body>
