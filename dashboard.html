@@ -213,7 +213,7 @@
         }
 
         /* ------------------------------------------------------------------
-           BLACK SHINE GLOSSY CARD (Inspired by Reference Image 38203.jpg) 
+           BLACK SHINE GLOSSY CARD 
            ------------------------------------------------------------------ */
         .digital-card {
             background: linear-gradient(135deg, #181818 0%, #050505 45%, #000000 100%);
@@ -221,28 +221,25 @@
             padding: 18px 20px 20px 20px; 
             color: #ffffff;
             
-            /* Deep shadow for premium physical look & metallic warm rim */
             box-shadow: 
                 0 22px 44px -12px rgba(0, 0, 0, 0.8), 
                 0 10px 20px -8px rgba(0, 0, 0, 0.6),
-                inset 0 1px 2px rgba(255, 255, 255, 0.25), /* Top shine */
-                inset 0 -1px 2px rgba(200, 160, 100, 0.3); /* Warm/Gold bottom reflection */
+                inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                inset 0 -1px 2px rgba(200, 160, 100, 0.3);
                 
             margin-top: 34px; 
             margin-bottom: 16px;
             position: relative;
-            overflow: hidden; /* Clips the sharp reflections to the card border */
+            overflow: hidden;
             min-height: 165px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             z-index: 2;
             
-            /* Subtle bronze/metallic edge mimicking the image */
             border: 1px solid rgba(168, 140, 102, 0.3); 
         }
 
-        /* Sharp Window Pane Light Reflection */
         .digital-card::before {
             content: '';
             position: absolute;
@@ -250,7 +247,6 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            /* Creates distinct bright bars reflecting off a glossy black surface */
             background: linear-gradient(
                 115deg,
                 transparent 30%,
@@ -264,7 +260,6 @@
             );
             pointer-events: none;
             z-index: 0;
-            /* Optional: Animate it slowly to feel luxurious */
             animation: glossPanes 12s ease-in-out infinite alternate;
         }
 
@@ -273,7 +268,6 @@
             100% { transform: translateY(-5%) translateX(5%); }
         }
 
-        /* Smooth curved gradient for overall surface gloss */
         .digital-card::after {
             content: '';
             position: absolute;
@@ -286,7 +280,21 @@
             z-index: 0;
         }
 
-        /* Ensure all text and buttons stay above the reflection layers */
+        /* Adjusted: Larger size (115px height) and shifted left (right: 75px) */
+        .card-af-watermark {
+            position: absolute;
+            right: 75px;
+            top: 15px;
+            height: 115px;
+            width: auto;
+            object-fit: contain;
+            opacity: 0.38;
+            filter: brightness(1.2) contrast(1.15) drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            pointer-events: none;
+            z-index: 2;
+            user-select: none;
+        }
+
         .card-top, .card-center-stack, .card-bottom {
             position: relative;
             z-index: 10;
@@ -336,15 +344,14 @@
         .card-center-stack {
             display: flex;
             flex-direction: column;
-            gap: 4px; /* Slight increase for breathing room */
+            gap: 4px;
             margin-top: 8px;
         }
 
-        /* Adding embossed effect to text to mimic physical card stamping */
         .card-number {
             font-size: 14px;
             font-weight: 600 !important;
-            letter-spacing: 2px; /* Wider tracking like a real credit card */
+            letter-spacing: 2px;
             color: #f1f5f9;
             line-height: 1.1;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.2);
@@ -366,12 +373,11 @@
         }
 
         .asset-mini-amount {
-            font-size: 24px; /* Slightly larger */
+            font-size: 24px;
             font-weight: 700 !important;
             color: #ffffff;
             letter-spacing: -0.2px;
             line-height: 1.1;
-            /* Embossed shine effect */
             text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.3);
         }
 
@@ -408,15 +414,11 @@
             font-size: 9.5px;
             font-weight: 600 !important;
             letter-spacing: 0.5px;
-            /* Sharp, classy border */
             border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(4px);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
-        /* ------------------------------------------------------------------
-           REST OF THE STYLES 
-           ------------------------------------------------------------------ */
         .metrics-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -795,7 +797,6 @@
                 </button>
             </div>
 
-            <!-- Compact News Pill -->
             <div class="news-container">
                 <div class="news-pill" id="dashboardNewsPill">
                     <span class="news-dot"></span>
@@ -803,8 +804,9 @@
                 </div>
             </div>
 
-            <!-- Deep Black Glossy Digital Card -->
             <div class="digital-card">
+                <img src="af.png" alt="Af Graphic" class="card-af-watermark">
+
                 <div class="card-top">
                     <div class="card-holder-label" style="margin-bottom:0; color: #fff;">Secure Account Info</div>
                     <div class="card-identity-box">
@@ -828,7 +830,6 @@
                 </div>
                 
                 <div class="card-bottom">
-                    <!-- Adjusted Class for Right Alignment -->
                     <div class="card-col-right">
                         <div class="card-holder-label">Account Level</div>
                         <span class="status-pill">New Level</span>
@@ -1187,7 +1188,7 @@
             
             document.getElementById('dashboardNewsPill').addEventListener('click', () => {
                 showGlobalLoader("Loading News...");
-                goToPage("bu.html");
+                goToPage("news.html");
             });
 
             document.getElementById('aiChatBotNode').addEventListener('click', (e) => {

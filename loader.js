@@ -1,16 +1,16 @@
 (function () {
-  // 1. Inject Burgundy Glassmorphism CSS Styles
+  // 1. Inject White Glassmorphism CSS Styles
   const styles = `
-    /* Full-screen Dark Burgundy Glassmorphism Overlay */
+    /* Full-screen White Glassmorphism Overlay */
     #global-loader {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(26, 5, 10, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.45); /* Semi-transparent white */
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);  /* Blur background content */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -26,7 +26,7 @@
       pointer-events: none;
     }
 
-    /* Modern Dual-Ring Glowing Burgundy Spinner */
+    /* Dual-Ring Burgundy Glowing Spinner */
     .loader-container {
       position: relative;
       width: 64px;
@@ -46,7 +46,7 @@
       border-top-color: #800020 !important;
       border-right-color: #800020 !important;
       animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      filter: drop-shadow(0 0 10px rgba(128, 0, 32, 0.8));
+      filter: drop-shadow(0 0 8px rgba(128, 0, 32, 0.4));
     }
 
     .loader-ring-inner {
@@ -57,7 +57,7 @@
       border-right-color: #b01c3e !important;
       animation-duration: 0.8s;
       animation-direction: reverse;
-      filter: drop-shadow(0 0 8px rgba(176, 28, 62, 0.8));
+      filter: drop-shadow(0 0 6px rgba(176, 28, 62, 0.4));
     }
 
     @keyframes spin {
@@ -68,28 +68,28 @@
     /* Text & Badges */
     .loader-text {
       font-size: 15px;
-      color: #f8fafc;
-      font-weight: 500;
+      color: #1e293b;
+      font-weight: 600;
       letter-spacing: 0.5px;
       margin: 0;
     }
 
-    /* Connection Error Glass Card */
+    /* Connection Error White Glass Card */
     .network-error-box {
       display: none;
       text-align: center;
       padding: 32px 28px;
       max-width: 340px;
-      background: rgba(45, 10, 18, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     }
 
     .error-icon {
       width: 48px;
       height: 48px;
-      background: rgba(239, 68, 68, 0.15);
+      background: rgba(239, 68, 68, 0.12);
       color: #ef4444;
       border-radius: 50%;
       display: flex;
@@ -101,14 +101,14 @@
 
     .network-error-box h3 {
       margin: 0 0 8px 0;
-      color: #ffffff;
+      color: #0f172a;
       font-size: 18px;
       font-weight: 600;
     }
 
     .network-error-box p {
       margin: 0 0 20px 0;
-      color: #d1d5db;
+      color: #475569;
       font-size: 14px;
       line-height: 1.5;
     }
@@ -123,7 +123,7 @@
       font-weight: 600;
       cursor: pointer;
       width: 100%;
-      box-shadow: 0 4px 12px rgba(74, 0, 18, 0.4);
+      box-shadow: 0 4px 12px rgba(128, 0, 32, 0.25);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -136,6 +136,9 @@
   styleSheet.innerText = styles;
   document.head.appendChild(styleSheet);
 
+  let activeRequests = 0;
+  let safetyTimer = null;
+
   // Global Controller Methods
   window.AppLoader = {
     show: function (msg = "Loading...") {
@@ -143,15 +146,26 @@
       const loaderContent = document.getElementById("loader-content");
       const networkError = document.getElementById("network-error");
       const loaderText = document.querySelector(".loader-text");
+
       if (loaderText) loaderText.innerText = msg;
       if (loaderContent) loaderContent.style.display = "block";
       if (networkError) networkError.style.display = "none";
       if (loader) loader.classList.remove("hidden");
+
+      // Auto-hide after 8s safety timeout so page never stays frozen forever
+      clearTimeout(safetyTimer);
+      safetyTimer = setTimeout(() => {
+        activeRequests = 0;
+        this.hide();
+      }, 8000);
     },
+
     hide: function () {
       const loader = document.getElementById("global-loader");
       if (loader) loader.classList.add("hidden");
+      clearTimeout(safetyTimer);
     },
+
     showError: function () {
       const loader = document.getElementById("global-loader");
       const loaderContent = document.getElementById("loader-content");
@@ -161,13 +175,67 @@
         if (loaderContent) loaderContent.style.display = "none";
         if (networkError) networkError.style.display = "block";
       }
+      clearTimeout(safetyTimer);
     }
   };
 
-  // 2. DOM Injection & Auto-Interceptors
+  // Check Actual Ping / Internet Connection
+  async function checkRealConnectivity() {
+    if (!navigator.onLine) return false;
+    try {
+      await fetch(`https://www.google.com/generate_204?ts=${Date.now()}`, {
+        method: "HEAD",
+        mode: "no-cors",
+        cache: "no-store"
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // 2. Intercept Active Network Requests (Auto open/close on operations)
+  function setupNetworkInterceptors() {
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+      activeRequests++;
+      window.AppLoader.show("Loading...");
+      try {
+        const response = await originalFetch.apply(this, args);
+        return response;
+      } catch (err) {
+        const isConnected = await checkRealConnectivity();
+        if (!isConnected) window.AppLoader.showError();
+        throw err;
+      } finally {
+        activeRequests = Math.max(0, activeRequests - 1);
+        if (activeRequests === 0) window.AppLoader.hide();
+      }
+    };
+
+    const originalXHR = window.XMLHttpRequest.prototype.open;
+    window.XMLHttpRequest.prototype.open = function (...args) {
+      this.addEventListener("loadstart", () => {
+        activeRequests++;
+        window.AppLoader.show("Loading...");
+      });
+      const handleEnd = async () => {
+        activeRequests = Math.max(0, activeRequests - 1);
+        if (this.status === 0) {
+          const isConnected = await checkRealConnectivity();
+          if (!isConnected) window.AppLoader.showError();
+        }
+        if (activeRequests === 0) window.AppLoader.hide();
+      };
+      this.addEventListener("loadend", handleEnd);
+      return originalXHR.apply(this, args);
+    };
+  }
+
+  // 3. Injection and Event Listeners
   document.addEventListener("DOMContentLoaded", () => {
     const loaderHTML = `
-      <div id="global-loader">
+      <div id="global-loader" class="hidden">
         <div id="loader-content">
           <div class="loader-container">
             <div class="loader-ring"></div>
@@ -186,37 +254,43 @@
     `;
     document.body.insertAdjacentHTML("afterbegin", loaderHTML);
 
-    // Network Check
-    if (!navigator.onLine) {
-      window.AppLoader.showError();
-    } else {
-      setTimeout(() => window.AppLoader.hide(), 300);
-    }
+    setupNetworkInterceptors();
 
-    window.addEventListener("offline", () => window.AppLoader.showError());
-    window.addEventListener("online", () => {
-      window.AppLoader.show("Connected! Loading...");
-      setTimeout(() => window.AppLoader.hide(), 500);
+    // Check actual internet health on initialization
+    checkRealConnectivity().then((online) => {
+      if (!online) window.AppLoader.showError();
     });
 
-    // Intercept buttons, links, and navigation items globally
-    document.addEventListener("click", (e) => {
-      const btnOrLink = e.target.closest("button, a, .nav-item, .fixed-invitation-level-bar");
-      if (!btnOrLink) return;
+    window.addEventListener("offline", () => window.AppLoader.showError());
+    window.addEventListener("online", async () => {
+      const isOnline = await checkRealConnectivity();
+      if (isOnline) {
+        window.AppLoader.show("Connected!");
+        setTimeout(() => window.AppLoader.hide(), 600);
+      } else {
+        window.AppLoader.showError();
+      }
+    });
 
-      // Skip loader on specific actions
-      if (btnOrLink.id === "popupConfirmBtn" || btnOrLink.classList.contains("retry-btn") || btnOrLink.id === "shareBtn") {
+    // Intercept Page Navigation Links (Only real external link navigation)
+    document.addEventListener("click", async (e) => {
+      const link = e.target.closest("a");
+      if (!link) return;
+
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("javascript:") || link.target === "_blank") {
         return;
       }
 
-      if (!navigator.onLine) {
+      const isConnected = await checkRealConnectivity();
+      if (!isConnected) {
         e.preventDefault();
         e.stopPropagation();
         window.AppLoader.showError();
         return;
       }
 
-      window.AppLoader.show("Please wait...");
+      window.AppLoader.show("Navigating...");
     }, true);
   });
 })();
