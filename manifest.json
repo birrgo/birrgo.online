@@ -1,9 +1,9 @@
 {
-  "id": "/",
-  "name": "Birr Go - Mobile Wallet",
-  "short_name": "Birr Go",
-  "description": "Secure and premium mobile wallet and payment app.",
-  "start_url": "/index.html",
+  "id": "/AppNews.html",
+  "name": "Birr Go - App News",
+  "short_name": "App News",
+  "description": "Latest news, sports, entertainment, and tech updates on Birr Go.",
+  "start_url": "/AppNews.html",
   "scope": "/",
   "display": "standalone",
   "display_override": [
@@ -12,10 +12,10 @@
     "minimal-ui"
   ],
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#8B0018",
+  "theme_color": "#8B0018",
   "categories": [
-    "finance",
+    "news",
     "utilities"
   ],
   "icons": [
@@ -52,10 +52,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Send Money",
-      "short_name": "Send",
-      "description": "Quickly send funds",
-      "url": "/index.html?action=send",
+      "name": "Latest News",
+      "short_name": "News",
+      "description": "Read top stories",
+      "url": "/AppNews.html",
       "icons": [
         {
           "src": "/icon.png",
