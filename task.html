@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Tasks</title>
     <link rel="stylesheet" href="task.css">
+
+    <!-- External Loader Integration -->
+    <script src="loader.js"></script>
 </head>
 <body>
 
@@ -189,7 +192,7 @@
             window.location.href = 'give.html';
         };
 
-        window.switchTaskPanel = function(targetPanel) {
+        window.switchTaskPanel = async function(targetPanel) {
             const btnWatch = document.getElementById('tabBtnWatch');
             const btnInvite = document.getElementById('tabBtnInvite');
             const btnGiveaway = document.getElementById('tabBtnGiveaway');
@@ -209,13 +212,16 @@
             if (targetPanel === 'watch') {
                 btnWatch.classList.add('active-view-tab');
                 panelWatch.classList.add('panel-active');
+                window.AppLoader.hide();
             } else if (targetPanel === 'invite') {
                 btnInvite.classList.add('active-view-tab');
                 panelInvite.classList.add('panel-active');
-                loadReferredUsers();
+                await loadReferredUsers();
+                window.AppLoader.hide();
             } else if (targetPanel === 'giveaway') {
                 btnGiveaway.classList.add('active-view-tab');
                 panelGiveaway.classList.add('panel-active');
+                window.AppLoader.hide();
             }
         };
 
@@ -302,7 +308,6 @@
                     buttonHTML = `<button class="btn-task cooldown" id="btn-action-${currentId}">Locked (${remainingMinutes}m)</button>`;
                 }
 
-                /* Image with Blur placeholder -> Crisp HD onload & Fallback SVG on low connections */
                 card.innerHTML = `
                     <div class="list-item-left">
                         <div class="list-icon-box">
@@ -321,7 +326,9 @@
 
                 const targetBtn = document.getElementById(`btn-action-${currentId}`);
                 if (targetBtn.classList.contains('cooldown')) {
-                    targetBtn.addEventListener('click', () => {
+                    targetBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        window.AppLoader.hide();
                         displayAppModal('lock', 'Task Locked', `This video row is locked. Please come back after ${remainingMinutes} minutes!`);
                     });
                 } else {

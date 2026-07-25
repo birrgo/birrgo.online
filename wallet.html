@@ -6,6 +6,7 @@
     <title>BirrGo - Premium Wallet</title>
     <link rel="stylesheet" href="wallet.css">
     <style>
+        /* Glass Meta & Receipt Styling */
         .glass-meta-grid {
             background: rgba(128, 0, 32, 0.04);
             border: 1px solid rgba(128, 0, 32, 0.12);
@@ -80,6 +81,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Integrated external loader.js file -->
+    <script src="loader.js"></script>
 
     <div class="network-blur-overlay" id="networkBlurGate"></div>
 
@@ -363,6 +367,19 @@
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
         const networkBlurGate = document.getElementById('networkBlurGate');
 
+        // Central Loader Helper targeting window.AppLoader
+        function showGlobalLoader(msg = "Loading...") {
+            if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+                window.AppLoader.show(msg);
+            }
+        }
+
+        function hideGlobalLoader() {
+            if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+                window.AppLoader.hide();
+            }
+        }
+
         function setupLazyImages() {
             const lazyImages = document.querySelectorAll('.image-lazy-blur');
             lazyImages.forEach(img => {
@@ -379,24 +396,28 @@
 
         window.goToPage = function(page) {
             if (page === '#') return;
+            showGlobalLoader("Navigating...");
             window.location.replace(page);
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
+            showGlobalLoader("Syncing Wallet...");
             setupLazyImages();
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.location.href = "new2.html";
+                window.goToPage("new2.html");
                 return;
             }
 
-            calculateCardIdentityMatrix();
+            await calculateCardIdentityMatrix();
             startLiveWalletListeners();
             setupSecurityToggles();
             setupFeatureGateways();
             setupNavigationHandlers();
             setupNotificationBadgeHandler();
             setupPopupCloseHandler();
+
+            hideGlobalLoader();
         });
 
         function displayAppModal(type, title, message, onConfirm = null) {
@@ -419,9 +440,11 @@
             setTimeout(() => customPopup.classList.add('show-modal'), 10);
 
             const handleClosure = () => {
+                showGlobalLoader("Closing...");
                 customPopup.classList.remove('show-modal');
                 setTimeout(() => {
                     customPopup.style.display = 'none';
+                    hideGlobalLoader();
                     if (onConfirm) onConfirm();
                 }, 300);
                 popupConfirmBtn.removeEventListener('click', handleClosure);
@@ -430,57 +453,75 @@
         }
 
         function setupNavigationHandlers() {
-            document.getElementById('navHome').addEventListener('click', () => goToPage('dashboard.html'));
-            document.getElementById('navTasks').addEventListener('click', () => goToPage('task.html'));
-            document.getElementById('navLottery').addEventListener('click', () => goToPage('lottery.html'));
-            document.getElementById('headerProfileBtn').addEventListener('click', () => goToPage('profile.html'));
+            document.getElementById('navHome').addEventListener('click', () => {
+                showGlobalLoader("Loading Home...");
+                goToPage('dashboard.html');
+            });
+            document.getElementById('navTasks').addEventListener('click', () => {
+                showGlobalLoader("Loading Tasks...");
+                goToPage('task.html');
+            });
+            document.getElementById('navLottery').addEventListener('click', () => {
+                showGlobalLoader("Loading Campaign...");
+                goToPage('lottery.html');
+            });
+            document.getElementById('headerProfileBtn').addEventListener('click', () => {
+                showGlobalLoader("Loading Profile...");
+                goToPage('profile.html');
+            });
         }
 
         function setupNotificationBadgeHandler() {
             const badgeBtn = document.getElementById('whatsNewBadgeBtn');
             badgeBtn.addEventListener('click', () => {
+                showGlobalLoader("Opening News...");
                 goToPage('bu.html');
             });
         }
 
-        function calculateCardIdentityMatrix() {
+        async function calculateCardIdentityMatrix() {
             const cleanPhone = activeUserPhone.replace(/\D/g, '');
             const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
             const completeRawCardSequence = cleanPhone + final6Reversed;
             decryptedCardNum = completeRawCardSequence.match(/.{1,4}/g).join(' ');
             
             const userRef = ref(db, `users/${activeUserPhone}`);
-            get(userRef).then((snapshot) => {
+            try {
+                const snapshot = await get(userRef);
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
                     decryptedFullName = userData.fullName || "Member Account";
                 } else {
                     decryptedFullName = "Member Account";
                 }
-            }).catch(() => {
+            } catch (err) {
                 decryptedFullName = "Member Account";
-            });
+            }
 
             document.getElementById('copyCardNumberBtn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!infoIsVisible || !decryptedCardNum) {
-                    displayAppModal('lock', 'Identity Locked', 'Please unlock your card details using your PIN first.');
-                    return;
-                }
-                
-                navigator.clipboard.writeText(decryptedCardNum.replace(/\s/g, ''))
-                    .then(() => {
-                        displayAppModal('success', 'Copied Successfully', 'Card number copied to your clipboard.');
-                    })
-                    .catch(() => {
-                        const fallbackInput = document.createElement('input');
-                        fallbackInput.value = decryptedCardNum.replace(/\s/g, '');
-                        document.body.appendChild(fallbackInput);
-                        fallbackInput.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(fallbackInput);
-                        displayAppModal('success', 'Copied Successfully', 'Card number copied to your clipboard.');
-                    });
+                showGlobalLoader("Processing...");
+                setTimeout(() => {
+                    hideGlobalLoader();
+                    if (!infoIsVisible || !decryptedCardNum) {
+                        displayAppModal('lock', 'Identity Locked', 'Please unlock your card details using your PIN first.');
+                        return;
+                    }
+                    
+                    navigator.clipboard.writeText(decryptedCardNum.replace(/\s/g, ''))
+                        .then(() => {
+                            displayAppModal('success', 'Copied Successfully', 'Card number copied to your clipboard.');
+                        })
+                        .catch(() => {
+                            const fallbackInput = document.createElement('input');
+                            fallbackInput.value = decryptedCardNum.replace(/\s/g, '');
+                            document.body.appendChild(fallbackInput);
+                            fallbackInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(fallbackInput);
+                            displayAppModal('success', 'Copied Successfully', 'Card number copied to your clipboard.');
+                        });
+                }, 200);
             });
         }
 
@@ -502,36 +543,44 @@
             }
 
             document.getElementById('eyeToggleBtn').addEventListener('click', () => {
-                if (infoIsVisible) {
-                    document.getElementById('wallet-card-number').innerText = "•••• •••• •••• ••••";
-                    document.getElementById('wallet-holder-name').innerText = "•••• ••••••";
-                    document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-                    infoIsVisible = false;
-                } else {
-                    clearErrorState();
-                    iconBox.className = "security-modal-icon";
-                    iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
-                    title.innerText = "Enter PIN";
-                    desc.innerText = "Please enter your 6-digit account PIN to reveal your card number and cardholder name.";
-                    passInput.style.display = "block";
-                    passInput.value = "";
-                    actionsGroup.className = "security-modal-actions";
-                    actionsGroup.innerHTML = `
-                        <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
-                        <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
-                    `;
-                    
-                    document.getElementById('closeModalBtn').addEventListener('click', closeModalTerminal);
-                    document.getElementById('submitPassBtn').addEventListener('click', handlePinVerification);
+                showGlobalLoader("Updating Display...");
+                setTimeout(() => {
+                    hideGlobalLoader();
+                    if (infoIsVisible) {
+                        document.getElementById('wallet-card-number').innerText = "•••• •••• •••• ••••";
+                        document.getElementById('wallet-holder-name').innerText = "•••• ••••••";
+                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                        infoIsVisible = false;
+                    } else {
+                        clearErrorState();
+                        iconBox.className = "security-modal-icon";
+                        iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+                        title.innerText = "Enter PIN";
+                        desc.innerText = "Please enter your 6-digit account PIN to reveal your card number and cardholder name.";
+                        passInput.style.display = "block";
+                        passInput.value = "";
+                        actionsGroup.className = "security-modal-actions";
+                        actionsGroup.innerHTML = `
+                            <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
+                            <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
+                        `;
+                        
+                        document.getElementById('closeModalBtn').addEventListener('click', closeModalTerminal);
+                        document.getElementById('submitPassBtn').addEventListener('click', handlePinVerification);
 
-                    modal.style.display = "flex";
-                    setTimeout(() => modal.classList.add('show-modal'), 10);
-                }
+                        modal.style.display = "flex";
+                        setTimeout(() => modal.classList.add('show-modal'), 10);
+                    }
+                }, 200);
             });
 
             function closeModalTerminal() {
+                showGlobalLoader("Closing PIN Terminal...");
                 modal.classList.remove('show-modal');
-                setTimeout(() => modal.style.display = "none", 200);
+                setTimeout(() => { 
+                    modal.style.display = "none"; 
+                    hideGlobalLoader();
+                }, 200);
             }
 
             passInput.addEventListener('input', () => {
@@ -539,12 +588,17 @@
             });
 
             async function handlePinVerification() {
+                showGlobalLoader("Verifying PIN...");
                 const typedPin = passInput.value.trim();
-                if(!typedPin) return;
+                if(!typedPin) {
+                    hideGlobalLoader();
+                    return;
+                }
 
                 const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
                 try {
                     const snap = await get(pinRef);
+                    hideGlobalLoader();
                     if(snap.exists() && String(snap.val()) === typedPin) {
                         document.getElementById('wallet-card-number').innerText = decryptedCardNum;
                         document.getElementById('wallet-holder-name').innerText = decryptedFullName;
@@ -561,6 +615,7 @@
                         errorBanner.style.animation = null;
                     }
                 } catch(e) {
+                    hideGlobalLoader();
                     modalCard.classList.add('has-error');
                     errorBanner.innerText = "Connection error. Please try again.";
                     errorBanner.style.display = "block";
@@ -580,30 +635,47 @@
             const modalCard = document.getElementById('securityModalCard');
 
             function launchLockedNotice(serviceName) {
-                modalCard.classList.remove('has-error');
-                errorBanner.style.display = "none";
-                
-                iconBox.className = "security-modal-icon bg-lock";
-                iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
-                
-                title.innerText = "Locked - Coming Soon";
-                desc.innerText = `${serviceName} service is currently locked. This feature will be available soon.`;
+                showGlobalLoader("Checking Status...");
+                setTimeout(() => {
+                    hideGlobalLoader();
 
-                passInput.style.display = "none";
-                actionsGroup.className = "security-modal-actions single-btn";
-                actionsGroup.innerHTML = `<button class="btn-modal-submit" id="dismissLockBtn">Close</button>`;
+                    modalCard.classList.remove('has-error');
+                    errorBanner.style.display = "none";
+                    
+                    iconBox.className = "security-modal-icon bg-lock";
+                    iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+                    
+                    title.innerText = "Locked - Coming Soon";
+                    desc.innerText = `${serviceName} service is currently locked. This feature will be available soon.`;
 
-                document.getElementById('dismissLockBtn').addEventListener('click', () => {
-                    modal.classList.remove('show-modal');
-                    setTimeout(() => modal.style.display = "none", 200);
-                });
+                    passInput.style.display = "none";
+                    actionsGroup.className = "security-modal-actions single-btn";
+                    actionsGroup.innerHTML = `<button class="btn-modal-submit" id="dismissLockBtn">Close</button>`;
 
-                modal.style.display = "flex";
-                setTimeout(() => modal.classList.add('show-modal'), 10);
+                    document.getElementById('dismissLockBtn').onclick = (e) => {
+                        e.stopPropagation();
+                        showGlobalLoader("Closing...");
+                        modal.classList.remove('show-modal');
+                        setTimeout(() => {
+                            modal.style.display = "none";
+                            hideGlobalLoader();
+                        }, 200);
+                    };
+
+                    modal.style.display = "flex";
+                    setTimeout(() => modal.classList.add('show-modal'), 10);
+                }, 200);
             }
 
-            document.getElementById('depositBtn').addEventListener('click', () => launchLockedNotice("Deposit"));
-            document.getElementById('withdrawBtn').addEventListener('click', () => launchLockedNotice("Withdraw"));
+            document.getElementById('depositBtn').onclick = (e) => {
+                e.stopPropagation();
+                launchLockedNotice("Deposit");
+            };
+            
+            document.getElementById('withdrawBtn').onclick = (e) => {
+                e.stopPropagation();
+                launchLockedNotice("Withdraw");
+            };
         }
 
         function resolveTransactionIcon(title) {
@@ -637,7 +709,6 @@
             return "";
         }
 
-        // Returns campaign key if transaction belongs to 1 of the 6 allowed campaigns
         function getCampaignKeyIfCampaign(title) {
             const text = (title || '').toLowerCase();
             if (text.includes('jetour')) return 'jetour';
@@ -649,7 +720,6 @@
             return null;
         }
 
-        // Asynchronous ticket number search from database matrix
         async function fetchExactEntryNumber(tx, txnId, campaignKey) {
             const direct = tx.ticketNum || tx.ticketNo || tx.exactNumber || tx.entryNumber || tx.ticketId;
             if (direct !== undefined && direct !== null) {
@@ -682,74 +752,87 @@
         }
 
         async function launchReceiptPopup(txnId, tx) {
-            document.body.classList.add('popup-active');
-            const overlay = document.getElementById('digitalSlipPopup');
-            overlay.classList.add('active');
-            
-            const loader = document.getElementById('slip-stream-loader');
-            const content = document.getElementById('slip-secure-content');
-            
-            loader.style.display = 'block';
-            content.style.display = 'none';
+            showGlobalLoader("Generating Receipt...");
+            try {
+                document.body.classList.add('popup-active');
+                const overlay = document.getElementById('digitalSlipPopup');
+                overlay.classList.add('active');
+                
+                const loader = document.getElementById('slip-stream-loader');
+                const content = document.getElementById('slip-secure-content');
+                
+                loader.style.display = 'block';
+                content.style.display = 'none';
 
-            const amountEl = document.getElementById('pop-val-amount');
-            const isIncome = tx.type === 'income' || tx.amount > 0;
-            
-            amountEl.innerText = `${isIncome ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)} ETB`;
-            amountEl.className = `ledger-val ${isIncome ? 'positive' : 'negative'}`;
-            
-            document.getElementById('pop-val-desc').innerText = tx.title;
-            document.getElementById('pop-val-date').innerText = tx.timestamp;
-            document.getElementById('pop-val-ref').innerText = txnId;
-            document.getElementById('pop-val-type').innerText = tx.isPromo ? "Promotional Reward" : (isIncome ? "Deposit / Credit" : "Withdrawal / Debit");
+                const amountEl = document.getElementById('pop-val-amount');
+                const isIncome = tx.type === 'income' || tx.amount > 0;
+                
+                amountEl.innerText = `${isIncome ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)} ETB`;
+                amountEl.className = `ledger-val ${isIncome ? 'positive' : 'negative'}`;
+                
+                document.getElementById('pop-val-desc').innerText = tx.title;
+                document.getElementById('pop-val-date').innerText = tx.timestamp;
+                document.getElementById('pop-val-ref').innerText = txnId;
+                document.getElementById('pop-val-type').innerText = tx.isPromo ? "Promotional Reward" : (isIncome ? "Deposit / Credit" : "Withdrawal / Debit");
 
-            // Check if transaction belongs strictly to 1 of the 6 campaign types
-            const campaignKey = getCampaignKeyIfCampaign(tx.title);
-            const rowEntry = document.getElementById('row-entry');
+                const campaignKey = getCampaignKeyIfCampaign(tx.title);
+                const rowEntry = document.getElementById('row-entry');
 
-            if (campaignKey) {
-                const entryNumber = await fetchExactEntryNumber(tx, txnId, campaignKey);
-                document.getElementById('pop-val-entry').innerText = entryNumber;
-                rowEntry.style.display = 'flex';
-            } else {
-                rowEntry.style.display = 'none';
+                if (campaignKey) {
+                    const entryNumber = await fetchExactEntryNumber(tx, txnId, campaignKey);
+                    document.getElementById('pop-val-entry').innerText = entryNumber;
+                    rowEntry.style.display = 'flex';
+                } else {
+                    rowEntry.style.display = 'none';
+                }
+
+                const targetRecipient = tx.recipientName || tx.recipientPhone || tx.recipient || tx.account || tx.phone || tx.sender || activeUserPhone;
+                document.getElementById('pop-val-account').innerText = targetRecipient;
+
+                const rowBalance = document.getElementById('row-balance');
+                if (tx.balance !== undefined && tx.balance !== null) {
+                    const bal = parseFloat(tx.balance);
+                    document.getElementById('pop-val-balance').innerText = `${bal.toFixed(2)} ETB`;
+                    rowBalance.style.display = 'flex';
+                } else {
+                    rowBalance.style.display = 'none';
+                }
+
+                const avatarContainer = document.getElementById('pop-avatar-container');
+                let iconSrc = resolveTransactionIcon(tx.title);
+
+                if (tx.isPromo && !iconSrc) iconSrc = "33440.png";
+
+                if (iconSrc) {
+                    avatarContainer.innerHTML = `<img src="${iconSrc}" alt="icon" class="image-lazy-blur loaded" onerror="this.parentElement.innerHTML='⚡'">`;
+                } else {
+                    avatarContainer.innerHTML = `<span>⚡</span>`;
+                }
+
+                loader.style.display = 'none';
+                content.style.display = 'block';
+
+                document.getElementById('popPrintBtn').onclick = () => {
+                    showGlobalLoader("Preparing Print PDF...");
+                    setTimeout(() => {
+                        hideGlobalLoader();
+                        window.print();
+                    }, 400);
+                };
+            } finally {
+                hideGlobalLoader();
             }
-
-            // Recipient Resolution
-            const targetRecipient = tx.recipientName || tx.recipientPhone || tx.recipient || tx.account || tx.phone || tx.sender || activeUserPhone;
-            document.getElementById('pop-val-account').innerText = targetRecipient;
-
-            // Balance Row Mapping
-            const rowBalance = document.getElementById('row-balance');
-            if (tx.balance !== undefined && tx.balance !== null) {
-                const bal = parseFloat(tx.balance);
-                document.getElementById('pop-val-balance').innerText = `${bal.toFixed(2)} ETB`;
-                rowBalance.style.display = 'flex';
-            } else {
-                rowBalance.style.display = 'none';
-            }
-
-            const avatarContainer = document.getElementById('pop-avatar-container');
-            let iconSrc = resolveTransactionIcon(tx.title);
-
-            if (tx.isPromo && !iconSrc) iconSrc = "33440.png";
-
-            if (iconSrc) {
-                avatarContainer.innerHTML = `<img src="${iconSrc}" alt="icon" class="image-lazy-blur loaded" onerror="this.parentElement.innerHTML='⚡'">`;
-            } else {
-                avatarContainer.innerHTML = `<span>⚡</span>`;
-            }
-
-            loader.style.display = 'none';
-            content.style.display = 'block';
-
-            document.getElementById('popPrintBtn').onclick = () => window.print();
         }
 
         function setupPopupCloseHandler() {
-            document.getElementById('closeReceiptBtn').onclick = () => {
+            document.getElementById('closeReceiptBtn').onclick = (e) => {
+                e.stopPropagation();
+                showGlobalLoader("Closing Receipt...");
                 document.getElementById('digitalSlipPopup').classList.remove('active');
                 document.body.classList.remove('popup-active');
+                setTimeout(() => {
+                    hideGlobalLoader();
+                }, 200);
             };
         }
 
@@ -926,7 +1009,6 @@
                     return;
                 }
 
-                // Sort Newest to Oldest
                 masterTransactionList.sort((a, b) => b.sortingValue - a.sortingValue);
 
                 masterTransactionList.forEach(tx => {

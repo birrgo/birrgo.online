@@ -9,7 +9,6 @@
         :root {
             --primary-burgundy: #800020;
             --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
-            --primary-blue-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #030712 100%);
             --accent-glow: rgba(128, 0, 32, 0.15);
             --text-dark: #0f172a;
             --text-muted: #475569;
@@ -18,7 +17,7 @@
             --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 3px 8px -2px rgba(0, 0, 0, 0.04);
             --success-green: #10b981;
             --warning-amber: #f59e0b;
-            --border-radius-lg: 20px;
+            --border-radius-lg: 18px;
             --border-radius-md: 14px;
         }
 
@@ -26,8 +25,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Times New Roman', Times, serif !important;
-            font-weight: 800 !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             letter-spacing: -0.1px;
             -webkit-tap-highlight-color: transparent;
         }
@@ -128,10 +126,9 @@
             fill: #334155;
         }
 
-        /* REDUCED SIZE NEWS CONTAINER & PILL */
         .news-container {
             margin-top: -46px; 
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: center;
             perspective: 800px;
@@ -149,16 +146,14 @@
                 linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 0.4rem 0.9rem; /* Reduced padding */
+            padding: 0.35rem 0.85rem;
             border-radius: 50px;
             border: 1.5px solid rgba(255, 255, 255, 0.95);
-            
             box-shadow: 
                 0 8px 18px -4px rgba(0, 0, 0, 0.25),
                 0 3px 8px -2px rgba(0, 0, 0, 0.12),
                 inset 0 2px 3px 0 rgba(255, 255, 255, 1),
                 inset 0 -1.5px 3px 0 rgba(203, 213, 225, 0.4);
-                
             cursor: pointer;
             outline: none;
             overflow: hidden;
@@ -197,7 +192,7 @@
         }
 
         .news-dot {
-            width: 0.5rem; /* Reduced dot size */
+            width: 0.5rem;
             height: 0.5rem;
             background-color: var(--primary-burgundy);
             border-radius: 50%;
@@ -206,7 +201,8 @@
         }
 
         .news-text {
-            font-size: 0.78rem; /* Reduced text size */
+            font-size: 0.75rem;
+            font-weight: 700 !important;
             color: var(--primary-burgundy);
             text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
         }
@@ -216,33 +212,84 @@
             50% { opacity: .4; transform: scale(0.85); }
         }
 
+        /* ------------------------------------------------------------------
+           BLACK SHINE GLOSSY CARD (Inspired by Reference Image 38203.jpg) 
+           ------------------------------------------------------------------ */
         .digital-card {
-            background: var(--primary-blue-gradient);
+            background: linear-gradient(135deg, #181818 0%, #050505 45%, #000000 100%);
             border-radius: var(--border-radius-lg);
-            padding: 18px;
+            padding: 18px 20px 20px 20px; 
             color: #ffffff;
-            box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.45);
-            margin-bottom: 14px;
+            
+            /* Deep shadow for premium physical look & metallic warm rim */
+            box-shadow: 
+                0 22px 44px -12px rgba(0, 0, 0, 0.8), 
+                0 10px 20px -8px rgba(0, 0, 0, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.25), /* Top shine */
+                inset 0 -1px 2px rgba(200, 160, 100, 0.3); /* Warm/Gold bottom reflection */
+                
+            margin-top: 34px; 
+            margin-bottom: 16px;
             position: relative;
-            overflow: hidden;
-            min-height: 175px;
+            overflow: hidden; /* Clips the sharp reflections to the card border */
+            min-height: 165px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             z-index: 2;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            
+            /* Subtle bronze/metallic edge mimicking the image */
+            border: 1px solid rgba(168, 140, 102, 0.3); 
         }
 
+        /* Sharp Window Pane Light Reflection */
         .digital-card::before {
             content: '';
             position: absolute;
-            bottom: -20px;
-            right: -20px;
-            width: 130px;
-            height: 130px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 50%;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            /* Creates distinct bright bars reflecting off a glossy black surface */
+            background: linear-gradient(
+                115deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.05) 31%,
+                rgba(255, 255, 255, 0.3) 34%,
+                transparent 35%,
+                transparent 39%,
+                rgba(255, 255, 255, 0.05) 40%,
+                rgba(255, 255, 255, 0.35) 43%,
+                transparent 44%
+            );
             pointer-events: none;
+            z-index: 0;
+            /* Optional: Animate it slowly to feel luxurious */
+            animation: glossPanes 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes glossPanes {
+            0% { transform: translateY(0%) translateX(0%); }
+            100% { transform: translateY(-5%) translateX(5%); }
+        }
+
+        /* Smooth curved gradient for overall surface gloss */
+        .digital-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ensure all text and buttons stay above the reflection layers */
+        .card-top, .card-center-stack, .card-bottom {
+            position: relative;
+            z-index: 10;
         }
 
         .card-top {
@@ -259,96 +306,117 @@
         }
 
         .btn-card-action {
-            background: rgba(255, 255, 255, 0.12);
-            border: none;
-            width: 32px;
-            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .btn-card-action:active { 
-            background: rgba(255, 255, 255, 0.25); 
+            background: rgba(255, 255, 255, 0.3); 
+            transform: scale(0.95);
         }
 
         .btn-card-action svg { 
-            width: 16px; 
-            height: 16px; 
+            width: 14px; 
+            height: 14px; 
             fill: none; 
             stroke: currentColor; 
-            stroke-width: 2.4; 
+            stroke-width: 2.2; 
         }
 
         .card-center-stack {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 4px; /* Slight increase for breathing room */
             margin-top: 8px;
         }
 
+        /* Adding embossed effect to text to mimic physical card stamping */
         .card-number {
-            font-size: 16px;
-            letter-spacing: 1.2px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.2;
+            font-size: 14px;
+            font-weight: 600 !important;
+            letter-spacing: 2px; /* Wider tracking like a real credit card */
+            color: #f1f5f9;
+            line-height: 1.1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.2);
         }
 
         .asset-embedded-row {
             display: flex;
             flex-direction: column;
-            gap: 0px;
-            margin-top: 4px;
+            gap: 2px;
+            margin-top: 6px;
         }
 
         .asset-mini-label {
-            font-size: 9px;
+            font-size: 8.5px;
+            font-weight: 500 !important;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .asset-mini-amount {
-            font-size: 30px; 
+            font-size: 24px; /* Slightly larger */
+            font-weight: 700 !important;
             color: #ffffff;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.2px;
             line-height: 1.1;
+            /* Embossed shine effect */
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.3);
         }
 
         .card-bottom {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; 
             align-items: flex-end;
             margin-top: 12px;
         }
 
-        .card-col-left { 
+        .card-col-right { 
             flex: 1; 
             min-width: 0; 
-            text-align: left; 
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            text-align: right; 
         }
 
         .card-holder-label {
             font-size: 9px;
+            font-weight: 600 !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: rgba(255, 255, 255, 0.55);
-            margin-bottom: 2px;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
         }
 
         .status-pill {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            padding: 3px 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 9.5px;
+            font-weight: 600 !important;
             letter-spacing: 0.5px;
+            /* Sharp, classy border */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
+        /* ------------------------------------------------------------------
+           REST OF THE STYLES 
+           ------------------------------------------------------------------ */
         .metrics-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -369,12 +437,14 @@
 
         .metric-header {
             font-size: 11px;
+            font-weight: 600 !important;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
         .metric-value {
             font-size: 15px;
+            font-weight: 700 !important;
             color: var(--text-dark);
         }
 
@@ -425,6 +495,7 @@
 
         .action-label {
             font-size: 12px;
+            font-weight: 600 !important;
             color: var(--text-dark);
             text-align: center;
         }
@@ -496,6 +567,7 @@
             color: #64748b;
             text-decoration: none;
             font-size: 10px;
+            font-weight: 600 !important;
             gap: 2px;
             flex: 1 1 0;
             width: 25%;
@@ -535,12 +607,12 @@
             stroke-width: 2.6;
         }
 
-        .custom-popup-backdrop {
+        .custom-popup-backdrop, .security-modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
@@ -552,14 +624,16 @@
             opacity: 0;
             transition: opacity 0.25s ease;
         }
-        .custom-popup-backdrop.show-modal {
+        
+        .custom-popup-backdrop.show-modal, .security-modal-backdrop.show-modal {
             display: flex;
             opacity: 1;
         }
-        .custom-popup-card {
+
+        .custom-popup-card, .security-modal-card {
             background: #ffffff;
             width: 86%;
-            max-width: 300px;
+            max-width: 310px;
             border-radius: 24px;
             padding: 20px 16px;
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
@@ -567,10 +641,12 @@
             transform: scale(0.88);
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .custom-popup-backdrop.show-modal .custom-popup-card {
+        
+        .custom-popup-backdrop.show-modal .custom-popup-card, .security-modal-backdrop.show-modal .security-modal-card {
             transform: scale(1);
         }
-        .popup-status-badge {
+
+        .popup-status-badge, .security-modal-icon {
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -578,29 +654,33 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 12px auto;
-        }
-        .popup-status-badge.bg-lock {
             background: #fdf2f4;
             color: var(--primary-burgundy);
         }
-        .popup-status-badge svg {
+        
+        .popup-status-badge svg, .security-modal-icon svg {
             width: 22px;
             height: 22px;
             fill: none;
             stroke: currentColor;
             stroke-width: 2.5;
         }
-        .custom-popup-title {
+        
+        .custom-popup-title, .security-modal-title {
             font-size: 16px;
+            font-weight: 700 !important;
             color: #111827;
             margin-bottom: 6px;
         }
-        .custom-popup-msg {
+        
+        .custom-popup-msg, .security-modal-desc {
             font-size: 13px;
+            font-weight: 500 !important;
             color: #6b7280;
             line-height: 1.45;
             margin-bottom: 16px;
         }
+
         .btn-popup-confirm {
             width: 100%;
             height: 42px;
@@ -609,74 +689,11 @@
             border: none;
             border-radius: 100px;
             font-size: 14px;
+            font-weight: 700 !important;
             cursor: pointer;
             box-shadow: 0 8px 16px rgba(128, 0, 32, 0.15);
         }
 
-        .security-modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.35);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 5000;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .security-modal-backdrop.show-modal { 
-            display: flex; 
-            opacity: 1; 
-        }
-        .security-modal-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 310px;
-            border-radius: var(--border-radius-lg);
-            padding: 20px 18px;
-            box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.12);
-            text-align: center;
-            transform: scale(0.92);
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .security-modal-backdrop.show-modal .security-modal-card { 
-            transform: scale(1); 
-        }
-        .security-modal-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #fdf2f4;
-            color: var(--primary-burgundy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px auto;
-        }
-        .security-modal-icon svg { 
-            width: 22px; 
-            height: 22px; 
-            fill: none; 
-            stroke: currentColor; 
-            stroke-width: 2.5; 
-        }
-        .security-modal-title { 
-            font-size: 16px; 
-            color: var(--text-dark); 
-            margin-bottom: 4px; 
-        }
-        .security-modal-desc { 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            line-height: 1.4; 
-            margin-bottom: 14px; 
-        }
         .modal-error-banner {
             display: none;
             background: #fef2f2;
@@ -685,9 +702,11 @@
             padding: 8px 12px;
             border-radius: 10px;
             font-size: 12px;
+            font-weight: 600 !important;
             margin-bottom: 14px;
             text-align: center;
         }
+        
         .security-password-input {
             width: 100%;
             height: 42px;
@@ -695,19 +714,23 @@
             border: 1.5px solid var(--border-light);
             padding: 0 12px;
             font-size: 16px;
+            font-weight: 700 !important;
             text-align: center;
             letter-spacing: 4px;
             margin-bottom: 14px;
             outline: none;
         }
+        
         .security-password-input:focus { 
             border-color: var(--primary-burgundy); 
         }
+        
         .security-modal-actions { 
             display: grid; 
             grid-template-columns: 1fr 2fr; 
             gap: 8px; 
         }
+        
         .btn-modal-cancel { 
             height: 40px; 
             background: #f1f5f9; 
@@ -715,8 +738,10 @@
             border: none; 
             border-radius: var(--border-radius-md); 
             font-size: 13px; 
+            font-weight: 600 !important;
             cursor: pointer; 
         }
+        
         .btn-modal-submit { 
             height: 40px; 
             background: var(--primary-burgundy-gradient); 
@@ -724,12 +749,15 @@
             border: none; 
             border-radius: var(--border-radius-md); 
             font-size: 13px; 
+            font-weight: 700 !important;
             cursor: pointer; 
         }
+        
         .security-modal-card.has-error .security-password-input { 
             border-color: #dc2626; 
             background-color: #fffafb; 
         }
+        
         .security-modal-card.has-error .security-modal-icon { 
             background: #fef2f2; 
             color: #dc2626; 
@@ -737,6 +765,8 @@
     </style>
 </head>
 <body>
+
+    <script src="loader.js"></script>
 
     <div class="app-view">
         
@@ -773,9 +803,10 @@
                 </div>
             </div>
 
+            <!-- Deep Black Glossy Digital Card -->
             <div class="digital-card">
                 <div class="card-top">
-                    <div class="card-holder-label" style="margin-bottom:0;">Secure Account Info</div>
+                    <div class="card-holder-label" style="margin-bottom:0; color: #fff;">Secure Account Info</div>
                     <div class="card-identity-box">
                         <button class="btn-card-action" id="eyeToggleBtn" title="Toggle Visibility">
                             <svg viewBox="0 0 24 24">
@@ -797,7 +828,8 @@
                 </div>
                 
                 <div class="card-bottom">
-                    <div class="card-col-left">
+                    <!-- Adjusted Class for Right Alignment -->
+                    <div class="card-col-right">
                         <div class="card-holder-label">Account Level</div>
                         <span class="status-pill">New Level</span>
                     </div>
@@ -850,7 +882,7 @@
 
         <nav class="bottom-nav-bar">
             <div class="bottom-nav-container">
-                <a href="#" class="nav-item-bottom active-tab">
+                <a href="#" class="nav-item-bottom active-tab" id="navHome">
                     <div class="tab-icon-wrapper">
                         <svg viewBox="0 0 24 24">
                             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -859,7 +891,7 @@
                     </div>
                     Home
                 </a>
-                <a href="task.html" class="nav-item-bottom">
+                <a href="task.html" class="nav-item-bottom" id="navTasks">
                     <div class="tab-icon-wrapper">
                         <svg viewBox="0 0 24 24">
                             <polyline points="9 11 12 14 22 4"></polyline>
@@ -868,7 +900,7 @@
                     </div>
                     Tasks
                 </a>
-                <a href="lottery.html" class="nav-item-bottom">
+                <a href="lottery.html" class="nav-item-bottom" id="navCampaign">
                     <div class="tab-icon-wrapper">
                         <svg viewBox="0 0 24 24">
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -876,7 +908,7 @@
                     </div>
                     Campaign
                 </a>
-                <a href="wallet.html" class="nav-item-bottom">
+                <a href="wallet.html" class="nav-item-bottom" id="navWallet">
                     <div class="tab-icon-wrapper">
                         <svg viewBox="0 0 24 24">
                             <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
@@ -948,31 +980,61 @@
         const popupTitle = document.getElementById('popupTitle');
         const popupBadge = document.getElementById('popupBadge');
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function showGlobalLoader(msg = "Loading...") {
+            if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+                window.AppLoader.show(msg);
+            }
+        }
+
+        function hideGlobalLoader() {
+            if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+                window.AppLoader.hide();
+            }
+        }
+
+        window.goToPage = function(page) {
+            if (page === '#') return;
+            showGlobalLoader("Navigating...");
+            window.location.replace(page);
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            showGlobalLoader("Syncing Dashboard...");
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.location.href = "new2.html";
+                window.goToPage("new2.html");
                 return;
             }
 
-            fetchRealAccountId();
+            await fetchRealAccountId();
             streamLiveDashboardMetrics();
             updateLocalTaskMetrics();
             setupInterfaceActions();
             setupSecurityToggles();
+            setupNavigationHandlers();
+
+            hideGlobalLoader();
         });
 
         function displayAppModal(message) {
-            popupBadge.className = "popup-status-badge bg-lock";
-            popupTitle.innerText = "Locked Coming Soon";
-            popupMessage.innerText = message;
-            customPopup.style.display = 'flex';
-            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+            showGlobalLoader("Opening Notice...");
+            setTimeout(() => {
+                hideGlobalLoader();
+                popupBadge.className = "popup-status-badge bg-lock";
+                popupTitle.innerText = "Locked Coming Soon";
+                popupMessage.innerText = message;
+                customPopup.style.display = 'flex';
+                setTimeout(() => customPopup.classList.add('show-modal'), 10);
+            }, 200);
         }
 
         popupConfirmBtn.addEventListener('click', () => {
+            showGlobalLoader("Closing...");
             customPopup.classList.remove('show-modal');
-            setTimeout(() => { customPopup.style.display = 'none'; }, 300);
+            setTimeout(() => { 
+                customPopup.style.display = 'none'; 
+                hideGlobalLoader();
+            }, 300);
         });
 
         async function fetchRealAccountId() {
@@ -1031,32 +1093,45 @@
             const passInput = document.getElementById('securePassInput');
 
             document.getElementById('eyeToggleBtn').addEventListener('click', () => {
-                if (infoIsVisible) {
-                    document.getElementById('displayWalletId').innerText = "BG ••••••";
-                    document.getElementById('dashboard-balance').innerText = "•••• Birr";
-                    document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-                    infoIsVisible = false;
-                } else {
-                    modalCard.classList.remove('has-error');
-                    errorBanner.style.display = "none";
-                    passInput.value = "";
-                    modal.style.display = "flex";
-                    setTimeout(() => modal.classList.add('show-modal'), 10);
-                }
+                showGlobalLoader("Updating Visibility...");
+                setTimeout(() => {
+                    hideGlobalLoader();
+                    if (infoIsVisible) {
+                        document.getElementById('displayWalletId').innerText = "BG ••••••";
+                        document.getElementById('dashboard-balance').innerText = "•••• Birr";
+                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                        infoIsVisible = false;
+                    } else {
+                        modalCard.classList.remove('has-error');
+                        errorBanner.style.display = "none";
+                        passInput.value = "";
+                        modal.style.display = "flex";
+                        setTimeout(() => modal.classList.add('show-modal'), 10);
+                    }
+                }, 200);
             });
 
             document.getElementById('closeModalBtn').addEventListener('click', () => {
+                showGlobalLoader("Closing Modal...");
                 modal.classList.remove('show-modal');
-                setTimeout(() => modal.style.display = "none", 200);
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    hideGlobalLoader();
+                }, 200);
             });
 
             document.getElementById('submitPassBtn').addEventListener('click', async () => {
+                showGlobalLoader("Verifying PIN...");
                 const typedPin = passInput.value.trim();
-                if (!typedPin) return;
+                if (!typedPin) {
+                    hideGlobalLoader();
+                    return;
+                }
 
                 const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
                 try {
                     const snap = await get(pinRef);
+                    hideGlobalLoader();
                     if (snap.exists() && String(snap.val()) === typedPin) {
                         document.getElementById('displayWalletId').innerText = decryptedCardNum;
                         document.getElementById('dashboard-balance').innerText = liveBalanceStr;
@@ -1071,19 +1146,55 @@
                         passInput.value = "";
                     }
                 } catch (e) {
+                    hideGlobalLoader();
                     errorBanner.innerText = "Verification failed.";
                     errorBanner.style.display = "block";
                 }
             });
         }
 
+        function setupNavigationHandlers() {
+            document.getElementById('navHome').addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+            document.getElementById('navTasks').addEventListener('click', (e) => {
+                e.preventDefault();
+                showGlobalLoader("Loading Tasks...");
+                goToPage('task.html');
+            });
+            document.getElementById('navCampaign').addEventListener('click', (e) => {
+                e.preventDefault();
+                showGlobalLoader("Loading Campaign...");
+                goToPage('lottery.html');
+            });
+            document.getElementById('navWallet').addEventListener('click', (e) => {
+                e.preventDefault();
+                showGlobalLoader("Loading Wallet...");
+                goToPage('wallet.html');
+            });
+        }
+
         function setupInterfaceActions() {
-            document.getElementById('action-send').addEventListener('click', () => displayAppModal("Locked coming soon"));
-            document.getElementById('action-receive').addEventListener('click', () => displayAppModal("Locked coming soon"));
-            document.getElementById('action-deposit').addEventListener('click', () => displayAppModal("Locked coming soon"));
-            document.getElementById('action-withdraw').addEventListener('click', () => displayAppModal("Locked coming soon"));
-            document.getElementById('profileBadgeNode').addEventListener('click', () => window.location.href = "profile.html");
-            document.getElementById('dashboardNewsPill').addEventListener('click', () => window.location.href = "news.html");
+            document.getElementById('action-send').addEventListener('click', () => displayAppModal("Send feature is currently locked."));
+            document.getElementById('action-receive').addEventListener('click', () => displayAppModal("Receive feature is currently locked."));
+            document.getElementById('action-deposit').addEventListener('click', () => displayAppModal("Deposit feature is currently locked."));
+            document.getElementById('action-withdraw').addEventListener('click', () => displayAppModal("Withdraw feature is currently locked."));
+            
+            document.getElementById('profileBadgeNode').addEventListener('click', () => {
+                showGlobalLoader("Loading Profile...");
+                goToPage("profile.html");
+            });
+            
+            document.getElementById('dashboardNewsPill').addEventListener('click', () => {
+                showGlobalLoader("Loading News...");
+                goToPage("bu.html");
+            });
+
+            document.getElementById('aiChatBotNode').addEventListener('click', (e) => {
+                e.preventDefault();
+                showGlobalLoader("Loading AI Assistant...");
+                goToPage("ai.html");
+            });
         }
     </script>
 </body>
