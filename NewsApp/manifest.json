@@ -1,19 +1,69 @@
 {
-  "name": "App News Dashboard",
+  "id": "/",
+  "name": "Birr Go - App News",
   "short_name": "App News",
-  "description": "Subdomain News PWA Application",
+  "description": "Latest news, sports, entertainment, and tech updates on Birr Go.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#F8F9FA",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "background_color": "#8B0018",
   "theme_color": "#8B0018",
+  "categories": [
+    "news",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/icon.png",
-      "sizes": "192x192 512x512",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/badge-icon.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "monochrome"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Latest News",
+      "short_name": "News",
+      "description": "Read top stories",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icon.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
     }
   ]
 }
