@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birr Go - PWA App Store</title>
+  <title>Birr Go - Web Store</title>
 
   <style>
     :root {
@@ -18,76 +18,97 @@
       --text-gray: #CCCCCC;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, Roboto, sans-serif; }
     
     body { 
       background-color: var(--bg-color); 
       color: #212529; 
       padding-bottom: 90px;
+      overflow-x: hidden;
     }
 
-    /* Fixed Top Header */
+    /* --- NATIVE APP-LIKE TOP HEADER UI --- */
     .header-container {
       position: sticky;
       top: 0;
       z-index: 1000;
       background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-mid) 60%, var(--shiny-burgundy-dark) 100%);
       color: white;
-      padding: 14px 16px;
+      padding: 16px 16px 14px 16px;
       border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 15px rgba(0, 0, 0, 0.35);
     }
 
     .top-bar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center; /* CENTERED STORE TITLE */
       margin-bottom: 12px;
     }
 
-    .back-btn {
-      width: 36px;
-      height: 36px;
-      background: white;
-      border-radius: 50%;
+    .header-title-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .store-logo {
+      width: 24px;
+      height: 24px;
+      background: #FFFFFF;
+      color: var(--shiny-burgundy-top);
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #333;
-      text-decoration: none;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      font-weight: 900;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
     .header-title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      text-align: center;
+      color: var(--text-white);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
+    /* Search Box */
     .search-box {
       width: 100%;
       max-width: 500px;
       margin: 0 auto;
       display: flex;
-      background: white;
-      border-radius: 20px;
-      padding: 6px 12px;
       align-items: center;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      padding: 6px 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .search-icon {
+      font-size: 14px;
+      color: #666;
+      margin-right: 8px;
+      user-select: none;
     }
 
     .search-box input {
       border: none;
       outline: none;
       width: 100%;
-      padding: 6px 8px;
+      padding: 6px 0;
       font-size: 14px;
-      border-radius: 20px;
+      background: transparent;
+      color: #333;
     }
 
+    .search-box input::placeholder { color: #888; }
+
+    /* Main Container */
     .app-container {
       max-width: 600px;
       margin: 16px auto;
@@ -222,6 +243,69 @@
     }
 
     .ad-box .ad-tag { position: absolute; right: 10px; top: 2px; font-size: 9px; color: #AAA; }
+
+    /* --- FULLSCREEN IN-APP WEB PREVIEW MODAL --- */
+    .web-preview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #111;
+      z-index: 99999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .preview-header {
+      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-dark) 100%);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .preview-back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s ease;
+    }
+
+    .preview-back-btn:active {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* CENTERED WEBSITE NAME TITLE IN PREVIEW */
+    .preview-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-iframe {
+      width: 100%;
+      height: calc(100vh - 55px);
+      border: none;
+      background: #FFFFFF;
+    }
   </style>
 
   <!-- Firebase SDKs -->
@@ -230,26 +314,38 @@
 </head>
 <body>
 
-  <!-- Top Bar -->
+  <!-- App Header Container -->
   <div class="header-container">
     <div class="top-bar">
-      <a href="wallet.html" class="back-btn">&#8592;</a>
-      <div class="header-title">BirrGo PWA Store</div>
-      <div style="width: 36px;"></div>
+      <div class="header-title-badge">
+        <div class="store-logo">B</div>
+        <h1 class="header-title">BirrGo Web Store</h1>
+      </div>
     </div>
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search verified PWA apps..." onkeyup="filterApps()">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search verified websites..." onkeyup="filterApps()">
     </div>
   </div>
 
   <main class="app-container" id="appList">
-    <div class="loading-text">Scanning for PWAs...</div>
+    <div class="loading-text">Scanning for websites...</div>
   </main>
 
   <!-- Bottom Ad Box -->
   <div class="ad-box">
     <span class="ad-tag">AD</span>
     📢 <span>Advertisement Space</span>
+  </div>
+
+  <!-- In-App Web Preview Overlay -->
+  <div id="webPreviewModal" class="web-preview-modal">
+    <div class="preview-header">
+      <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
+      <div class="preview-title" id="previewTitle">Website Name</div>
+      <div style="width: 65px;"></div> <!-- Spacer for perfect title centering -->
+    </div>
+    <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
   </div>
 
   <script>
@@ -277,7 +373,7 @@
       }
     }
 
-    function calculatePwaSize(name) {
+    function calculateWebSize(name) {
       let hash = 0;
       for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -298,28 +394,40 @@
         imgElement.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
       } else {
         imgElement.onerror = null;
-        imgElement.src = 'https://via.placeholder.com/65?text=PWA';
+        imgElement.src = 'https://via.placeholder.com/65?text=WEB';
       }
     }
 
-    // Opens apps reliably without breaking scripts or causing white screens
-    function launchPwaFullScreen(url) {
+    /* Opens website directly inside the in-app preview overlay */
+    function launchWebsite(url, appName) {
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
 
-      window.open(formattedUrl, '_blank');
+      // Set the Website Name as the Preview Title
+      document.getElementById('previewTitle').textContent = appName || 'Web View';
+      document.getElementById('previewIframe').src = formattedUrl;
+      
+      // Show full-screen preview overlay
+      document.getElementById('webPreviewModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeWebPreview() {
+      document.getElementById('webPreviewModal').style.display = 'none';
+      document.getElementById('previewIframe').src = '';
+      document.body.style.overflow = 'auto';
     }
 
     async function handleAppAction(key, targetUrl, appName) {
-      const isInstalled = localStorage.getItem('pwa_installed_' + key);
+      const isInstalled = localStorage.getItem('site_installed_' + key);
       const btn = document.getElementById('btn-' + key);
       const progressContainer = document.getElementById('progress-box-' + key);
       const progressBar = document.getElementById('progress-bar-' + key);
 
       if (isInstalled) {
-        launchPwaFullScreen(targetUrl);
+        launchWebsite(targetUrl, appName);
         return;
       }
 
@@ -341,7 +449,8 @@
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
 
-          launchPwaFullScreen(targetUrl);
+          // Auto open in inside-preview when installation finishes
+          launchWebsite(targetUrl, appName);
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
@@ -350,8 +459,8 @@
     }
 
     function markAsInstalled(key, url) {
-      localStorage.setItem('pwa_installed_' + key, 'true');
-      if (url) localStorage.setItem('pwa_installed_url_' + key, url);
+      localStorage.setItem('site_installed_' + key, 'true');
+      if (url) localStorage.setItem('site_installed_url_' + key, url);
 
       const btn = document.getElementById('btn-' + key);
       const uninstallBtn = document.getElementById('uninstall-' + key);
@@ -367,8 +476,8 @@
 
     function uninstallApp(key, appName) {
       if (confirm(`Remove ${appName} from your installed list?`)) {
-        localStorage.removeItem('pwa_installed_' + key);
-        localStorage.removeItem('pwa_installed_url_' + key);
+        localStorage.removeItem('site_installed_' + key);
+        localStorage.removeItem('site_installed_url_' + key);
 
         const btn = document.getElementById('btn-' + key);
         const uninstallBtn = document.getElementById('uninstall-' + key);
@@ -391,21 +500,23 @@
       appList.innerHTML = '';
 
       if (apps.length === 0) {
-        appList.innerHTML = '<div class="loading-text">No verified PWAs found.</div>';
+        appList.innerHTML = '<div class="loading-text">No verified websites found.</div>';
         return;
       }
 
       apps.forEach(({ key, app }) => {
-        const name = app.name || 'PWA Application';
-        const description = app.description || 'Web Progressive Web App';
+        const name = app.name || 'Web Site';
+        const description = app.description || 'Web Application';
         const targetUrl = app.url || '#';
         const initialIcon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
-        const pwaSize = calculatePwaSize(name);
+        const webSize = calculateWebSize(name);
 
-        const isInstalled = localStorage.getItem('pwa_installed_' + key);
+        const isInstalled = localStorage.getItem('site_installed_' + key);
         const buttonText = isInstalled ? 'Open' : 'Install';
         const openClass = isInstalled ? 'is-open' : '';
         const uninstallStyle = isInstalled ? 'display: inline-block;' : 'display: none;';
+
+        const safeName = name.replace(/'/g, "\\'");
 
         const cardHTML = `
           <div class="app-card" data-name="${name.toLowerCase()}">
@@ -415,7 +526,7 @@
                 <h2>${name}</h2>
                 <p>${description}</p>
                 <div class="app-meta">
-                  <span class="size-tag">📦 ${pwaSize}</span>
+                  <span class="size-tag">📦 ${webSize}</span>
                 </div>
                 <div class="progress-bar-container" id="progress-box-${key}">
                   <div class="progress-bar-fill" id="progress-bar-${key}"></div>
@@ -423,10 +534,10 @@
               </div>
             </div>
             <div class="btn-group">
-              <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}', '${name}')">
+              <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}', '${safeName}')">
                 ${buttonText}
               </button>
-              <button id="uninstall-${key}" class="btn-uninstall" style="${uninstallStyle}" onclick="uninstallApp('${key}', '${name}')">
+              <button id="uninstall-${key}" class="btn-uninstall" style="${uninstallStyle}" onclick="uninstallApp('${key}', '${safeName}')">
                 Uninstall
               </button>
             </div>
@@ -440,7 +551,7 @@
     db.ref('pwa_apps').on('value', (snapshot) => {
       allAppsData = [];
       if (!snapshot.exists()) {
-        appList.innerHTML = '<div class="loading-text">No PWAs available in store.</div>';
+        appList.innerHTML = '<div class="loading-text">No websites available in store.</div>';
         return;
       }
 
@@ -454,7 +565,7 @@
       renderAppList(allAppsData);
     }, (error) => {
       console.error("Database connection error:", error);
-      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load PWAs. Check connection.</div>';
+      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load websites. Check connection.</div>';
     });
 
     function filterApps() {
