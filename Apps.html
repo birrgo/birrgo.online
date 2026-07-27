@@ -11,7 +11,6 @@
       --shiny-burgundy-top: #5E0012;
       --shiny-burgundy-mid: #3B000B;
       --shiny-burgundy-dark: #210006;
-      --primary-red: #3B000B;
       --green-open: #28a745;
       --red-uninstall: #dc3545;
       --text-white: #FFFFFF;
@@ -250,7 +249,7 @@
       color: #AAA;
     }
 
-    /* FULL-SCREEN PWA VIEWER WITH STRAIGHT SHINY BURGUNDY HEADER */
+    /* FULL-SCREEN PWA VIEWER MODAL */
     #pwaViewerModal {
       display: none;
       position: fixed;
@@ -326,7 +325,7 @@
     }
   </style>
 
-  <!-- Firebase App & Realtime Database SDKs -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
@@ -355,7 +354,7 @@
     📢 <span>Advertisement Space</span>
   </div>
 
-  <!-- Full-Screen Custom PWA Modal with Straight Shiny Header -->
+  <!-- Full-Screen Custom PWA Modal with Header -->
   <div id="pwaViewerModal">
     <div class="pwa-viewer-header">
       <button class="pwa-close-btn" onclick="closePwaViewer()">✕</button>
@@ -424,31 +423,32 @@
       }
     }
 
-    // Opens PWA with straight shiny header, real title & X back button
+    // Opens PWA reliably without iframe security blocking errors
     function launchPwaFullScreen(url, appName) {
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
 
-      const modal = document.getElementById('pwaViewerModal');
-      const frame = document.getElementById('pwaFrame');
-      const titleEl = document.getElementById('pwaViewerTitle');
-
-      if (titleEl) {
-        titleEl.textContent = appName || 'App Viewer';
-      }
-
+      // Check if domain strictly blocks framing (like BBC, Google, YouTube)
       const frameBlockedDomains = ['bbc.com', 'google.com', 'youtube.com', 'facebook.com', 'twitter.com', 'x.com', 'instagram.com'];
-      const isBlockedDomain = frameBlockedDomains.some(domain => formattedUrl.toLowerCase().includes(domain));
+      const isFrameBlocked = frameBlockedDomains.some(domain => formattedUrl.toLowerCase().includes(domain));
 
-      if (isBlockedDomain) {
-        frame.src = 'https://corsproxy.io/?' + encodeURIComponent(formattedUrl);
+      if (isFrameBlocked) {
+        // Open directly so target app runs with 100% features and zero grey sad-face errors
+        window.open(formattedUrl, '_blank');
       } else {
-        frame.src = formattedUrl;
-      }
+        const modal = document.getElementById('pwaViewerModal');
+        const frame = document.getElementById('pwaFrame');
+        const titleEl = document.getElementById('pwaViewerTitle');
 
-      modal.style.display = 'flex';
+        if (titleEl) {
+          titleEl.textContent = appName || 'App Viewer';
+        }
+
+        frame.src = formattedUrl;
+        modal.style.display = 'flex';
+      }
     }
 
     function closePwaViewer() {
