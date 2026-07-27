@@ -121,7 +121,7 @@
         .brand-logo-title {
             color: #ffffff;
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 17px; /* Reduced font size */
+            font-size: 17px;
             font-weight: 700;
             text-align: center;
             display: flex;
@@ -167,7 +167,7 @@
             max-width: 1200px;
             margin: 10px auto 0 auto;
             padding: 0 16px;
-            display: none; /* Initially Hidden */
+            display: none;
             animation: fadeInDown 0.25s ease-out forwards;
         }
 
@@ -216,7 +216,7 @@
             cursor: pointer;
             transition: var(--transition-smooth);
             font-weight: 700;
-            font-size: 13px; /* Reduced font size */
+            font-size: 13px;
             color: var(--text-dark);
         }
 
@@ -257,11 +257,11 @@
             padding: 22px;
             box-shadow: var(--shadow-3d-md);
             border: 1px solid rgba(226, 232, 240, 0.9);
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         .category-wrapper.active-view {
-            display: block !important; /* ONLY 1 CATEGORY RENDERED */
+            display: block !important;
         }
 
         .category-header {
@@ -287,7 +287,7 @@
 
         .category-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px; /* Reduced font size */
+            font-size: 18px;
             font-weight: 700;
             color: var(--burgundy-dark);
         }
@@ -328,7 +328,7 @@
         }
 
         .card-title-text {
-            font-size: 15px; /* Reduced font size */
+            font-size: 15px;
             font-weight: 800;
         }
 
@@ -369,7 +369,7 @@
 
         .split-header {
             color: #f8fafc;
-            font-size: 13px; /* Reduced font size */
+            font-size: 13px;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -392,7 +392,7 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 10px;
             font-weight: 700;
-            font-size: 11px; /* Reduced font size */
+            font-size: 11px;
             color: white;
             cursor: pointer;
             transition: var(--transition-smooth);
@@ -463,7 +463,7 @@
 
         .metric-card h2 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px; /* Reduced font size */
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -567,6 +567,18 @@
             </div>
             <div class="category-grid">
                 
+                <!-- NEW: Bix Apps split card pointing to SIDs Gateway, AI, and Admin Apps -->
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>🚀</span> Bix Apps
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="sidsgateway.html"><button class="sub-nav-btn btn-push-action">SIDs Gateway</button></a>
+                        <a href="ais.html"><button class="sub-nav-btn btn-ai-action">AI Gate</button></a>
+                        <a href="adminapp.html"><button class="sub-nav-btn btn-keys">Admin Apps</button></a>
+                    </div>
+                </div>
+
                 <div class="split-card-container">
                     <div class="split-header">
                         <span>📣</span> Gateways & Support AI

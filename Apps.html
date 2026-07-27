@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birr Go - PWA App Store</title>
+
+  <style>
+    :root {
+      --bg-color: #F8F9FA;
+      --card-bg: #4A030D; /* Dark maroon background matching screenshot */
+      --primary-red: #8B0018;
+      --green-open: #28a745;
+      --text-white: #FFFFFF;
+      --text-yellow: #FFD700;
+      --text-gray: #CCCCCC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    
+    body { 
+      background-color: var(--bg-color); 
+      color: #212529; 
+      padding-bottom: 90px; /* Leave space for fixed bottom ad box */
+    }
+
+    /* Fixed Top Header Container with Bottom Curve */
+    .header-container {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: var(--primary-red);
+      color: white;
+      padding: 16px 16px 24px 16px;
+      border-bottom-left-radius: 50% 20px;
+      border-bottom-right-radius: 50% 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Search Bar */
+    .search-box {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      background: white;
+      border-radius: 20px;
+      padding: 6px 12px;
+      align-items: center;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 14px;
+      border-radius: 20px;
+    }
+
+    /* App Container */
+    .app-container {
+      max-width: 600px;
+      margin: 16px auto;
+      padding: 0 16px;
+    }
+
+    /* App Cards styled like your UI screenshot */
+    .app-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      gap: 12px;
+      color: white;
+    }
+
+    .app-info { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; }
+    .app-icon { 
+      width: 65px; 
+      height: 65px; 
+      border-radius: 12px; 
+      object-fit: cover; 
+      background-color: #FFF; 
+      flex-shrink: 0; 
+    }
+    .app-details { flex: 1; min-width: 0; }
+    .app-details h2 { font-size: 15px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-details p { font-size: 12px; color: var(--text-gray); margin-top: 4px; line-clamp: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .action-btn {
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      background-color: #FFFFFF;
+      color: #333;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .action-btn.is-open {
+      background-color: var(--green-open);
+      color: white;
+    }
+
+    .action-btn:active { transform: scale(0.95); }
+    .loading-text { text-align: center; color: #666; padding: 30px 20px; font-size: 14px; }
+
+    /* Fixed Bottom Ad Box */
+    .ad-box {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px dashed #CCC;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ad-box .ad-tag {
+      position: absolute;
+      right: 10px;
+      top: 2px;
+      font-size: 9px;
+      color: #AAA;
+    }
+  </style>
+
+  <!-- Firebase App & Realtime Database SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <!-- Fixed Top Bar with Curve -->
+  <div class="header-container">
+    <div class="top-bar">
+      <!-- Back button targeting wallet.html -->
+      <a href="wallet.html" class="back-btn">&#8592;</a>
+      <div class="header-title">BirrGo App Store</div>
+      <div style="width: 36px;"></div> <!-- Spacer for symmetry -->
+    </div>
+    <!-- Search Bar -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
+    </div>
+  </div>
+
+  <main class="app-container" id="appList">
+    <div class="loading-text">Loading apps...</div>
+  </main>
+
+  <!-- Bottom Fixed Ad Box -->
+  <div class="ad-box">
+    <span class="ad-tag">AD</span>
+    📢 <span>Advertisement Space</span>
+  </div>
+
+  <script>
+    // --- FIREBASE CONFIGURATION ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+      authDomain: "birrgo-fdf7e.firebaseapp.com",
+      databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+      projectId: "birrgo-fdf7e",
+      storageBucket: "birrgo-fdf7e.firebasestorage.app",
+      messagingSenderId: "2317445154",
+      appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const appList = document.getElementById('appList');
+
+    let deferredPrompt = null;
+    let allAppsData = [];
+
+    // Capture PWA install prompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    // Handle Install / Open Button Action
+    function handleAppAction(key, url) {
+      const isInstalled = localStorage.getItem('installed_' + key);
+
+      if (isInstalled) {
+        window.open(url, '_blank');
+      } else {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              setAppInstalled(key, url);
+            }
+            deferredPrompt = null;
+          });
+        } else {
+          setAppInstalled(key, url);
+          window.open(url, '_blank');
+        }
+      }
+    }
+
+    function setAppInstalled(key, url) {
+      localStorage.setItem('installed_' + key, 'true');
+      const btn = document.getElementById('btn-' + key);
+      if (btn) {
+        btn.textContent = 'Open';
+        btn.classList.add('is-open');
+      }
+    }
+
+    // Render list from data
+    function renderAppList(apps) {
+      appList.innerHTML = '';
+
+      if (apps.length === 0) {
+        appList.innerHTML = '<div class="loading-text">No apps found.</div>';
+        return;
+      }
+
+      apps.forEach(({ key, app }) => {
+        // Fallback icon preview logic using domain favicon service
+        let iconUrl = app.icon;
+        if (!iconUrl && app.url) {
+          try {
+            const domain = new URL(app.url).hostname;
+            iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+          } catch(e) {
+            iconUrl = 'https://via.placeholder.com/65';
+          }
+        } else if (!iconUrl) {
+          iconUrl = 'https://via.placeholder.com/65';
+        }
+
+        const name = app.name || 'Unnamed Application';
+        const description = app.description || 'Web PWA Application';
+        const targetUrl = app.url || '#';
+
+        const isInstalled = localStorage.getItem('installed_' + key);
+        const buttonText = isInstalled ? 'Open' : 'Install';
+        const openClass = isInstalled ? 'is-open' : '';
+
+        const cardHTML = `
+          <div class="app-card" data-name="${name.toLowerCase()}">
+            <div class="app-info">
+              <img src="${iconUrl}" alt="${name}" class="app-icon" onerror="this.onerror=null;this.src='https://via.placeholder.com/65';">
+              <div class="app-details">
+                <h2>${name}</h2>
+                <p>${description}</p>
+              </div>
+            </div>
+            <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}')">
+              ${buttonText}
+            </button>
+          </div>
+        `;
+
+        appList.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    // Real-Time Listener on Firebase
+    db.ref('pwa_apps').on('value', (snapshot) => {
+      allAppsData = [];
+      if (!snapshot.exists()) {
+        appList.innerHTML = '<div class="loading-text">No apps available right now.</div>';
+        return;
+      }
+
+      snapshot.forEach((childSnapshot) => {
+        allAppsData.push({
+          key: childSnapshot.key,
+          app: childSnapshot.val()
+        });
+      });
+
+      renderAppList(allAppsData);
+    }, (error) => {
+      console.error("Database connection error:", error);
+      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load apps. Check database rules.</div>';
+    });
+
+    // Real-time Search Filter
+    function filterApps() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = allAppsData.filter(item => {
+        const name = (item.app.name || '').toLowerCase();
+        const desc = (item.app.description || '').toLowerCase();
+        return name.includes(query) || desc.includes(query);
+      });
+      renderAppList(filtered);
+    }
+  </script>
+
+</body>
+</html>
