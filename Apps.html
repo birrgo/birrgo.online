@@ -245,6 +245,40 @@
       font-size: 9px;
       color: #AAA;
     }
+
+    /* FULL-SCREEN PWA VIEWER (NO TOP URL BAR) */
+    #pwaViewerModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 99999;
+    }
+
+    #pwaViewerModal iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .close-pwa-btn {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 100000;
+      background: rgba(0,0,0,0.75);
+      color: #FFF;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
   </style>
 
   <!-- Firebase App & Realtime Database SDKs -->
@@ -276,6 +310,12 @@
     📢 <span>Advertisement Space</span>
   </div>
 
+  <!-- Full-Screen PWA Modal Container -->
+  <div id="pwaViewerModal">
+    <button class="close-pwa-btn" onclick="closePwaViewer()">✕ Exit App</button>
+    <iframe id="pwaFrame" allow="geolocation; microphone; camera; midi; encrypted-media"></iframe>
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -294,7 +334,6 @@
     let deferredPrompt = null;
     let allAppsData = [];
 
-    // Capture install prompt if user is installing the Store itself
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -334,30 +373,33 @@
       }
     }
 
+    // Opens PWA in pure fullscreen (No browser top link header)
+    function launchPwaFullScreen(url) {
+      const modal = document.getElementById('pwaViewerModal');
+      const frame = document.getElementById('pwaFrame');
+      frame.src = url;
+      modal.style.display = 'block';
+    }
+
+    function closePwaViewer() {
+      const modal = document.getElementById('pwaViewerModal');
+      const frame = document.getElementById('pwaFrame');
+      frame.src = '';
+      modal.style.display = 'none';
+    }
+
     async function handleAppAction(key, targetUrl, appName) {
       const isInstalled = localStorage.getItem('pwa_installed_' + key);
       const btn = document.getElementById('btn-' + key);
       const progressContainer = document.getElementById('progress-box-' + key);
       const progressBar = document.getElementById('progress-bar-' + key);
 
-      // 1. If already installed, open the app
+      // If installed, open directly full screen inside app
       if (isInstalled) {
-        window.open(targetUrl, '_blank');
+        launchPwaFullScreen(targetUrl);
         return;
       }
 
-      // 2. If native prompt is available for this current domain
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if (choice.outcome === 'accepted') {
-          markAsInstalled(key, targetUrl);
-          deferredPrompt = null;
-          return;
-        }
-      }
-
-      // 3. For third-party PWAs: simulate installation prep, then launch URL so browser triggers "Add to Home Screen"
       btn.disabled = true;
       btn.classList.add('is-downloading');
       btn.textContent = '0%';
@@ -376,8 +418,8 @@
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
 
-          // Launch target app so browser can prompt user to add to home screen
-          window.open(targetUrl, '_blank');
+          // Launch full screen on complete
+          launchPwaFullScreen(targetUrl);
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
@@ -402,9 +444,7 @@
     }
 
     function uninstallApp(key, appName) {
-      const userConfirmed = confirm(`To uninstall ${appName}:\n\n1. It will be removed from your store list.\n2. To remove the icon from your device, long-press the ${appName} app icon on your home screen and select "Uninstall" or "Remove".\n\nProceed?`);
-      
-      if (userConfirmed) {
+      if (confirm(`Remove ${appName} from your installed list?`)) {
         localStorage.removeItem('pwa_installed_' + key);
         localStorage.removeItem('pwa_installed_url_' + key);
 
