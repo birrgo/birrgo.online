@@ -26,7 +26,7 @@
       padding-bottom: 90px;
     }
 
-    /* Straight Fixed Top Header with Dark Shiny Burgundy Gradient */
+    /* Fixed Top Header */
     .header-container {
       position: sticky;
       top: 0;
@@ -133,9 +133,7 @@
       font-size: 10px;
       font-weight: 600;
     }
-    .size-tag {
-      color: var(--text-yellow);
-    }
+    .size-tag { color: var(--text-yellow); }
 
     /* Download Progress UI */
     .progress-bar-container {
@@ -180,18 +178,10 @@
       min-width: 85px;
     }
 
-    .action-btn.is-open {
-      background-color: var(--green-open);
-      color: white;
-    }
+    .action-btn.is-open { background-color: var(--green-open); color: white; }
+    .action-btn.is-downloading { background-color: #ffc107; color: #000; cursor: wait; }
 
-    .action-btn.is-downloading {
-      background-color: #ffc107;
-      color: #000;
-      cursor: wait;
-    }
-
-    /* 3D Stylized Uninstall Button */
+    /* 3D Uninstall Button */
     .btn-uninstall {
       padding: 6px 14px;
       border-radius: 14px;
@@ -209,16 +199,6 @@
       text-align: center;
     }
 
-    .btn-uninstall:hover {
-      background: linear-gradient(180deg, #f05462 0%, #ca2233 100%);
-    }
-
-    .btn-uninstall:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #7a0e19, 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .action-btn:active { transform: scale(0.95); }
     .loading-text { text-align: center; color: #666; padding: 30px 20px; font-size: 14px; }
 
     /* Fixed Bottom Ad Box */
@@ -241,132 +221,7 @@
       gap: 6px;
     }
 
-    .ad-box .ad-tag {
-      position: absolute;
-      right: 10px;
-      top: 2px;
-      font-size: 9px;
-      color: #AAA;
-    }
-
-    /* FULL-SCREEN CUSTOM PWA VIEWER MODAL */
-    #pwaViewerModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #FFFFFF;
-      z-index: 999999;
-      flex-direction: column;
-    }
-
-    .pwa-viewer-header {
-      position: relative;
-      z-index: 1000000;
-      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-mid) 60%, var(--shiny-burgundy-dark) 100%);
-      color: white;
-      padding: 12px 16px;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-
-    .pwa-close-btn {
-      width: 36px;
-      height: 36px;
-      background: #FFFFFF;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #3B000B;
-      border: none;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      transition: transform 0.15s ease;
-    }
-
-    .pwa-close-btn:active {
-      transform: scale(0.9);
-    }
-
-    .pwa-viewer-title {
-      font-size: 16px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #FFFFFF;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 65%;
-    }
-
-    .pwa-iframe-container {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      background: #FFFFFF;
-    }
-
-    .pwa-iframe-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    /* Fallback UI inside modal if an app blocks iframe */
-    .pwa-fallback-card {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #1A0005;
-      color: white;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      z-index: 10;
-    }
-
-    .pwa-fallback-card h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-      color: #FFF;
-    }
-
-    .pwa-fallback-card p {
-      font-size: 13px;
-      color: #CCC;
-      margin-bottom: 20px;
-      max-width: 300px;
-    }
-
-    .launch-external-btn {
-      padding: 12px 28px;
-      background: linear-gradient(180deg, #28a745 0%, #1e7e34 100%);
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      text-decoration: none;
-    }
+    .ad-box .ad-tag { position: absolute; right: 10px; top: 2px; font-size: 9px; color: #AAA; }
   </style>
 
   <!-- Firebase SDKs -->
@@ -375,14 +230,13 @@
 </head>
 <body>
 
-  <!-- Straight Fixed Top Bar -->
+  <!-- Top Bar -->
   <div class="header-container">
     <div class="top-bar">
       <a href="wallet.html" class="back-btn">&#8592;</a>
       <div class="header-title">BirrGo PWA Store</div>
       <div style="width: 36px;"></div>
     </div>
-    <!-- Search Bar -->
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="Search verified PWA apps..." onkeyup="filterApps()">
     </div>
@@ -392,29 +246,10 @@
     <div class="loading-text">Scanning for PWAs...</div>
   </main>
 
-  <!-- Bottom Fixed Ad Box -->
+  <!-- Bottom Ad Box -->
   <div class="ad-box">
     <span class="ad-tag">AD</span>
     📢 <span>Advertisement Space</span>
-  </div>
-
-  <!-- Full-Screen Custom PWA Modal -->
-  <div id="pwaViewerModal">
-    <div class="pwa-viewer-header">
-      <button class="pwa-close-btn" onclick="closePwaViewer()">✕</button>
-      <div class="pwa-viewer-title" id="pwaViewerTitle">App Viewer</div>
-      <div style="width: 36px;"></div>
-    </div>
-    <div class="pwa-iframe-container">
-      <iframe id="pwaFrame" allow="geolocation; microphone; camera; midi; encrypted-media; autoplay; clipboard-write"></iframe>
-      
-      <!-- Fallback view if iframe security triggers -->
-      <div class="pwa-fallback-card" id="pwaFallbackCard">
-        <h3 id="fallbackAppName">Launch Application</h3>
-        <p>This web app security settings require direct full-screen opening.</p>
-        <button class="launch-external-btn" id="fallbackLaunchBtn">Open App Now</button>
-      </div>
-    </div>
   </div>
 
   <script>
@@ -431,14 +266,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const appList = document.getElementById('appList');
-
-    let deferredPrompt = null;
     let allAppsData = [];
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
 
     function getDomain(url) {
       try {
@@ -474,51 +302,14 @@
       }
     }
 
-    // Opens PWA safely without any sad-face frame blocking errors
-    function launchPwaFullScreen(url, appName) {
+    // Opens apps reliably without breaking scripts or causing white screens
+    function launchPwaFullScreen(url) {
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
 
-      // Check if domain is known to strictly block iframe embedding (CNN, BBC, YouTube, Google, etc.)
-      const isKnownBlockedDomain = /cnn\.com|bbc\.com|google\.com|youtube\.com|facebook\.com|twitter\.com|x\.com|instagram\.com|tiktok\.com/i.test(formattedUrl);
-
-      if (isKnownBlockedDomain) {
-        // Launch directly in full standalone window so it works 100% without iframe errors
-        window.open(formattedUrl, '_blank');
-      } else {
-        const modal = document.getElementById('pwaViewerModal');
-        const frame = document.getElementById('pwaFrame');
-        const titleEl = document.getElementById('pwaViewerTitle');
-        const fallbackCard = document.getElementById('pwaFallbackCard');
-        const fallbackAppName = document.getElementById('fallbackAppName');
-        const fallbackLaunchBtn = document.getElementById('fallbackLaunchBtn');
-
-        if (titleEl) titleEl.textContent = appName || 'App Viewer';
-        if (fallbackAppName) fallbackAppName.textContent = appName || 'App';
-
-        fallbackCard.style.display = 'none';
-        frame.style.display = 'block';
-
-        // Prepare fallback click handler
-        fallbackLaunchBtn.onclick = function() {
-          window.open(formattedUrl, '_blank');
-          closePwaViewer();
-        };
-
-        frame.src = formattedUrl;
-        modal.style.display = 'flex';
-      }
-    }
-
-    function closePwaViewer() {
-      const modal = document.getElementById('pwaViewerModal');
-      const frame = document.getElementById('pwaFrame');
-      const fallbackCard = document.getElementById('pwaFallbackCard');
-      frame.src = '';
-      fallbackCard.style.display = 'none';
-      modal.style.display = 'none';
+      window.open(formattedUrl, '_blank');
     }
 
     async function handleAppAction(key, targetUrl, appName) {
@@ -528,7 +319,7 @@
       const progressBar = document.getElementById('progress-bar-' + key);
 
       if (isInstalled) {
-        launchPwaFullScreen(targetUrl, appName);
+        launchPwaFullScreen(targetUrl);
         return;
       }
 
@@ -550,7 +341,7 @@
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
 
-          launchPwaFullScreen(targetUrl, appName);
+          launchPwaFullScreen(targetUrl);
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
