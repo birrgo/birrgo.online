@@ -60,23 +60,29 @@
       position: relative;
     }
 
-    /* --- Precise 3-Menu Overlay --- */
+    /* --- Back Button / Menu Overlay --- */
     .back-button-blocker {
       position: absolute;
       top: 10px;
       left: 10px;
       width: 36px;        
       height: 36px;       
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(0, 0, 0, 0.4);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 50;        
       pointer-events: auto;
-      cursor: default;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(4px);
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .back-button-blocker:active {
+      transform: scale(0.95);
+      background-color: rgba(0, 0, 0, 0.6);
     }
 
     /* 3-Menu Icon */
@@ -102,8 +108,6 @@
       height: 100%;
       border: none;
       background: white;
-      transform: scale(1.03); 
-      transform-origin: top center;
     }
 
     /* --- Bottom Navigation Menu --- */
@@ -175,8 +179,8 @@
   <main class="main-content">
     <div class="frame-container">
       
-      <!-- Overlaid 3-Menu Box -->
-      <div class="back-button-blocker" onclick="event.stopPropagation(); return false;">
+      <!-- Overlaid 3-Menu Box (Handles iframe back navigation) -->
+      <div class="back-button-blocker" onclick="goBackInFrame(event)" title="Back">
         <div class="menu-icon">
           <span></span>
           <span></span>
@@ -222,8 +226,10 @@
 
   <!-- JavaScript -->
   <script>
+    const iframe = document.getElementById('newsFrame');
+
     function switchTab(pageUrl, element) {
-      document.getElementById('newsFrame').src = pageUrl;
+      iframe.src = pageUrl;
 
       const navItems = document.querySelectorAll('.nav-item');
       navItems.forEach(item => item.classList.remove('active'));
@@ -231,12 +237,24 @@
       element.classList.add('active');
     }
 
-    // Register Service Worker
+    // Controls internal back button functionality for the iframe
+    function goBackInFrame(e) {
+      if (e) e.stopPropagation();
+      try {
+        if (iframe.contentWindow.history.length > 1) {
+          iframe.contentWindow.history.back();
+        }
+      } catch (err) {
+        console.log('Cross-origin iframe back navigation prevented');
+      }
+    }
+
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker Registered with scope:', reg.scope))
-          .catch(err => console.error('SW Registration failed: ', err));
+          .then(reg => console.log('Service Worker Registered:', reg.scope))
+          .catch(err => console.error('SW Registration failed:', err));
       });
     }
   </script>
