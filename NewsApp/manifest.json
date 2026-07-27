@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "/NewsApp/",
   "name": "Birr Go - App News",
   "short_name": "App News",
   "description": "Latest news, sports, entertainment, and tech updates on Birr Go.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/NewsApp/",
+  "scope": "/NewsApp/",
   "display": "standalone",
   "display_override": [
     "standalone",
@@ -20,31 +20,31 @@
   ],
   "icons": [
     {
-      "src": "/icon.png",
+      "src": "/NewsApp/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon.png",
+      "src": "/NewsApp/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icon.png",
+      "src": "/NewsApp/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon.png",
+      "src": "/NewsApp/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/badge-icon.png",
+      "src": "/NewsApp/badge-icon.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "monochrome"
@@ -55,10 +55,10 @@
       "name": "Latest News",
       "short_name": "News",
       "description": "Read top stories",
-      "url": "/",
+      "url": "/NewsApp/",
       "icons": [
         {
-          "src": "/icon.png",
+          "src": "/NewsApp/icon.png",
           "sizes": "192x192",
           "type": "image/png",
           "purpose": "any"
