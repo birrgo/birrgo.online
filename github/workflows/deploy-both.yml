@@ -1,0 +1,61 @@
+name: Deploy Main Site and Subdomain PWA
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Deploy Main Site (birrgo.online) from Root
+  deploy-main:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Main Site Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Serves root directory
+
+      - name: Deploy Main Site
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Job 2: Deploy Subdomain PWA (appnews.birrgo.online) from /NewsApp
+  deploy-subdomain:
+    needs: deploy-main
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload NewsApp Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './NewsApp' # Serves only NewsApp subfolder
+
+      - name: Deploy Subdomain PWA
+        id: deployment
+        uses: actions/deploy-pages@v4
