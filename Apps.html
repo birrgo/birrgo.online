@@ -26,7 +26,7 @@
       padding-bottom: 90px;
     }
 
-    /* Straight Fixed Top Header with Shiny Dark Burgundy Gradient */
+    /* Straight Fixed Top Header with Dark Shiny Burgundy Gradient */
     .header-container {
       position: sticky;
       top: 0;
@@ -249,7 +249,7 @@
       color: #AAA;
     }
 
-    /* FULL-SCREEN PWA VIEWER MODAL */
+    /* FULL-SCREEN CUSTOM PWA VIEWER MODAL */
     #pwaViewerModal {
       display: none;
       position: fixed;
@@ -323,6 +323,50 @@
       height: 100%;
       border: none;
     }
+
+    /* Fallback UI inside modal if an app blocks iframe */
+    .pwa-fallback-card {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #1A0005;
+      color: white;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .pwa-fallback-card h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #FFF;
+    }
+
+    .pwa-fallback-card p {
+      font-size: 13px;
+      color: #CCC;
+      margin-bottom: 20px;
+      max-width: 300px;
+    }
+
+    .launch-external-btn {
+      padding: 12px 28px;
+      background: linear-gradient(180deg, #28a745 0%, #1e7e34 100%);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      text-decoration: none;
+    }
   </style>
 
   <!-- Firebase SDKs -->
@@ -354,7 +398,7 @@
     📢 <span>Advertisement Space</span>
   </div>
 
-  <!-- Full-Screen Custom PWA Modal with Header -->
+  <!-- Full-Screen Custom PWA Modal -->
   <div id="pwaViewerModal">
     <div class="pwa-viewer-header">
       <button class="pwa-close-btn" onclick="closePwaViewer()">✕</button>
@@ -363,6 +407,13 @@
     </div>
     <div class="pwa-iframe-container">
       <iframe id="pwaFrame" allow="geolocation; microphone; camera; midi; encrypted-media; autoplay; clipboard-write"></iframe>
+      
+      <!-- Fallback view if iframe security triggers -->
+      <div class="pwa-fallback-card" id="pwaFallbackCard">
+        <h3 id="fallbackAppName">Launch Application</h3>
+        <p>This web app security settings require direct full-screen opening.</p>
+        <button class="launch-external-btn" id="fallbackLaunchBtn">Open App Now</button>
+      </div>
     </div>
   </div>
 
@@ -423,28 +474,38 @@
       }
     }
 
-    // Opens PWA reliably without iframe security blocking errors
+    // Opens PWA safely without any sad-face frame blocking errors
     function launchPwaFullScreen(url, appName) {
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
 
-      // Check if domain strictly blocks framing (like BBC, Google, YouTube)
-      const frameBlockedDomains = ['bbc.com', 'google.com', 'youtube.com', 'facebook.com', 'twitter.com', 'x.com', 'instagram.com'];
-      const isFrameBlocked = frameBlockedDomains.some(domain => formattedUrl.toLowerCase().includes(domain));
+      // Check if domain is known to strictly block iframe embedding (CNN, BBC, YouTube, Google, etc.)
+      const isKnownBlockedDomain = /cnn\.com|bbc\.com|google\.com|youtube\.com|facebook\.com|twitter\.com|x\.com|instagram\.com|tiktok\.com/i.test(formattedUrl);
 
-      if (isFrameBlocked) {
-        // Open directly so target app runs with 100% features and zero grey sad-face errors
+      if (isKnownBlockedDomain) {
+        // Launch directly in full standalone window so it works 100% without iframe errors
         window.open(formattedUrl, '_blank');
       } else {
         const modal = document.getElementById('pwaViewerModal');
         const frame = document.getElementById('pwaFrame');
         const titleEl = document.getElementById('pwaViewerTitle');
+        const fallbackCard = document.getElementById('pwaFallbackCard');
+        const fallbackAppName = document.getElementById('fallbackAppName');
+        const fallbackLaunchBtn = document.getElementById('fallbackLaunchBtn');
 
-        if (titleEl) {
-          titleEl.textContent = appName || 'App Viewer';
-        }
+        if (titleEl) titleEl.textContent = appName || 'App Viewer';
+        if (fallbackAppName) fallbackAppName.textContent = appName || 'App';
+
+        fallbackCard.style.display = 'none';
+        frame.style.display = 'block';
+
+        // Prepare fallback click handler
+        fallbackLaunchBtn.onclick = function() {
+          window.open(formattedUrl, '_blank');
+          closePwaViewer();
+        };
 
         frame.src = formattedUrl;
         modal.style.display = 'flex';
@@ -454,7 +515,9 @@
     function closePwaViewer() {
       const modal = document.getElementById('pwaViewerModal');
       const frame = document.getElementById('pwaFrame');
+      const fallbackCard = document.getElementById('pwaFallbackCard');
       frame.src = '';
+      fallbackCard.style.display = 'none';
       modal.style.display = 'none';
     }
 
