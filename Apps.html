@@ -10,6 +10,125 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    .section-title {
+      color: #aaa;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* Custom 3D White Modal UI */
+    .app-action-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .app-action-card {
+      background: #ffffff;
+      border-radius: 22px;
+      padding: 24px 20px;
+      width: 88%;
+      max-width: 340px;
+      text-align: center;
+      color: #1a1a1a;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35), 0 5px 15px rgba(0, 0, 0, 0.15);
+      animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .app-action-card img {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      object-fit: cover;
+    }
+
+    .app-action-card h3 {
+      margin: 0 0 18px 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .app-action-btn {
+      width: 100%;
+      padding: 13px 16px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    /* Shiny Burgundy Buttons */
+    .btn-burgundy-shiny {
+      background: linear-gradient(180deg, #800020 0%, #500014 60%, #38000e 100%);
+      color: #ffffff;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 4px 12px rgba(80, 0, 20, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-burgundy-shiny:active {
+      transform: scale(0.98);
+      background: linear-gradient(180deg, #500014 0%, #38000e 100%);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Soft Off-White Cancel Button */
+    .btn-cancel-soft {
+      background-color: #f0f2f5;
+      color: #333333;
+      border: 1px solid #e1e4e8;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .btn-cancel-soft:active {
+      background-color: #e2e5e9;
+      transform: scale(0.98);
+    }
+
+    /* Pin Badge Indicator */
+    .installed-app-item {
+      position: relative;
+    }
+    .pin-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 10px;
+      background: #5d0017;
+      color: #fff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+  </style>
 </head>
 <body>
 
@@ -75,16 +194,14 @@
     <div class="search-results-container" id="searchResults"></div>
   </div>
 
-  <!-- UNINSTALL CONFIRMATION MODAL -->
-  <div class="confirm-overlay" id="confirmModal">
-    <div class="confirm-card">
-      <img id="dialogIcon" class="dialog-app-icon" src="" alt="App Icon">
-      <div class="confirm-title" id="dialogAppName">Uninstall App?</div>
-      <div class="confirm-message">Are you sure you want to uninstall this application from your device?</div>
-      <div class="confirm-actions">
-        <button class="dialog-btn-cancel" onclick="closeUninstallModal()">Cancel</button>
-        <button class="dialog-btn-remove" id="confirmOkBtn">Uninstall</button>
-      </div>
+  <!-- 3D WHITE CUSTOM MODAL (PIN, UNINSTALL, CANCEL) -->
+  <div class="app-action-modal" id="appActionModal">
+    <div class="app-action-card">
+      <img id="actionIcon" src="" alt="App Icon">
+      <h3 id="actionAppName">App Options</h3>
+      <button class="app-action-btn btn-burgundy-shiny" id="actionPinBtn" onclick="togglePinApp()">Pin to Top</button>
+      <button class="app-action-btn btn-burgundy-shiny" onclick="executeUninstall()">Uninstall App</button>
+      <button class="app-action-btn btn-cancel-soft" onclick="closeActionModal()">Cancel</button>
     </div>
   </div>
 
@@ -160,7 +277,7 @@
     const appList = document.getElementById('appList');
     let allAppsData = [];
     let activeCategory = 'installed';
-    let pendingUninstallKey = null;
+    let selectedAppKey = null;
 
     function showGlobalLoader(msg = "Loading...") {
       if (window.AppLoader && typeof window.AppLoader.show === 'function') {
@@ -254,7 +371,8 @@
         const targetUrl = app.url || '#';
         const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
         const appSize = getAdminSize(app);
-        const isInstalled = localStorage.getItem('site_installed_' + key);
+        const isSystem = app.isSystem === true || app.isSystemApp === true;
+        const isInstalled = localStorage.getItem('site_installed_' + key) || isSystem;
         const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
         const isPaid = isAppPaid(app);
         const isPurchased = localStorage.getItem('site_purchased_' + key);
@@ -337,27 +455,42 @@
       document.body.style.overflow = 'auto';
     }
 
-    function promptUninstallApp(key, appName, iconUrl) {
-      pendingUninstallKey = key;
-      document.getElementById('dialogAppName').textContent = `Uninstall ${appName}?`;
-      document.getElementById('dialogIcon').src = iconUrl;
+    function openAppActions(key, appName, iconUrl) {
+      selectedAppKey = key;
+      document.getElementById('actionAppName').textContent = appName;
+      document.getElementById('actionIcon').src = iconUrl;
       
-      const okBtn = document.getElementById('confirmOkBtn');
-      okBtn.onclick = function() {
-        if (pendingUninstallKey) {
-          localStorage.removeItem('site_installed_' + pendingUninstallKey);
-          pendingUninstallKey = null;
-          closeUninstallModal();
-          renderAppList(allAppsData);
-        }
-      };
+      const isPinned = localStorage.getItem('site_pinned_' + key) === 'true';
+      const pinBtn = document.getElementById('actionPinBtn');
+      pinBtn.textContent = isPinned ? 'Unpin App' : 'Pin to Top';
 
-      document.getElementById('confirmModal').style.display = 'flex';
+      document.getElementById('appActionModal').style.display = 'flex';
     }
 
-    function closeUninstallModal() {
-      document.getElementById('confirmModal').style.display = 'none';
-      pendingUninstallKey = null;
+    function closeActionModal() {
+      document.getElementById('appActionModal').style.display = 'none';
+      selectedAppKey = null;
+    }
+
+    function togglePinApp() {
+      if (!selectedAppKey) return;
+      const currentPinned = localStorage.getItem('site_pinned_' + selectedAppKey) === 'true';
+      if (currentPinned) {
+        localStorage.removeItem('site_pinned_' + selectedAppKey);
+      } else {
+        localStorage.setItem('site_pinned_' + selectedAppKey, 'true');
+      }
+      closeActionModal();
+      renderAppList(allAppsData);
+    }
+
+    function executeUninstall() {
+      if (selectedAppKey) {
+        localStorage.removeItem('site_installed_' + selectedAppKey);
+        localStorage.removeItem('site_pinned_' + selectedAppKey);
+        closeActionModal();
+        renderAppList(allAppsData);
+      }
     }
 
     function renderAppList(apps) {
@@ -365,7 +498,8 @@
 
       const categoryApps = apps.filter(item => {
         const { key, app } = item;
-        const isInstalled = localStorage.getItem('site_installed_' + key);
+        const isSystem = app.isSystem === true || app.isSystemApp === true;
+        const isInstalled = localStorage.getItem('site_installed_' + key) || isSystem;
         const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
 
         if (activeCategory === 'installed') return isInstalled && !isStore;
@@ -381,22 +515,46 @@
       }
 
       if (activeCategory === 'installed') {
-        let gridHTML = '<div class="installed-grid">';
-        categoryApps.forEach(({ key, app }) => {
+        const sortedApps = categoryApps.sort((a, b) => {
+          const aSystem = a.app.isSystem === true || a.app.isSystemApp === true;
+          const bSystem = b.app.isSystem === true || b.app.isSystemApp === true;
+
+          if (aSystem !== bSystem) return bSystem - aSystem; // 1. System Apps locked on top
+
+          const aPinned = localStorage.getItem('site_pinned_' + a.key) === 'true';
+          const bPinned = localStorage.getItem('site_pinned_' + b.key) === 'true';
+
+          if (aPinned !== bPinned) return bPinned - aPinned; // 2. Pinned Apps under system apps
+
+          const aTime = parseInt(localStorage.getItem('site_installed_time_' + a.key) || '0');
+          const bTime = parseInt(localStorage.getItem('site_installed_time_' + b.key) || '0');
+          return bTime - aTime; // 3. Newest installed apps next
+        });
+
+        let html = '<div class="installed-grid">';
+
+        sortedApps.forEach(({ key, app }) => {
           const name = app.name || 'App';
           const targetUrl = app.url || '#';
           const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
           const safeName = name.replace(/'/g, "\\'");
+          const isSystem = app.isSystem === true || app.isSystemApp === true;
+          const isPinned = localStorage.getItem('site_pinned_' + key) === 'true';
 
-          gridHTML += `
-            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" oncontextmenu="promptUninstallApp('${key}', '${safeName}', '${icon}'); return false;">
+          const contextMenuAttr = !isSystem ? `oncontextmenu="openAppActions('${key}', '${safeName}', '${icon}'); return false;"` : '';
+          const pinBadgeHtml = isPinned ? `<span class="pin-badge">📌</span>` : '';
+
+          html += `
+            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" ${contextMenuAttr}>
+              ${pinBadgeHtml}
               <img src="${icon}" class="installed-app-icon" onerror="handleImageError(this, '${targetUrl}')" alt="${name}">
               <span class="installed-app-name">${name}</span>
             </div>
           `;
         });
-        gridHTML += '</div>';
-        appList.insertAdjacentHTML('beforeend', gridHTML);
+
+        html += '</div>';
+        appList.insertAdjacentHTML('beforeend', html);
         return;
       }
 

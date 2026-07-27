@@ -95,6 +95,8 @@
     .price-badge.free { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     .price-badge.paid { background: #fff3cd; color: #664d03; border: 1px solid #ffe69c; }
 
+    .badge-system { background: #0d6efd; color: white; padding: 1px 5px; border-radius: 4px; font-size: 9px; font-weight: bold; margin-left: 4px; }
+
     .action-group { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-edit { background: #0d6efd; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
     .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
@@ -165,6 +167,13 @@
 
     <label for="appUrl">URL Target:</label>
     <input type="url" id="appUrl" placeholder="https://example.com/ or store link" oninput="debouncedPreview()">
+
+    <!-- SYSTEM APP CONFIGURATION -->
+    <label for="isSystemApp">App Protection Level:</label>
+    <select id="isSystemApp">
+      <option value="false">Standard App (Uninstallable)</option>
+      <option value="true">🛡️ System App (Non-Uninstallable)</option>
+    </select>
 
     <!-- PRICING & RECEIVING ADMIN -->
     <div class="row-2">
@@ -283,7 +292,7 @@
     const db = firebase.database();
 
     let verifiedIconUrl = "";
-    let selectedManualCategory = "valid"; // default 'valid' or 'invalid'
+    let selectedManualCategory = "valid";
     let debounceTimer = null;
     let localAppsCache = []; 
     let localTransactionsCache = [];
@@ -483,6 +492,8 @@
       const desc = document.getElementById('appDesc').value.trim();
       let url = document.getElementById('appUrl').value.trim();
       
+      const isSystemApp = document.getElementById('isSystemApp').value === 'true';
+
       const pricingType = document.getElementById('pricingType').value;
       const appPrice = pricingType === 'paid' ? (parseFloat(document.getElementById('appPrice').value) || 0) : 0;
       const adminPhone = document.getElementById('adminPhone').value.trim();
@@ -518,6 +529,7 @@
         description: desc || "No description provided.",
         url: url,
         sourceType: sourceType,
+        isSystemApp: isSystemApp,
         pricingType: pricingType,
         price: appPrice,
         adminPhone: adminPhone,
@@ -567,6 +579,8 @@
       document.getElementById('appDesc').value = app.description || '';
       document.getElementById('appUrl').value = app.url || '';
       
+      document.getElementById('isSystemApp').value = app.isSystemApp ? 'true' : 'false';
+
       document.getElementById('pricingType').value = app.pricingType || 'free';
       document.getElementById('appPrice').value = app.price && app.price !== 0 ? app.price : '';
       document.getElementById('adminPhone').value = app.adminPhone || app.ownerPhone || '';
@@ -601,6 +615,9 @@
       document.getElementById('appName').value = '';
       document.getElementById('appDesc').value = '';
       document.getElementById('appUrl').value = '';
+      
+      document.getElementById('isSystemApp').value = 'false';
+
       document.getElementById('pricingType').value = 'free';
       document.getElementById('appPrice').value = '';
       document.getElementById('adminPhone').value = '';
@@ -719,12 +736,14 @@
         ? `<span class="price-badge paid">💰 Price: ${safePrice} ETB</span> | ` 
         : `<span class="price-badge free">🆓 Free</span> | `;
 
+      const systemBadge = app.isSystemApp ? `<span class="badge-system">🛡️ System App</span>` : '';
+
       return `
         <div class="app-item">
           <div class="app-info-admin">
             <img src="${escapeHtml(app.icon)}" alt="Icon" onerror="this.src='https://via.placeholder.com/36?text=Icon'">
             <div>
-              <strong>${escapeHtml(app.name)} <small style="display:inline; color:#888;">(${escapeHtml(safeType)})</small></strong>
+              <strong>${escapeHtml(app.name)} <small style="display:inline; color:#888;">(${escapeHtml(safeType)})</small> ${systemBadge}</strong>
               <small>${escapeHtml(app.url)}</small>
               <div class="meta-pills">${priceBadgeHtml}⭐ ${escapeHtml(app.userRating || '4.8 ★')} | 🛡️ ${escapeHtml(app.systemRating || 'PEGI 3')} | 📦 ${escapeHtml(app.size || '12.5 MB')} | 📥 ${escapeHtml(app.downloads || '50K+')}</div>
             </div>
