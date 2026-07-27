@@ -4,332 +4,223 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Birr Go - Web Store</title>
+  
+  <link rel="stylesheet" href="Apps.css">
 
-  <style>
-    :root {
-      --bg-color: #F8F9FA;
-      --shiny-burgundy-top: #5E0012;
-      --shiny-burgundy-mid: #3B000B;
-      --shiny-burgundy-dark: #210006;
-      --green-open: #28a745;
-      --red-uninstall: #dc3545;
-      --text-white: #FFFFFF;
-      --text-yellow: #FFD700;
-      --text-gray: #CCCCCC;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, Roboto, sans-serif; }
-    
-    body { 
-      background-color: var(--bg-color); 
-      color: #212529; 
-      padding-bottom: 90px;
-      overflow-x: hidden;
-    }
-
-    /* --- NATIVE APP-LIKE TOP HEADER UI --- */
-    .header-container {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-mid) 60%, var(--shiny-burgundy-dark) 100%);
-      color: white;
-      padding: 16px 16px 14px 16px;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 15px rgba(0, 0, 0, 0.35);
-    }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-
-    .header-title-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .header-title {
-      font-size: 19px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      text-align: center;
-      color: var(--text-white);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    /* Search Box */
-    .search-box {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 22px;
-      padding: 6px 14px;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .search-icon {
-      font-size: 14px;
-      color: #666;
-      margin-right: 8px;
-      user-select: none;
-    }
-
-    .search-box input {
-      border: none;
-      outline: none;
-      width: 100%;
-      padding: 6px 0;
-      font-size: 14px;
-      background: transparent;
-      color: #333;
-    }
-
-    .search-box input::placeholder { color: #888; }
-
-    /* Main Container */
-    .app-container {
-      max-width: 600px;
-      margin: 16px auto;
-      padding: 0 16px;
-    }
-
-    /* Shiny Dark Burgundy App Cards */
-    .app-card {
-      background: linear-gradient(135deg, #4A000E 0%, #290007 70%, #170004 100%);
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 6px 14px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      gap: 12px;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .app-info { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; }
-    .app-icon { 
-      width: 65px; 
-      height: 65px; 
-      border-radius: 12px; 
-      object-fit: cover; 
-      background-color: #FFF; 
-      flex-shrink: 0; 
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .app-details { flex: 1; min-width: 0; }
-    .app-details h2 { font-size: 15px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-details p { font-size: 11px; color: var(--text-gray); margin-top: 2px; line-clamp: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    
-    .app-meta {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 4px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-    .size-tag { color: var(--text-yellow); }
-
-    /* Download Progress UI */
-    .progress-bar-container {
-      width: 100%;
-      background: rgba(255,255,255,0.2);
-      height: 6px;
-      border-radius: 3px;
-      margin-top: 6px;
-      overflow: hidden;
-      display: none;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--green-open);
-      width: 0%;
-      transition: width 0.2s ease;
-    }
-
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-end;
-      flex-shrink: 0;
-    }
-
-    .action-btn {
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      border: none;
-      background-color: #FFFFFF;
-      color: #333;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      min-width: 85px;
-    }
-
-    .action-btn.is-open { background-color: var(--green-open); color: white; }
-    .action-btn.is-downloading { background-color: #ffc107; color: #000; cursor: wait; }
-
-    /* 3D Uninstall Button */
-    .btn-uninstall {
-      padding: 6px 14px;
-      border-radius: 14px;
-      font-size: 11px;
-      font-weight: 700;
-      border: 1px solid #a71d2a;
-      background: linear-gradient(180deg, #e44d5a 0%, #b81c2c 100%);
-      color: #FFFFFF;
-      cursor: pointer;
-      display: none;
-      box-shadow: 0 4px 0 #7a0e19, 0 5px 8px rgba(0, 0, 0, 0.4);
-      transition: all 0.1s ease;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-      min-width: 85px;
-      text-align: center;
-    }
-
-    .loading-text { text-align: center; color: #666; padding: 30px 20px; font-size: 14px; }
-
-    /* Fixed Bottom Ad Box */
-    .ad-box {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #FFFFFF;
-      border-top: 1px dashed #CCC;
-      padding: 12px;
-      text-align: center;
-      font-size: 13px;
-      color: #777;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .ad-box .ad-tag { position: absolute; right: 10px; top: 2px; font-size: 9px; color: #AAA; }
-
-    /* --- FULLSCREEN IN-APP WEB PREVIEW MODAL --- */
-    .web-preview-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #111;
-      z-index: 99999;
-      display: none;
-      flex-direction: column;
-    }
-
-    .preview-header {
-      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-dark) 100%);
-      color: white;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .preview-back-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 6px 12px;
-      border-radius: 18px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .preview-back-btn:active {
-      background: rgba(255, 255, 255, 0.4);
-    }
-
-    .preview-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #FFFFFF;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 70%;
-      letter-spacing: 0.5px;
-      margin: 0 auto;
-    }
-
-    .preview-iframe {
-      width: 100%;
-      height: calc(100vh - 55px);
-      border: none;
-      background: #FFFFFF;
-    }
-  </style>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* Subtext under install buttons */
+    .btn-subtext {
+      display: block;
+      font-size: 10px;
+      color: #800020;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 3px;
+    }
+
+    .details-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Highest Priority Modal Overlay */
+    .security-modal-backdrop {
+      position: fixed !important;
+      top: 0 !important; 
+      left: 0 !important; 
+      right: 0 !important; 
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0, 0, 0, 0.8) !important;
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999 !important; /* Forces PIN popup above all screens */
+    }
+    .security-modal-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 340px;
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      text-align: center;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1000000 !important;
+    }
+    .security-modal-icon {
+      width: 48px; height: 48px;
+      background: rgba(128, 0, 32, 0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .security-modal-icon svg {
+      width: 24px; height: 24px; stroke: #800020; fill: none; stroke-width: 2;
+    }
+    .security-modal-title {
+      font-size: 18px; font-weight: 700; color: #1f0007; margin-bottom: 6px;
+    }
+    .security-modal-desc {
+      font-size: 13px; color: #6b5257; margin-bottom: 14px; line-height: 1.4;
+    }
+    .security-password-input {
+      width: 100%; padding: 12px; font-size: 18px; text-align: center;
+      letter-spacing: 6px; border-radius: 12px; border: 1.5px solid #ccc;
+      box-sizing: border-box; margin-bottom: 14px; outline: none;
+    }
+    .security-password-input:focus {
+      border-color: #800020;
+    }
+    .modal-error-banner {
+      font-size: 11px; color: #d32f2f; margin-bottom: 10px; display: none; font-weight: 600;
+    }
+    .security-modal-actions {
+      display: flex; gap: 10px;
+    }
+    .btn-modal-cancel, .btn-modal-submit {
+      flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      border: none; cursor: pointer;
+    }
+    .btn-modal-cancel { background: #f1f1f1; color: #333; }
+    .btn-modal-submit { background: #800020; color: #fff; }
+  </style>
 </head>
 <body>
 
-  <!-- App Header Container -->
   <div class="header-container">
-    <div class="top-bar">
-      <div class="header-title-badge">
-        <h1 class="header-title">BirrGo Web Store</h1>
-      </div>
+    <div class="header-top-row">
+      <a href="wallet.html" class="nav-btn" title="Back">&#8592;</a>
+      <h1 class="header-title">BirrGo Store</h1>
+      <button class="nav-btn" onclick="openSearchModal()" title="Search">&#128065;</button>
     </div>
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search verified websites..." onkeyup="filterApps()">
+  </div>
+
+  <div class="category-menu-wrapper">
+    <div class="category-menu">
+      <button class="menu-tab active" onclick="switchCategory('installed', this)">Installed</button>
+      <button class="menu-tab" onclick="switchCategory('birrgo', this)">BirrGo Apps</button>
+      <button class="menu-tab" onclick="switchCategory('universal', this)">Universal</button>
+      <button class="menu-tab" onclick="switchCategory('stores', this)">Stores</button>
     </div>
   </div>
 
   <main class="app-container" id="appList">
-    <div class="loading-text">Scanning for websites...</div>
+    <div class="loading-text">Loading store apps...</div>
   </main>
 
-  <!-- Bottom Ad Box -->
-  <div class="ad-box">
-    <span class="ad-tag">AD</span>
-    📢 <span>Advertisement Space</span>
+  <!-- FULL ARTICLE APP DETAILS PAGE -->
+  <div class="full-screen-app-page" id="appDetailsPage">
+    <div class="details-top-bar">
+      <div class="header-title" id="pageBarTitle">App Details</div>
+      <button class="close-x-btn" onclick="closeFullScreenAppPage()" title="Close">&#10005;</button>
+    </div>
+
+    <div class="details-page-content">
+      <div class="details-header-card">
+        <div class="details-header-top">
+          <div class="details-header-left">
+            <img id="pageAppIcon" src="" class="details-app-icon" alt="App Icon">
+            <div class="details-app-meta">
+              <h2 id="pageAppName">App Name</h2>
+            </div>
+          </div>
+          <div class="details-header-right">
+            <button class="details-header-btn" id="pageInstallBtn">Install App</button>
+            <span id="pageInstallSubtext" class="btn-subtext"></span>
+          </div>
+        </div>
+
+        <div class="app-meta-grid">
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageUserRating">--</span>
+            <span class="meta-box-label">User Rating</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageSystemRating">--</span>
+            <span class="meta-box-label">System Rate</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageAppSize">--</span>
+            <span class="meta-box-label">Size</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageDownloadCount">--</span>
+            <span class="meta-box-label">Downloads</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-article-card">
+        <div class="details-article-title">About this App</div>
+        <div class="details-article-body" id="pageAppDescription">
+          Loading article description...
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- In-App Web Preview Overlay -->
+  <!-- PURCHASE CONFIRMATION & PIN POPUP -->
+  <div class="security-modal-backdrop" id="walletPurchaseModal">
+    <div class="security-modal-card">
+      <div class="security-modal-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h3 class="security-modal-title">Confirm Purchase</h3>
+      <p class="security-modal-desc" id="purchaseModalDesc">This app costs 0 ETB. Enter your 6-digit Wallet PIN/Password to continue.</p>
+      
+      <div class="modal-error-banner" id="purchaseModalError"></div>
+
+      <input type="password" maxlength="6" inputmode="numeric" class="security-password-input" id="walletPinInput" placeholder="••••••">
+
+      <div class="security-modal-actions">
+        <button class="btn-modal-cancel" onclick="closeWalletPurchaseModal()">Cancel</button>
+        <button class="btn-modal-submit" id="btnConfirmPurchase" onclick="submitWalletPurchase()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-modal-overlay" id="searchModal">
+    <div class="search-modal-header">
+      <div class="search-input-pill">
+        <span>🔍</span>
+        <input type="text" id="globalSearchInput" placeholder="Enter App Name..." onkeyup="performGlobalSearch()">
+      </div>
+      <button class="search-cancel-btn" onclick="closeSearchModal()">Cancel</button>
+    </div>
+    
+    <div class="search-hint-text" id="searchHint">Type an app name above to find apps quickly across all categories.</div>
+    <div class="search-results-container" id="searchResults"></div>
+  </div>
+
+  <div class="confirm-overlay" id="confirmModal">
+    <div class="confirm-card">
+      <img id="dialogIcon" class="dialog-app-icon" src="" alt="App Icon">
+      <div class="confirm-title" id="dialogAppName">Uninstall App?</div>
+      <div class="confirm-message">Are you sure you want to uninstall this application from your device?</div>
+      <div class="confirm-actions">
+        <button class="dialog-btn-cancel" onclick="closeUninstallModal()">Cancel</button>
+        <button class="dialog-btn-remove" id="confirmOkBtn">Uninstall</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-box">
+    <span>Advertisement Space</span>
+  </div>
+
   <div id="webPreviewModal" class="web-preview-modal">
     <div class="preview-header">
       <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
-      <div class="preview-title" id="previewTitle">Website Name</div>
-      <div style="width: 50px;"></div> <!-- Spacer for center alignment -->
+      <div class="preview-title" id="previewTitle">App Name</div>
+      <div style="width: 40px;"></div>
     </div>
     <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
   </div>
@@ -349,86 +240,415 @@
     const db = firebase.database();
     const appList = document.getElementById('appList');
     let allAppsData = [];
+    let activeCategory = 'installed';
+    let pendingUninstallKey = null;
+    let activePurchaseKey = null;
+
+    const activeUserPhone = localStorage.getItem('auth_session_phone');
+
+    function getAdminSize(app) {
+      if (app.size || app.appSize) {
+        let raw = app.size || app.appSize;
+        return raw.toString().includes('MB') ? raw : raw + ' MB';
+      }
+      return '12.5 MB';
+    }
+
+    function getAdminUserRating(app) {
+      if (app.userRating || app.rating) {
+        let val = app.userRating || app.rating;
+        return val.toString().includes('★') ? val : val + ' ★';
+      }
+      return '4.8 ★';
+    }
+
+    function getAdminSystemRating(app) {
+      return app.systemRating || app.pegi || 'PEGI 3';
+    }
+
+    function getAdminDownloadCount(app) {
+      if (app.downloads || app.downloadCount) {
+        let val = app.downloads || app.downloadCount;
+        return val.toString().includes('+') ? val : val + '+';
+      }
+      return '50K+';
+    }
+
+    function isAppPaid(app) {
+      return app.pricingType === 'paid' && parseFloat(app.price) > 0;
+    }
+
+    function openFullScreenAppPage(key) {
+      const item = allAppsData.find(a => a.key === key);
+      if (!item) return;
+
+      const app = item.app;
+      const name = app.name || 'App';
+      const description = app.description || 'No detailed article provided for this application.';
+      const targetUrl = app.url || '#';
+      const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+      const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+      const safeName = name.replace(/'/g, "\\'");
+
+      document.getElementById('pageBarTitle').textContent = name;
+      document.getElementById('pageAppName').textContent = name;
+      document.getElementById('pageAppIcon').src = icon;
+      document.getElementById('pageAppDescription').textContent = description;
+
+      document.getElementById('pageUserRating').textContent = getAdminUserRating(app);
+      document.getElementById('pageSystemRating').textContent = getAdminSystemRating(app);
+      document.getElementById('pageAppSize').textContent = getAdminSize(app);
+      document.getElementById('pageDownloadCount').textContent = getAdminDownloadCount(app);
+
+      setupInstallButtonState(key, app, targetUrl, safeName, isStore);
+
+      document.getElementById('appDetailsPage').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function setupInstallButtonState(key, app, targetUrl, safeName, isStore) {
+      const installBtn = document.getElementById('pageInstallBtn');
+      const subtextElem = document.getElementById('pageInstallSubtext');
+      
+      const isInstalled = localStorage.getItem('site_installed_' + key);
+      const isPaid = isAppPaid(app);
+      const isPurchased = localStorage.getItem('site_purchased_' + key);
+
+      if (isPaid && !isPurchased && !isInstalled) {
+        subtextElem.textContent = `Paid (${app.price} ETB)`;
+      } else {
+        subtextElem.textContent = '';
+      }
+
+      if (isInstalled) {
+        installBtn.textContent = 'Open App';
+        installBtn.className = 'details-header-btn is-open';
+        installBtn.onclick = function() {
+          closeFullScreenAppPage();
+          openApp(key, targetUrl, safeName, isStore);
+        };
+      } else if (isPaid && !isPurchased) {
+        installBtn.textContent = 'Install App';
+        installBtn.className = 'details-header-btn';
+        installBtn.onclick = function() {
+          promptWalletPurchase(key);
+        };
+      } else {
+        installBtn.textContent = isStore ? 'Get App' : 'Install App';
+        installBtn.className = 'details-header-btn';
+        installBtn.onclick = function() {
+          if (isStore) {
+            handleAppAction(key, targetUrl, safeName, isStore);
+          } else {
+            startDownloadCount(key, targetUrl, safeName, isStore, installBtn);
+          }
+        };
+      }
+    }
+
+    function promptWalletPurchase(key) {
+      if (!activeUserPhone) {
+        alert("Please log into your account first to make a purchase.");
+        window.location.href = "new2.html";
+        return;
+      }
+      activePurchaseKey = key;
+      const appItem = allAppsData.find(a => a.key === key);
+      const app = appItem ? appItem.app : {};
+      
+      const modal = document.getElementById('walletPurchaseModal');
+      // Ensure the modal is strictly appended to the end of body to avoid stacking context issues
+      document.body.appendChild(modal);
+
+      document.getElementById('purchaseModalDesc').textContent = `This app costs ${app.price || 0} ETB. Enter your 6-digit Wallet PIN/Password to continue.`;
+      document.getElementById('purchaseModalError').style.display = 'none';
+      document.getElementById('walletPinInput').value = '';
+      modal.style.display = 'flex';
+      setTimeout(() => document.getElementById('walletPinInput').focus(), 100);
+    }
+
+    function closeWalletPurchaseModal() {
+      document.getElementById('walletPurchaseModal').style.display = 'none';
+      activePurchaseKey = null;
+    }
+
+    async function submitWalletPurchase() {
+      const pinInput = document.getElementById('walletPinInput').value.trim();
+      const errBanner = document.getElementById('purchaseModalError');
+      const confirmBtn = document.getElementById('btnConfirmPurchase');
+
+      if (!pinInput || pinInput.length !== 6) {
+        errBanner.textContent = "Please enter your 6-digit PIN.";
+        errBanner.style.display = 'block';
+        return;
+      }
+
+      const item = allAppsData.find(a => a.key === activePurchaseKey);
+      if (!item) return;
+
+      const app = item.app;
+      const price = parseFloat(app.price) || 0;
+      const appAdminPhone = app.adminPhone || app.ownerPhone || app.creatorPhone || null;
+
+      try {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "Processing...";
+
+        // 1. Check PIN
+        const pinSnap = await db.ref(`users/${activeUserPhone}/securityPin`).once('value');
+        if (!pinSnap.exists() || String(pinSnap.val()) !== pinInput) {
+          errBanner.textContent = "Incorrect PIN. Try again.";
+          errBanner.style.display = 'block';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = "Confirm";
+          return;
+        }
+
+        // 2. Check Wallet Balance
+        const balSnap = await db.ref(`users/${activeUserPhone}/walletBalance`).once('value');
+        const currentBalance = parseFloat(balSnap.val()) || 0;
+
+        if (currentBalance < price) {
+          errBanner.textContent = "Insufficient wallet balance.";
+          errBanner.style.display = 'block';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = "Confirm";
+          return;
+        }
+
+        const now = new Date();
+        const timestampStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
+                             now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        // 3. Deduct Balance from Buyer
+        const newBuyerBalance = currentBalance - price;
+        await db.ref(`users/${activeUserPhone}/walletBalance`).set(newBuyerBalance);
+
+        // 4. Add Expense Record
+        await db.ref(`users/${activeUserPhone}/transactions`).push({
+          title: `Purchased ${app.name || 'App'}`,
+          amount: -price,
+          type: 'expense',
+          timestamp: timestampStr,
+          timestampISO: now.toISOString(),
+          sortingTime: Date.now(),
+          balanceAfter: newBuyerBalance
+        });
+
+        // 5. Transfer Funds to App Creator or Global Admin
+        if (appAdminPhone) {
+          const adminBalRef = db.ref(`users/${appAdminPhone}/walletBalance`);
+          const adminSnap = await adminBalRef.once('value');
+          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
+          const newAdminBalance = currentAdminBalance + price;
+          
+          await adminBalRef.set(newAdminBalance);
+
+          await db.ref(`users/${appAdminPhone}/transactions`).push({
+            title: `App Sale: ${app.name || 'App'}`,
+            amount: price,
+            type: 'income',
+            sender: activeUserPhone,
+            timestamp: timestampStr,
+            timestampISO: now.toISOString(),
+            sortingTime: Date.now(),
+            balanceAfter: newAdminBalance
+          });
+        } else {
+          const adminBalRef = db.ref('admin/walletBalance');
+          const adminSnap = await adminBalRef.once('value');
+          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
+          await adminBalRef.set(currentAdminBalance + price);
+        }
+
+        // 6. Public Transaction Log
+        await db.ref('transactions').push({
+          appName: app.name || 'App',
+          amount: price,
+          sender: activeUserPhone,
+          recipientAdmin: appAdminPhone || 'Global Admin',
+          timestamp: Date.now(),
+          type: 'web_deposit'
+        });
+
+        // Mark local purchase state
+        localStorage.setItem('site_purchased_' + activePurchaseKey, 'true');
+
+        const purchasedKey = activePurchaseKey;
+        const targetUrl = app.url || '#';
+        const safeName = (app.name || 'App').replace(/'/g, "\\'");
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirm";
+
+        closeWalletPurchaseModal();
+
+        document.getElementById('pageInstallSubtext').textContent = '';
+        renderAppList(allAppsData);
+
+        const installBtn = document.getElementById('pageInstallBtn');
+        startDownloadCount(purchasedKey, targetUrl, safeName, isStore, installBtn);
+
+      } catch (err) {
+        console.error("Purchase error:", err);
+        errBanner.textContent = "Transaction failed. Try again.";
+        errBanner.style.display = 'block';
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirm";
+      }
+    }
+
+    function startDownloadCount(key, targetUrl, safeName, isStore, buttonElem) {
+      let progress = 0;
+      buttonElem.disabled = true;
+      buttonElem.className = 'details-header-btn is-progress';
+
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 10;
+        if (progress > 100) progress = 100;
+
+        buttonElem.textContent = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          localStorage.setItem('site_installed_' + key, 'true');
+          
+          buttonElem.disabled = false;
+          buttonElem.textContent = 'Open App';
+          buttonElem.className = 'details-header-btn is-open';
+
+          buttonElem.onclick = function() {
+            closeFullScreenAppPage();
+            openApp(key, targetUrl, safeName, isStore);
+          };
+
+          renderAppList(allAppsData);
+        }
+      }, 200);
+    }
+
+    function closeFullScreenAppPage() {
+      document.getElementById('appDetailsPage').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function openSearchModal() {
+      const modal = document.getElementById('searchModal');
+      const input = document.getElementById('globalSearchInput');
+      modal.style.display = 'flex';
+      input.value = '';
+      document.getElementById('searchResults').innerHTML = '';
+      document.getElementById('searchHint').style.display = 'block';
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeSearchModal() {
+      document.getElementById('searchModal').style.display = 'none';
+      document.getElementById('globalSearchInput').value = '';
+    }
+
+    function performGlobalSearch() {
+      const query = document.getElementById('globalSearchInput').value.toLowerCase().trim();
+      const resultsContainer = document.getElementById('searchResults');
+      const hintText = document.getElementById('searchHint');
+
+      if (!query) {
+        hintText.style.display = 'block';
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      hintText.style.display = 'none';
+
+      const matchedApps = allAppsData.filter(item => {
+        const name = (item.app.name || '').toLowerCase();
+        const desc = (item.app.description || '').toLowerCase();
+        return name.includes(query) || desc.includes(query);
+      });
+
+      if (matchedApps.length === 0) {
+        resultsContainer.innerHTML = '<div class="loading-text" style="color:white;">No apps found matching your search.</div>';
+        return;
+      }
+
+      resultsContainer.innerHTML = '';
+      matchedApps.forEach(({ key, app }) => {
+        const name = app.name || 'App';
+        const targetUrl = app.url || '#';
+        const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+        const appSize = getAdminSize(app);
+        const isInstalled = localStorage.getItem('site_installed_' + key);
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+        const isPaid = isAppPaid(app);
+        const isPurchased = localStorage.getItem('site_purchased_' + key);
+        
+        let btnLabel = isInstalled ? 'Open' : (isStore ? 'Get' : 'Install');
+        let btnClass = isInstalled ? 'main-install-btn is-open' : 'main-install-btn';
+
+        const subtextHtml = (isPaid && !isPurchased && !isInstalled) ? `<span class="btn-subtext">Paid (${app.price} ETB)</span>` : '';
+
+        const cardHTML = `
+          <div class="app-card" onclick="closeSearchModal(); openFullScreenAppPage('${key}');">
+            <div class="app-info">
+              <img src="${icon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
+              <div class="app-details">
+                <h2>${name}</h2>
+                <span class="app-size-badge">${appSize}</span>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <button class="${btnClass}" onclick="event.stopPropagation(); closeSearchModal(); openFullScreenAppPage('${key}');">${btnLabel}</button>
+              ${subtextHtml}
+            </div>
+          </div>
+        `;
+        resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    function switchCategory(categoryKey, tabBtn) {
+      activeCategory = categoryKey;
+      document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+      if (tabBtn) tabBtn.classList.add('active');
+      renderAppList(allAppsData);
+    }
 
     function getDomain(url) {
       try {
         const u = new URL(url.startsWith('http') ? url : 'https://' + url);
         return u.hostname;
-      } catch(e) {
-        return url;
-      }
-    }
-
-    function calculateWebSize(name) {
-      let hash = 0;
-      for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const baseKB = Math.abs(hash % 2400) + 850;
-      return (baseKB / 1024).toFixed(1) + " MB";
+      } catch(e) { return url; }
     }
 
     function handleImageError(imgElement, appUrl) {
       const domain = getDomain(appUrl);
-      const stage = imgElement.getAttribute('data-error-stage') || '0';
-
-      if (stage === '0') {
-        imgElement.setAttribute('data-error-stage', '1');
-        imgElement.src = `https://icon.horse/icon/${domain}`;
-      } else if (stage === '1') {
-        imgElement.setAttribute('data-error-stage', '2');
-        imgElement.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-      } else {
-        imgElement.onerror = null;
-        imgElement.src = 'https://via.placeholder.com/65?text=WEB';
-      }
+      imgElement.onerror = null;
+      imgElement.src = `https://icon.horse/icon/${domain}`;
     }
 
-    // Opens valid sites inside the in-app preview modal
     function launchWebsite(url, appName) {
       let formattedUrl = url.trim();
-      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
-        formattedUrl = 'https://' + formattedUrl;
-      }
-      
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) formattedUrl = 'https://' + formattedUrl;
       document.getElementById('previewTitle').textContent = appName || 'Web View';
       document.getElementById('previewIframe').src = formattedUrl;
-
       document.getElementById('webPreviewModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
 
-    // Opens website based on ADMIN DATABASE VALIDATION:
-    // If Admin marked as valid (canIframe: true) -> In-App Frame
-    // If Admin marked as invalid (canIframe: false) -> External Browser
-    function openApp(key, url, appName) {
-      const appItem = allAppsData.find(item => item.key === key);
-      
-      // Read admin database determination
-      let isValidForIframe = false;
-      if (appItem && appItem.app) {
-        if (appItem.app.hasOwnProperty('canIframe')) {
-          isValidForIframe = (appItem.app.canIframe === true);
-        } else if (appItem.app.category) {
-          isValidForIframe = (appItem.app.category === 'valid');
-        }
-      } else {
-        // Fallback to local storage if offline
-        isValidForIframe = localStorage.getItem('site_iframe_valid_' + key) === 'true';
+    function openApp(key, url, appName, isStore) {
+      if (isStore) {
+        window.location.href = url;
+        return;
       }
+      const appItem = allAppsData.find(item => item.key === key);
+      let isValidForIframe = appItem && appItem.app ? (appItem.app.canIframe === true || appItem.app.category === 'valid') : false;
       
       let formattedUrl = url.trim();
-      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
-        formattedUrl = 'https://' + formattedUrl;
-      }
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) formattedUrl = 'https://' + formattedUrl;
 
-      if (isValidForIframe) {
-        // VALID BY ADMIN: Open inside in-app modal frame
-        launchWebsite(formattedUrl, appName);
-      } else {
-        // INVALID BY ADMIN: Directly open in mobile default browser
-        window.open(formattedUrl, '_blank');
-      }
+      if (isValidForIframe) launchWebsite(formattedUrl, appName);
+      else window.open(formattedUrl, '_blank');
     }
 
     function closeWebPreview() {
@@ -437,149 +657,116 @@
       document.body.style.overflow = 'auto';
     }
 
-    function handleAppAction(key, targetUrl, appName) {
-      const isInstalled = localStorage.getItem('site_installed_' + key);
-      const btn = document.getElementById('btn-' + key);
-      const progressContainer = document.getElementById('progress-box-' + key);
-      const progressBar = document.getElementById('progress-bar-' + key);
-
-      // If already installed, launch immediately using Admin's Database rule
-      if (isInstalled) {
-        openApp(key, targetUrl, appName);
+    function handleAppAction(key, targetUrl, appName, isStore) {
+      if (isStore) {
+        window.location.href = targetUrl;
         return;
       }
-
-      btn.disabled = true;
-      btn.classList.add('is-downloading');
-      btn.textContent = '0%';
-      if (progressContainer) progressContainer.style.display = 'block';
-
-      let progress = 0;
-
-      const downloadInterval = setInterval(() => {
-        progress += Math.floor(Math.random() * 18) + 12;
-        
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(downloadInterval);
-          
-          markAsInstalled(key, targetUrl);
-
-          btn.disabled = false;
-          btn.classList.remove('is-downloading');
-          if (progressContainer) progressContainer.style.display = 'none';
-
-        } else {
-          btn.textContent = progress + '%';
-          if (progressBar) progressBar.style.width = progress + '%';
-        }
-      }, 200);
     }
 
-    function markAsInstalled(key, url) {
-      localStorage.setItem('site_installed_' + key, 'true');
-      if (url) localStorage.setItem('site_installed_url_' + key, url);
+    function promptUninstallApp(key, appName, iconUrl) {
+      pendingUninstallKey = key;
+      document.getElementById('dialogAppName').textContent = `Uninstall ${appName}?`;
+      document.getElementById('dialogIcon').src = iconUrl;
+      
+      const okBtn = document.getElementById('confirmOkBtn');
+      okBtn.onclick = function() {
+        if (pendingUninstallKey) {
+          localStorage.removeItem('site_installed_' + pendingUninstallKey);
+          pendingUninstallKey = null;
+          closeUninstallModal();
+          renderAppList(allAppsData);
+        }
+      };
 
-      // Save Admin's database decision into local state for offline access
-      const appItem = allAppsData.find(item => item.key === key);
-      let isValid = false;
-      if (appItem && appItem.app) {
-        isValid = appItem.app.canIframe === true || appItem.app.category === 'valid';
-      }
-      localStorage.setItem('site_iframe_valid_' + key, isValid ? 'true' : 'false');
-
-      const btn = document.getElementById('btn-' + key);
-      const uninstallBtn = document.getElementById('uninstall-' + key);
-
-      if (btn) {
-        btn.textContent = 'Open';
-        btn.classList.add('is-open');
-      }
-      if (uninstallBtn) {
-        uninstallBtn.style.display = 'inline-block';
-      }
+      document.getElementById('confirmModal').style.display = 'flex';
     }
 
-    function uninstallApp(key, appName) {
-      if (confirm(`Remove ${appName} from your installed list?`)) {
-        localStorage.removeItem('site_installed_' + key);
-        localStorage.removeItem('site_installed_url_' + key);
-        localStorage.removeItem('site_iframe_valid_' + key);
-
-        const btn = document.getElementById('btn-' + key);
-        const uninstallBtn = document.getElementById('uninstall-' + key);
-        const progressBar = document.getElementById('progress-bar-' + key);
-
-        if (btn) {
-          btn.textContent = 'Install';
-          btn.classList.remove('is-open', 'is-downloading');
-        }
-        if (uninstallBtn) {
-          uninstallBtn.style.display = 'none';
-        }
-        if (progressBar) {
-          progressBar.style.width = '0%';
-        }
-      }
+    function closeUninstallModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+      pendingUninstallKey = null;
     }
 
     function renderAppList(apps) {
       appList.innerHTML = '';
 
-      if (apps.length === 0) {
-        appList.innerHTML = '<div class="loading-text">No verified websites found.</div>';
+      const categoryApps = apps.filter(item => {
+        const { key, app } = item;
+        const isInstalled = localStorage.getItem('site_installed_' + key);
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+
+        if (activeCategory === 'installed') return isInstalled && !isStore;
+        if (activeCategory === 'birrgo') return !isInstalled && (app.canIframe === true || app.category === 'valid') && !isStore;
+        if (activeCategory === 'universal') return !isInstalled && app.canIframe !== true && app.category !== 'valid' && !isStore;
+        if (activeCategory === 'stores') return isStore;
+        return false;
+      });
+
+      if (categoryApps.length === 0) {
+        appList.innerHTML = '<div class="loading-text">No apps found in this category.</div>';
         return;
       }
 
-      apps.forEach(({ key, app }) => {
-        const name = app.name || 'Web Site';
-        const description = app.description || 'Web Application';
+      if (activeCategory === 'installed') {
+        let gridHTML = '<div class="installed-grid">';
+        categoryApps.forEach(({ key, app }) => {
+          const name = app.name || 'App';
+          const targetUrl = app.url || '#';
+          const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+          const safeName = name.replace(/'/g, "\\'");
+
+          gridHTML += `
+            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" oncontextmenu="promptUninstallApp('${key}', '${safeName}', '${icon}'); return false;">
+              <img src="${icon}" class="installed-app-icon" onerror="handleImageError(this, '${targetUrl}')" alt="${name}">
+              <span class="installed-app-name">${name}</span>
+            </div>
+          `;
+        });
+        gridHTML += '</div>';
+        appList.insertAdjacentHTML('beforeend', gridHTML);
+        return;
+      }
+
+      categoryApps.forEach(({ key, app }) => {
+        const name = app.name || 'App';
         const targetUrl = app.url || '#';
-        const initialIcon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
-        const webSize = calculateWebSize(name);
-
+        const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+        const appSize = getAdminSize(app);
         const isInstalled = localStorage.getItem('site_installed_' + key);
-        const buttonText = isInstalled ? 'Open' : 'Install';
-        const openClass = isInstalled ? 'is-open' : '';
-        const uninstallStyle = isInstalled ? 'display: inline-block;' : 'display: none;';
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+        const isPaid = isAppPaid(app);
+        const isPurchased = localStorage.getItem('site_purchased_' + key);
+        
+        let btnLabel = isInstalled ? 'Open' : (isStore ? 'Get' : 'Install');
+        let btnClass = isInstalled ? 'main-install-btn is-open' : 'main-install-btn';
 
-        const safeName = name.replace(/'/g, "\\'");
+        const subtextHtml = (isPaid && !isPurchased && !isInstalled) ? `<span class="btn-subtext">Paid (${app.price} ETB)</span>` : '';
 
         const cardHTML = `
-          <div class="app-card" data-name="${name.toLowerCase()}">
+          <div class="app-card" onclick="openFullScreenAppPage('${key}')">
             <div class="app-info">
-              <img src="${initialIcon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
+              <img src="${icon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
               <div class="app-details">
                 <h2>${name}</h2>
-                <p>${description}</p>
-                <div class="app-meta">
-                  <span class="size-tag">📦 ${webSize}</span>
-                </div>
-                <div class="progress-bar-container" id="progress-box-${key}">
-                  <div class="progress-bar-fill" id="progress-bar-${key}"></div>
+                <div class="app-meta-badges">
+                  <span class="app-size-badge">${appSize}</span>
                 </div>
               </div>
             </div>
-            <div class="btn-group">
-              <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}', '${safeName}')">
-                ${buttonText}
-              </button>
-              <button id="uninstall-${key}" class="btn-uninstall" style="${uninstallStyle}" onclick="uninstallApp('${key}', '${safeName}')">
-                Uninstall
-              </button>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <button class="${btnClass}" onclick="event.stopPropagation(); openFullScreenAppPage('${key}');">${btnLabel}</button>
+              ${subtextHtml}
             </div>
           </div>
         `;
-
         appList.insertAdjacentHTML('beforeend', cardHTML);
       });
     }
 
-    // REAL-TIME DATABASE LISTENER
     db.ref('pwa_apps').on('value', (snapshot) => {
       allAppsData = [];
       if (!snapshot.exists()) {
-        appList.innerHTML = '<div class="loading-text">No websites available in store.</div>';
+        appList.innerHTML = '<div class="loading-text">No apps available in store.</div>';
         return;
       }
 
@@ -592,19 +779,9 @@
 
       renderAppList(allAppsData);
     }, (error) => {
-      console.error("Database connection error:", error);
-      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load websites. Check connection.</div>';
+      console.error("Database error:", error);
+      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load. Check connection.</div>';
     });
-
-    function filterApps() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const filtered = allAppsData.filter(item => {
-        const name = (item.app.name || '').toLowerCase();
-        const desc = (item.app.description || '').toLowerCase();
-        return name.includes(query) || desc.includes(query);
-      });
-      renderAppList(filtered);
-    }
   </script>
 
 </body>

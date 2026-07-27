@@ -3,50 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Website Admin Panel</title>
+  <title>Website & App Admin Panel</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; padding: 20px; max-width: 550px; margin: auto; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f8; padding: 20px; max-width: 550px; margin: auto; }
     
     .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .back-btn { background: #333; color: white; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; }
 
     .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2 { color: #8B0018; margin-bottom: 16px; font-size: 18px; }
+    h2 { color: #8B0018; margin-bottom: 16px; font-size: 18px; margin-top: 0; }
     
-    .stats-bar { 
-      background: #8B0018; color: white; padding: 12px 16px; border-radius: 8px; font-weight: bold; margin-bottom: 16px; 
-      display: flex; justify-content: space-between; align-items: center; font-size: 13px; 
+    .deposits-summary-bar {
+      background: white; color: #333; padding: 16px 18px; border-radius: 12px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;
+      margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;
     }
+    .deposits-info { display: flex; flex-direction: column; gap: 4px; }
+    .deposits-title { font-size: 13px; font-weight: 600; color: #666; }
+    .deposits-amount-display { font-size: 22px; font-weight: 800; color: #1b5e20; }
     
-    input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    
-    .icon-preview-box {
-      display: none; align-items: center; gap: 12px; margin-bottom: 14px; padding: 12px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 8px;
+    .btn-open-modal {
+      background: #1b5e20; color: white; border: none; padding: 8px 18px;
+      border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer;
+      transition: background 0.2s ease;
     }
-    .icon-preview-box img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #fff; }
-    .icon-preview-details { display: flex; flex-direction: column; font-size: 12px; gap: 3px; }
-    .frame-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; width: fit-content; }
-    .badge-valid { background: #d1e7dd; color: #0f5132; }
-    .badge-invalid { background: #f8d7da; color: #842029; }
-    .badge-checking { background: #cff4fc; color: #055160; }
+    .btn-open-modal:hover { background: #2e7d32; }
 
-    .btn-submit { width: 100%; padding: 12px; background: #8B0018; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    label { font-size: 12px; font-weight: bold; margin-bottom: 4px; display: block; color: #333; }
+    input, select, textarea { 
+      width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; 
+      border-radius: 6px; box-sizing: border-box; background: #fff; font-size: 14px; font-family: inherit;
+    }
+
+    textarea { resize: vertical; min-height: 70px; }
+
+    .row-2 { display: flex; gap: 10px; }
+    .row-2 > div { flex: 1; }
+
+    .search-box-container { margin-bottom: 16px; }
+    .search-input { 
+      border: 2px solid #8B0018 !important; 
+      border-radius: 8px !important; 
+      padding: 11px !important; 
+      font-size: 14px !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* MANUAL IFRAME TEST & PREVIEW BOX */
+    .test-box {
+      display: none; flex-direction: column; gap: 10px; padding: 14px;
+      background: #f8f9fa; border: 1px solid #cbd5e1; border-radius: 10px; margin-bottom: 16px;
+    }
+    .icon-header-preview { display: flex; align-items: center; gap: 12px; }
+    .icon-header-preview img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #fff; border: 1px solid #ddd; }
+    
+    .iframe-wrapper {
+      width: 100%; height: 260px; border: 2px dashed #94a3b8; border-radius: 8px;
+      overflow: hidden; background: #ffffff; position: relative;
+    }
+    .iframe-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+    .manual-test-actions { display: flex; gap: 10px; margin-top: 4px; }
+    .btn-choice {
+      flex: 1; padding: 10px 12px; border: 2px solid transparent; border-radius: 8px;
+      font-weight: bold; font-size: 13px; cursor: pointer; text-align: center;
+      transition: all 0.2s ease; opacity: 0.65;
+    }
+    .btn-choice.active { opacity: 1; transform: scale(1.02); }
+    .btn-choice-valid { background: #d1e7dd; color: #0f5132; border-color: #0f5132; }
+    .btn-choice-invalid { background: #f8d7da; color: #842029; border-color: #842029; }
+
+    .btn-submit { width: 100%; padding: 12px; background: #8B0018; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
+    .btn-submit:disabled { background: #a55c67; cursor: not-allowed; }
     .btn-cancel { width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 6px; display: none; }
     .status { margin-top: 10px; font-size: 13px; text-align: center; font-weight: 600; }
 
     .category-header { font-size: 14px; font-weight: 700; padding: 8px 12px; border-radius: 6px; margin: 16px 0 10px 0; }
     .cat-valid { background: #e8f5e9; color: #1b5e20; border-left: 4px solid #2e7d32; }
     .cat-invalid { background: #ffebee; color: #b71c1c; border-left: 4px solid #c62828; }
+    .cat-store { background: #eef2f5; color: #1c2d42; border-left: 4px solid #4a6572; }
 
     .app-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
     .app-info-admin { display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden; }
     .app-info-admin img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
     .app-info-admin strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
     .app-info-admin small { color: #6c757d; display: block; font-size: 11px; word-break: break-all; }
+    .meta-pills { font-size: 10px; color: #8B0018; font-weight: bold; margin-top: 2px; }
     
+    .price-badge { padding: 1px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+    .price-badge.free { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+    .price-badge.paid { background: #fff3cd; color: #664d03; border: 1px solid #ffe69c; }
+
     .action-group { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-edit { background: #0d6efd; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
     .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+
+    .fullscreen-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #f4f6f8; z-index: 9999; overflow-y: auto; padding: 20px; box-sizing: border-box;
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+      padding-bottom: 10px; border-bottom: 2px solid #2e7d32;
+    }
+    .modal-header h2 { margin: 0; color: #1b5e20; }
+    .close-modal-btn {
+      background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px;
+      font-weight: bold; cursor: pointer; font-size: 14px;
+    }
+    
+    .deposit-card-item {
+      background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05); border-left: 5px solid #2e7d32;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .deposit-top-row { display: flex; justify-content: space-between; align-items: center; }
+    .deposit-app-title { font-weight: bold; font-size: 15px; color: #333; }
+    .deposit-amount-badge { background: #d1e7dd; color: #0f5132; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 14px; }
+    .deposit-sub-info { font-size: 12px; color: #666; }
+
+    .no-data-box {
+      text-align: center; padding: 40px 20px; background: white; border-radius: 10px;
+      border: 1px dashed #ccc; color: #888; font-weight: bold; font-size: 15px;
+    }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -58,34 +138,134 @@
     <a href="new.html" class="back-btn">&#x2190; Back to New</a>
   </div>
 
-  <div class="stats-bar">
-    <span>Total Listed Websites</span>
-    <span id="totalCount">0</span>
+  <div class="deposits-summary-bar">
+    <div class="deposits-info">
+      <div class="deposits-title">Total Web Deposits Collected</div>
+      <div class="deposits-amount-display" id="totalDepositsAmount">0 ETB</div>
+    </div>
+    <button class="btn-open-modal" onclick="openDepositsModal()">Open</button>
   </div>
 
   <div class="card">
-    <h2 id="formTitle">Add New Website Link</h2>
+    <h2 id="formTitle">Add New Link / App</h2>
     <input type="hidden" id="editKey">
-    <input type="text" id="appName" placeholder="Website Name (e.g. Birr Go News)">
-    <input type="text" id="appDesc" placeholder="Description (e.g. Latest News & Updates)">
-    <input type="url" id="appUrl" placeholder="Website URL (e.g. https://example.com/)" oninput="debouncedIconPreview()">
     
-    <div id="iconPreviewBox" class="icon-preview-box">
-      <img id="iconPreviewImg" src="" alt="Icon Preview">
-      <div class="icon-preview-details">
-        <strong>Website Icon & Category Check</strong>
-        <span id="frameBadge" class="frame-badge badge-checking">Testing Frame Category...</span>
+    <label for="appType">Link Type:</label>
+    <select id="appType" onchange="debouncedPreview()">
+      <option value="website">Website / Web App</option>
+      <option value="playstore">Google Play Store</option>
+      <option value="appstore">Apple App Store</option>
+    </select>
+
+    <label for="appName">App / Website Name:</label>
+    <input type="text" id="appName" placeholder="e.g. Birr Go News">
+
+    <label for="appDesc">Description / Full Article:</label>
+    <textarea id="appDesc" placeholder="Enter full description or app features..."></textarea>
+
+    <label for="appUrl">URL Target:</label>
+    <input type="url" id="appUrl" placeholder="https://example.com/ or store link" oninput="debouncedPreview()">
+
+    <!-- PRICING & RECEIVING ADMIN -->
+    <div class="row-2">
+      <div>
+        <label for="pricingType">Access Model:</label>
+        <select id="pricingType" onchange="togglePriceInput()">
+          <option value="free">Free</option>
+          <option value="paid">Paid</option>
+        </select>
+      </div>
+      <div id="priceBox" style="display: none;">
+        <label for="appPrice">Price Amount (e.g. 50 ETB):</label>
+        <input type="number" id="appPrice" placeholder="50">
       </div>
     </div>
 
-    <button class="btn-submit" id="saveBtn" onclick="saveWebsite()">Add Website</button>
+    <label for="adminPhone">Admin Phone Number (Receiving Wallet Account):</label>
+    <input type="text" id="adminPhone" placeholder="e.g. 0912345678 or 251912345678">
+
+    <label for="adminCardChoice">Deposit Account Option:</label>
+    <select id="adminCardChoice" onchange="toggleCardNumberInput()">
+      <option value="default">Default Admin (1111111111111)</option>
+      <option value="custom">Other / Custom Card Number</option>
+    </select>
+
+    <label for="targetCardNumber">Deposit Receiving Card / Account Number:</label>
+    <input type="text" id="targetCardNumber" value="1111111111111" placeholder="e.g. 1000123456789" readonly style="background-color: #eef2f5; font-weight: bold; color: #1b5e20;">
+
+    <label for="customIcon">Custom Icon Image URL (Optional - Overrides Auto Fetch):</label>
+    <input type="url" id="customIcon" placeholder="https://example.com/custom-icon.png" oninput="debouncedPreview()">
+
+    <div class="row-2">
+      <div>
+        <label for="userRating">User Rating (App Review):</label>
+        <input type="text" id="userRating" placeholder="e.g. 4.8 ★">
+      </div>
+      <div>
+        <label for="systemRating">System Rating:</label>
+        <input type="text" id="systemRating" placeholder="e.g. PEGI 3 / Everyone">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label for="appSize">App Size:</label>
+        <input type="text" id="appSize" placeholder="e.g. 12.5 MB">
+      </div>
+      <div>
+        <label for="downloads">Total Downloads:</label>
+        <input type="text" id="downloads" placeholder="e.g. 50K+ / 1M+">
+      </div>
+    </div>
+
+    <!-- MANUAL IFRAME TESTER & ICON PREVIEW BOX -->
+    <div id="testBox" class="test-box">
+      <div class="icon-header-preview">
+        <img id="iconPreviewImg" src="" alt="Icon Preview" onerror="this.src='https://via.placeholder.com/48?text=Icon'">
+        <div>
+          <strong style="font-size: 13px; color: #333;">Live iFrame Manual Test</strong>
+          <small style="display:block; color:#666;">Check if website opens below, then select category.</small>
+        </div>
+      </div>
+
+      <div id="iframeContainer" class="iframe-wrapper">
+        <iframe id="previewIframe" src="about:blank"></iframe>
+      </div>
+
+      <div class="manual-test-actions" id="manualActions">
+        <button type="button" id="btnValid" class="btn-choice btn-choice-valid active" onclick="setManualChoice('valid')">
+          🟢 Valid (iFrame Opened)
+        </button>
+        <button type="button" id="btnInvalid" class="btn-choice btn-choice-invalid" onclick="setManualChoice('invalid')">
+          🔴 Invalid (Frame Blocked)
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="saveBtn" onclick="saveWebsite()">Add Item</button>
     <button class="btn-cancel" id="cancelBtn" onclick="resetForm()">Cancel Edit</button>
     <div id="status" class="status"></div>
   </div>
 
   <div class="card">
-    <h2>Database Sync (Categorized)</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="margin:0;">Database Sync</h2>
+      <span style="font-size:12px; color:#666; font-weight:bold;">Total Apps: <span id="totalCount">0</span></span>
+    </div>
+
+    <div class="search-box-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search apps by name, link, or price..." oninput="renderAppList()">
+    </div>
+
     <div id="adminAppList">Loading database...</div>
+  </div>
+
+  <div id="depositsModal" class="fullscreen-modal">
+    <div class="modal-header">
+      <h2>💳 Real-Time Web Payment Deposits</h2>
+      <button class="close-modal-btn" onclick="closeDepositsModal()">✕ Close</button>
+    </div>
+    <div id="depositsContainer">Connecting to realtime database...</div>
   </div>
 
   <script>
@@ -103,189 +283,405 @@
     const db = firebase.database();
 
     let verifiedIconUrl = "";
-    let detectedCanIframe = false;
+    let selectedManualCategory = "valid"; // default 'valid' or 'invalid'
     let debounceTimer = null;
+    let localAppsCache = []; 
+    let localTransactionsCache = [];
 
-    const UNFRAMEABLE_DOMAINS = [
-      'bbc.com', 'bbc.co.uk', 'google.com', 'youtube.com', 
-      'facebook.com', 'twitter.com', 'x.com', 'instagram.com', 
-      'github.com', 'linkedin.com', 'amazon.com', 'reddit.com',
-      'microsoft.com', 'apple.com', 'netflix.com', 'telegram.org', 't.me'
-    ];
-
-    function isKnownUnframeable(url) {
-      try {
-        const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname.toLowerCase();
-        return UNFRAMEABLE_DOMAINS.some(d => domain === d || domain.endsWith('.' + d));
-      } catch(e) { return false; }
+    function togglePriceInput() {
+      const type = document.getElementById('pricingType').value;
+      const priceBox = document.getElementById('priceBox');
+      priceBox.style.display = type === 'paid' ? 'block' : 'none';
+      if (type !== 'paid') document.getElementById('appPrice').value = '';
     }
 
-    async function checkIframeSupport(url) {
-      let formattedUrl = url.trim();
-      if (!formattedUrl.startsWith('http')) formattedUrl = 'https://' + formattedUrl;
-
-      if (isKnownUnframeable(formattedUrl)) return false;
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-        const response = await fetch('https://corsproxy.io/?' + encodeURIComponent(formattedUrl), { 
-          method: 'GET', signal: controller.signal 
-        });
-        clearTimeout(timeoutId);
-
-        const xfo = response.headers.get('x-frame-options');
-        const csp = response.headers.get('content-security-policy');
-        controller.abort();
-
-        if (xfo && (xfo.toUpperCase() === 'DENY' || xfo.toUpperCase() === 'SAMEORIGIN')) return false;
-        if (csp && (csp.toLowerCase().includes('frame-ancestors') || csp.toLowerCase().includes("frame-src 'none'"))) return false;
-
-        return true;
-      } catch (e) {
-        return false;
+    function toggleCardNumberInput() {
+      const choice = document.getElementById('adminCardChoice').value;
+      const cardInput = document.getElementById('targetCardNumber');
+      
+      if (choice === 'default') {
+        cardInput.value = '1111111111111';
+        cardInput.readOnly = true;
+        cardInput.style.backgroundColor = '#eef2f5';
+        cardInput.style.color = '#1b5e20';
+      } else {
+        cardInput.readOnly = false;
+        cardInput.style.backgroundColor = '#fff';
+        cardInput.style.color = '#333';
+        if (cardInput.value === '1111111111111') cardInput.value = '';
+        cardInput.focus();
       }
     }
 
-    function debouncedIconPreview() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(updatePreview, 400);
+    function setManualChoice(choice) {
+      selectedManualCategory = choice;
+      const btnValid = document.getElementById('btnValid');
+      const btnInvalid = document.getElementById('btnInvalid');
+
+      if (choice === 'valid') {
+        btnValid.classList.add('active');
+        btnInvalid.classList.remove('active');
+      } else {
+        btnInvalid.classList.add('active');
+        btnValid.classList.remove('active');
+      }
     }
 
-    async function updatePreview() {
-      let rawUrl = document.getElementById('appUrl').value.trim();
-      const previewBox = document.getElementById('iconPreviewBox');
-      const previewImg = document.getElementById('iconPreviewImg');
-      const frameBadge = document.getElementById('frameBadge');
-
-      if (!rawUrl) { previewBox.style.display = 'none'; return; }
-      if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) rawUrl = 'https://' + rawUrl;
-
+    function getPlayStoreIconUrl(appUrl) {
       try {
-        const urlObj = new URL(rawUrl);
-        const origin = urlObj.origin;
-        const domain = urlObj.hostname;
+        const urlObj = new URL(appUrl.startsWith('http') ? appUrl : 'https://' + appUrl);
+        const packageId = urlObj.searchParams.get('id');
+        if (packageId) return `https://unavatar.io/google-play/${packageId}`;
+      } catch(e) {}
+      return null;
+    }
 
-        if (domain && domain.includes('.')) {
-          previewBox.style.display = 'flex';
-          frameBadge.className = "frame-badge badge-checking";
-          frameBadge.textContent = "Testing Validity Category...";
-
-          checkIframeSupport(rawUrl).then(isFrameable => {
-            detectedCanIframe = isFrameable;
-            if (isFrameable) {
-              frameBadge.className = "frame-badge badge-valid";
-              frameBadge.textContent = "🟢 Category: VALID (iFrame Compatible)";
-            } else {
-              frameBadge.className = "frame-badge badge-invalid";
-              frameBadge.textContent = "🔴 Category: INVALID (External Browser)";
-            }
-          });
-
-          previewImg.src = `https://icon.horse/icon/${domain}`;
-          verifiedIconUrl = previewImg.src;
+    async function fetchAppleAppIcon(appUrl) {
+      try {
+        const match = appUrl.match(/id(\d+)/);
+        if (match && match[1]) {
+          const res = await fetch(`https://itunes.apple.com/lookup?id=${match[1]}`);
+          const data = await res.json();
+          if (data.results && data.results.length > 0) {
+            return data.results[0].artworkUrl512 || data.results[0].artworkUrl100;
+          }
         }
-      } catch (e) { previewBox.style.display = 'none'; }
+      } catch (e) {}
+      return null;
+    }
+
+    function debouncedPreview() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(updateLiveTestAndPreview, 400);
+    }
+
+    async function updateLiveTestAndPreview() {
+      let rawUrl = document.getElementById('appUrl').value.trim();
+      let customIcon = document.getElementById('customIcon').value.trim();
+      const sourceType = document.getElementById('appType').value;
+      const testBox = document.getElementById('testBox');
+      const previewImg = document.getElementById('iconPreviewImg');
+      const iframeContainer = document.getElementById('iframeContainer');
+      const previewIframe = document.getElementById('previewIframe');
+      const manualActions = document.getElementById('manualActions');
+
+      if (!rawUrl && !customIcon) { 
+        testBox.style.display = 'none'; 
+        previewIframe.src = "about:blank";
+        return; 
+      }
+
+      if (rawUrl && !/^https?:\/\//i.test(rawUrl)) rawUrl = 'https://' + rawUrl;
+
+      testBox.style.display = 'flex';
+
+      if (customIcon) {
+        verifiedIconUrl = customIcon;
+        previewImg.src = customIcon;
+      } 
+      else if (sourceType === 'playstore' && rawUrl) {
+        const realPlayIcon = getPlayStoreIconUrl(rawUrl);
+        verifiedIconUrl = realPlayIcon || "https://cdn-icons-png.flaticon.com/512/888/888857.png";
+        previewImg.src = verifiedIconUrl;
+      } 
+      else if (sourceType === 'appstore' && rawUrl) {
+        previewImg.src = "https://via.placeholder.com/48?text=Loading";
+        const realAppleIcon = await fetchAppleAppIcon(rawUrl);
+        verifiedIconUrl = realAppleIcon || "https://cdn-icons-png.flaticon.com/512/888/888841.png";
+        previewImg.src = verifiedIconUrl;
+      } 
+      else if (rawUrl) {
+        try {
+          const domain = new URL(rawUrl).hostname;
+          if (domain) {
+            verifiedIconUrl = `https://icon.horse/icon/${domain}`;
+            previewImg.src = verifiedIconUrl;
+          }
+        } catch(e) {}
+      }
+
+      if (sourceType === 'playstore' || sourceType === 'appstore') {
+        iframeContainer.style.display = 'none';
+        manualActions.style.display = 'none';
+        previewIframe.src = "about:blank";
+      } else {
+        iframeContainer.style.display = 'block';
+        manualActions.style.display = 'flex';
+        if (rawUrl && previewIframe.src !== rawUrl) {
+          previewIframe.src = rawUrl;
+        }
+      }
+    }
+
+    db.ref('transactions').on('value', (snapshot) => {
+      localTransactionsCache = [];
+      if (snapshot.exists() && snapshot.hasChildren()) {
+        snapshot.forEach((child) => {
+          const tx = child.val();
+          if (tx) {
+            const type = (tx.type || tx.sourceType || tx.paymentType || tx.category || '').toLowerCase();
+            if (type.includes('web') || type.includes('deposit') || tx.isWeb === true || (!type && (tx.appName || tx.url))) {
+              localTransactionsCache.push({ id: child.key, ...tx });
+            }
+          }
+        });
+      }
+      renderDepositsList();
+    });
+
+    function openDepositsModal() {
+      document.getElementById('depositsModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      renderDepositsList();
+    }
+
+    function closeDepositsModal() {
+      document.getElementById('depositsModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function renderDepositsList() {
+      const container = document.getElementById('depositsContainer');
+      let totalSum = 0;
+      
+      if (!localTransactionsCache || localTransactionsCache.length === 0) {
+        document.getElementById('totalDepositsAmount').textContent = '0 ETB';
+        container.innerHTML = `<div class="no-data-box"><span style="font-size:24px; display:block; margin-bottom:8px;">❌</span>No web payment deposits found.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      localTransactionsCache.slice().reverse().forEach((tx) => {
+        const rawAmount = parseFloat(tx.amount || tx.price || 0);
+        if (!isNaN(rawAmount) && rawAmount > 0) totalSum += rawAmount;
+
+        const title = tx.appName || tx.name || tx.title || 'Web Deposit';
+        const amount = tx.amount || tx.price || 0;
+        const sender = tx.sender || tx.fromUser || tx.userPhone || 'Unknown User';
+        const dateStr = tx.timestamp ? new Date(tx.timestamp).toLocaleString() : '';
+
+        container.insertAdjacentHTML('beforeend', `
+          <div class="deposit-card-item">
+            <div class="deposit-top-row">
+              <div class="deposit-app-title">🌐 ${escapeHtml(title)}</div>
+              <div class="deposit-amount-badge">+${amount} ETB</div>
+            </div>
+            <div class="deposit-sub-info">
+              👤 From: <strong>${escapeHtml(sender)}</strong> ${dateStr ? `• 🕒 ${dateStr}` : ''}
+            </div>
+          </div>
+        `);
+      });
+
+      document.getElementById('totalDepositsAmount').textContent = `${totalSum.toLocaleString()} ETB`;
     }
 
     async function saveWebsite() {
       const editKey = document.getElementById('editKey').value;
+      const sourceType = document.getElementById('appType').value;
       const name = document.getElementById('appName').value.trim();
       const desc = document.getElementById('appDesc').value.trim();
       let url = document.getElementById('appUrl').value.trim();
+      
+      const pricingType = document.getElementById('pricingType').value;
+      const appPrice = pricingType === 'paid' ? (parseFloat(document.getElementById('appPrice').value) || 0) : 0;
+      const adminPhone = document.getElementById('adminPhone').value.trim();
+      const depositCardNumber = document.getElementById('targetCardNumber').value.trim() || '1111111111111';
+      const customIcon = document.getElementById('customIcon').value.trim();
+      
+      const userRating = document.getElementById('userRating').value.trim() || "4.8 ★";
+      const systemRating = document.getElementById('systemRating').value.trim() || "PEGI 3";
+      const size = document.getElementById('appSize').value.trim() || "12.5 MB";
+      const downloads = document.getElementById('downloads').value.trim() || "50K+";
+
       const status = document.getElementById('status');
+      const saveBtn = document.getElementById('saveBtn');
 
       if (!name || !url) { alert("Please enter Name and URL!"); return; }
-      if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-      status.style.color = '#0d6efd';
-      status.textContent = "Categorizing and saving to database...";
+      let canIframe = false;
+      let category = "store";
 
-      const canIframe = await checkIframeSupport(url);
-      const category = canIframe ? "valid" : "invalid"; // Save explicit category label
+      if (sourceType === 'website') {
+        canIframe = (selectedManualCategory === 'valid');
+        category = selectedManualCategory;
+      }
 
       let domain = url;
       try { domain = new URL(url).hostname; } catch(e) {}
 
+      const finalIcon = customIcon || verifiedIconUrl || `https://icon.horse/icon/${domain}`;
+
       const payload = {
         name: name,
-        description: desc || "Web Application",
+        description: desc || "No description provided.",
         url: url,
-        icon: verifiedIconUrl || `https://icon.horse/icon/${domain}`,
+        sourceType: sourceType,
+        pricingType: pricingType,
+        price: appPrice,
+        adminPhone: adminPhone,
+        depositCardNumber: depositCardNumber,
+        customIcon: customIcon,
+        icon: finalIcon,
         canIframe: canIframe,
-        category: category, // WRITES TO DATABASE AS "valid" OR "invalid"
+        category: category,
+        userRating: userRating,
+        systemRating: systemRating,
+        size: size,
+        downloads: downloads,
         timestamp: Date.now()
       };
 
+      saveBtn.disabled = true;
+      status.style.color = '#0d6efd';
+      status.textContent = "Saving item to Firebase database...";
+
+      const onComplete = (err) => {
+        saveBtn.disabled = false;
+        if (err) {
+          status.style.color = 'red';
+          status.textContent = "Error saving: " + err.message;
+        } else {
+          status.style.color = 'green';
+          status.textContent = editKey ? "Item updated successfully!" : "Item saved!";
+          resetForm();
+        }
+      };
+
       if (editKey) {
-        db.ref('pwa_apps/' + editKey).update(payload).then(() => {
-          status.style.color = 'green';
-          status.textContent = "Website updated successfully!";
-          resetForm();
-        });
+        db.ref('pwa_apps/' + editKey).update(payload, onComplete);
       } else {
-        db.ref('pwa_apps').push(payload).then(() => {
-          status.style.color = 'green';
-          status.textContent = "Website categorized & saved!";
-          resetForm();
-        });
+        db.ref('pwa_apps').push(payload, onComplete);
       }
     }
 
-    function editWebsite(key, name, desc, url) {
+    function editWebsite(key) {
+      const item = localAppsCache.find(x => x.key === key);
+      if (!item) return;
+      const app = item.app;
+
       document.getElementById('editKey').value = key;
-      document.getElementById('appName').value = name;
-      document.getElementById('appDesc').value = desc;
-      document.getElementById('appUrl').value = url;
-      document.getElementById('formTitle').textContent = "Edit Website Link";
-      document.getElementById('saveBtn').textContent = "Update Website";
+      document.getElementById('appType').value = app.sourceType || 'website';
+      document.getElementById('appName').value = app.name || '';
+      document.getElementById('appDesc').value = app.description || '';
+      document.getElementById('appUrl').value = app.url || '';
+      
+      document.getElementById('pricingType').value = app.pricingType || 'free';
+      document.getElementById('appPrice').value = app.price && app.price !== 0 ? app.price : '';
+      document.getElementById('adminPhone').value = app.adminPhone || app.ownerPhone || '';
+      
+      const cardNum = app.depositCardNumber || '1111111111111';
+      document.getElementById('adminCardChoice').value = (cardNum === '1111111111111') ? 'default' : 'custom';
+      document.getElementById('targetCardNumber').value = cardNum;
+      
+      toggleCardNumberInput();
+      togglePriceInput();
+
+      document.getElementById('customIcon').value = app.customIcon || '';
+      document.getElementById('userRating').value = app.userRating || '';
+      document.getElementById('systemRating').value = app.systemRating || '';
+      document.getElementById('appSize').value = app.size || '';
+      document.getElementById('downloads').value = app.downloads || '';
+
+      const appCategory = app.category || (app.canIframe ? 'valid' : 'invalid');
+      setManualChoice(appCategory === 'invalid' ? 'invalid' : 'valid');
+
+      document.getElementById('formTitle').textContent = "Edit Link / App";
+      document.getElementById('saveBtn').textContent = "Update Item";
       document.getElementById('cancelBtn').style.display = "block";
-      updatePreview();
+      
+      updateLiveTestAndPreview();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function resetForm() {
       document.getElementById('editKey').value = '';
+      document.getElementById('appType').value = 'website';
       document.getElementById('appName').value = '';
       document.getElementById('appDesc').value = '';
       document.getElementById('appUrl').value = '';
-      document.getElementById('iconPreviewBox').style.display = 'none';
-      document.getElementById('formTitle').textContent = "Add New Website Link";
-      document.getElementById('saveBtn').textContent = "Add Website";
+      document.getElementById('pricingType').value = 'free';
+      document.getElementById('appPrice').value = '';
+      document.getElementById('adminPhone').value = '';
+      document.getElementById('adminCardChoice').value = 'default';
+      
+      toggleCardNumberInput();
+      togglePriceInput();
+
+      document.getElementById('customIcon').value = '';
+      document.getElementById('userRating').value = '';
+      document.getElementById('systemRating').value = '';
+      document.getElementById('appSize').value = '';
+      document.getElementById('downloads').value = '';
+
+      setManualChoice('valid');
+      document.getElementById('previewIframe').src = 'about:blank';
+      document.getElementById('testBox').style.display = 'none';
+
+      document.getElementById('formTitle').textContent = "Add New Link / App";
+      document.getElementById('saveBtn').textContent = "Add Item";
       document.getElementById('cancelBtn').style.display = "none";
+      document.getElementById('status').textContent = '';
+      document.getElementById('saveBtn').disabled = false;
     }
 
     function deleteWebsite(key) {
-      if (confirm("Delete this website from database?")) {
+      if (confirm("Delete this item from database?")) {
         db.ref('pwa_apps/' + key).remove();
       }
     }
 
     db.ref('pwa_apps').on('value', (snapshot) => {
+      localAppsCache = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          localAppsCache.push({ key: child.key, app: child.val() });
+        });
+      }
+      renderAppList();
+    });
+
+    function renderAppList() {
       const totalCount = document.getElementById('totalCount');
       const adminAppList = document.getElementById('adminAppList');
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
 
-      if (!snapshot.exists()) {
+      if (localAppsCache.length === 0) {
         totalCount.textContent = '0';
-        adminAppList.innerHTML = '<p style="color:#6c757d;">No websites in database.</p>';
+        adminAppList.innerHTML = '<p style="color:#6c757d; padding:10px 0;">No items in database.</p>';
         return;
       }
 
-      const validItems = [];
-      const invalidItems = [];
-
-      snapshot.forEach((child) => {
-        const key = child.key;
-        const app = child.val();
-        const category = app.category || (app.canIframe ? 'valid' : 'invalid');
-
-        if (category === 'valid') validItems.push({ key, app });
-        else invalidItems.push({ key, app });
+      const filtered = localAppsCache.filter(({ app }) => {
+        const name = (app.name || '').toLowerCase();
+        const url = (app.url || '').toLowerCase();
+        const desc = (app.description || '').toLowerCase();
+        const price = (app.price ? app.price.toString() : '').toLowerCase();
+        const pricingType = (app.pricingType || '').toLowerCase();
+        const sourceType = (app.sourceType || '').toLowerCase();
+        return name.includes(searchQuery) || url.includes(searchQuery) || desc.includes(searchQuery) || price.includes(searchQuery) || pricingType.includes(searchQuery) || sourceType.includes(searchQuery);
       });
 
-      totalCount.textContent = `${snapshot.numChildren()} (Valid: ${validItems.length} | Invalid: ${invalidItems.length})`;
+      const validItems = [];
+      const invalidItems = [];
+      const storeItems = [];
+
+      filtered.forEach(({ key, app }) => {
+        const category = app.category || (app.sourceType && app.sourceType !== 'website' ? 'store' : (app.canIframe ? 'valid' : 'invalid'));
+
+        if (category === 'valid') validItems.push({ key, app });
+        else if (category === 'invalid') invalidItems.push({ key, app });
+        else storeItems.push({ key, app });
+      });
+
+      totalCount.textContent = `${filtered.length}`;
       adminAppList.innerHTML = '';
+
+      if (filtered.length === 0) {
+        adminAppList.innerHTML = '<p style="color:#6c757d; text-align:center; padding:15px;">No matching apps found.</p>';
+        return;
+      }
 
       if (validItems.length > 0) {
         adminAppList.insertAdjacentHTML('beforeend', `<div class="category-header cat-valid">🟢 Category: Valid (${validItems.length})</div>`);
@@ -296,21 +692,45 @@
         adminAppList.insertAdjacentHTML('beforeend', `<div class="category-header cat-invalid">🔴 Category: Invalid (${invalidItems.length})</div>`);
         invalidItems.forEach(({ key, app }) => adminAppList.insertAdjacentHTML('beforeend', createRow(key, app)));
       }
-    });
+
+      if (storeItems.length > 0) {
+        adminAppList.insertAdjacentHTML('beforeend', `<div class="category-header cat-store">📱 Category: App Store / Play Store (${storeItems.length})</div>`);
+        storeItems.forEach(({ key, app }) => adminAppList.insertAdjacentHTML('beforeend', createRow(key, app)));
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     function createRow(key, app) {
-      const safeName = (app.name || '').replace(/'/g, "\\'");
-      const safeDesc = (app.description || '').replace(/'/g, "\\'");
-      const safeUrl = (app.url || '').replace(/'/g, "\\'");
+      const safePricingType = app.pricingType || 'free';
+      const safePrice = app.price || 0;
+      const safeType = app.sourceType || 'website';
+
+      const isPaid = safePricingType === 'paid' && safePrice > 0;
+      const priceBadgeHtml = isPaid 
+        ? `<span class="price-badge paid">💰 Price: ${safePrice} ETB</span> | ` 
+        : `<span class="price-badge free">🆓 Free</span> | `;
 
       return `
         <div class="app-item">
           <div class="app-info-admin">
-            <img src="${app.icon}" alt="Icon">
-            <div><strong>${app.name}</strong><small>${app.url}</small></div>
+            <img src="${escapeHtml(app.icon)}" alt="Icon" onerror="this.src='https://via.placeholder.com/36?text=Icon'">
+            <div>
+              <strong>${escapeHtml(app.name)} <small style="display:inline; color:#888;">(${escapeHtml(safeType)})</small></strong>
+              <small>${escapeHtml(app.url)}</small>
+              <div class="meta-pills">${priceBadgeHtml}⭐ ${escapeHtml(app.userRating || '4.8 ★')} | 🛡️ ${escapeHtml(app.systemRating || 'PEGI 3')} | 📦 ${escapeHtml(app.size || '12.5 MB')} | 📥 ${escapeHtml(app.downloads || '50K+')}</div>
+            </div>
           </div>
           <div class="action-group">
-            <button class="btn-edit" onclick="editWebsite('${key}', '${safeName}', '${safeDesc}', '${safeUrl}')">Edit</button>
+            <button class="btn-edit" onclick="editWebsite('${key}')">Edit</button>
             <button class="btn-delete" onclick="deleteWebsite('${key}')">Delete</button>
           </div>
         </div>
