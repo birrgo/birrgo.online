@@ -27,7 +27,7 @@
       overflow-x: hidden;
     }
 
-    /* --- TOP HEADER UI --- */
+    /* --- NATIVE APP-LIKE TOP HEADER UI --- */
     .header-container {
       position: sticky;
       top: 0;
@@ -49,21 +49,7 @@
     .header-title-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .store-logo {
-      width: 24px;
-      height: 24px;
-      background: #FFFFFF;
-      color: var(--shiny-burgundy-top);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 14px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
     .header-title {
@@ -272,15 +258,16 @@
       background: rgba(255, 255, 255, 0.2);
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 18px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
       transition: background 0.2s ease;
+      white-space: nowrap;
     }
 
     .preview-back-btn:active {
@@ -288,15 +275,16 @@
     }
 
     .preview-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #FFFFFF;
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 60%;
+      max-width: 70%;
       letter-spacing: 0.5px;
+      margin: 0 auto;
     }
 
     .preview-iframe {
@@ -317,7 +305,6 @@
   <div class="header-container">
     <div class="top-bar">
       <div class="header-title-badge">
-        <div class="store-logo">B</div>
         <h1 class="header-title">BirrGo Web Store</h1>
       </div>
     </div>
@@ -342,7 +329,7 @@
     <div class="preview-header">
       <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
       <div class="preview-title" id="previewTitle">Website Name</div>
-      <div style="width: 65px;"></div>
+      <div style="width: 50px;"></div> <!-- Spacer for center alignment -->
     </div>
     <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
   </div>
@@ -397,63 +384,49 @@
       }
     }
 
-    /* --- IFRAME SUPPORT DETECTION CODE --- */
-    async function canEmbedInIframe(url) {
-      try {
-        // Quick header inspection via proxy
-        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-        if (!response.ok) return false;
-        
-        const data = await response.json();
-        const headers = data.status?.response_headers || {};
-
-        let xFrame = "";
-        let csp = "";
-
-        for (let key in headers) {
-          const lowerKey = key.toLowerCase();
-          if (lowerKey === 'x-frame-options') xFrame = String(headers[key]).toLowerCase();
-          if (lowerKey === 'content-security-policy') csp = String(headers[key]).toLowerCase();
-        }
-
-        // Check if X-Frame-Options or CSP blocks framing
-        if (xFrame.includes('deny') || xFrame.includes('sameorigin')) {
-          return false;
-        }
-        if (csp.includes('frame-ancestors') && (csp.includes("'none'") || csp.includes("'self'"))) {
-          return false;
-        }
-
-        return true;
-      } catch (e) {
-        // Fallback safely if network check fails
-        return false;
+    // Opens valid sites inside the in-app preview modal
+    function launchWebsite(url, appName) {
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = 'https://' + formattedUrl;
       }
+      
+      document.getElementById('previewTitle').textContent = appName || 'Web View';
+      document.getElementById('previewIframe').src = formattedUrl;
+
+      document.getElementById('webPreviewModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
 
-    /* Smart Launch: Detects frame compatibility first */
-    async function smartLaunch(url, appName, btnElement) {
+    // Opens website based on ADMIN DATABASE VALIDATION:
+    // If Admin marked as valid (canIframe: true) -> In-App Frame
+    // If Admin marked as invalid (canIframe: false) -> External Browser
+    function openApp(key, url, appName) {
+      const appItem = allAppsData.find(item => item.key === key);
+      
+      // Read admin database determination
+      let isValidForIframe = false;
+      if (appItem && appItem.app) {
+        if (appItem.app.hasOwnProperty('canIframe')) {
+          isValidForIframe = (appItem.app.canIframe === true);
+        } else if (appItem.app.category) {
+          isValidForIframe = (appItem.app.category === 'valid');
+        }
+      } else {
+        // Fallback to local storage if offline
+        isValidForIframe = localStorage.getItem('site_iframe_valid_' + key) === 'true';
+      }
+      
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
 
-      const originalText = btnElement ? btnElement.textContent : 'Open';
-      if (btnElement) btnElement.textContent = 'Opening...';
-
-      // CODE DETECTS IF IT CAN RUN INSIDE IFRAME
-      const canRunInFrame = await canEmbedInIframe(formattedUrl);
-
-      if (btnElement) btnElement.textContent = originalText;
-
-      if (canRunInFrame) {
-        // Runs inside in-app frame
-        document.getElementById('previewTitle').textContent = appName || 'Web View';
-        document.getElementById('previewIframe').src = formattedUrl;
-        document.getElementById('webPreviewModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+      if (isValidForIframe) {
+        // VALID BY ADMIN: Open inside in-app modal frame
+        launchWebsite(formattedUrl, appName);
       } else {
-        // Blocked by site! Opens directly from their server
+        // INVALID BY ADMIN: Directly open in mobile default browser
         window.open(formattedUrl, '_blank');
       }
     }
@@ -464,14 +437,15 @@
       document.body.style.overflow = 'auto';
     }
 
-    async function handleAppAction(key, targetUrl, appName) {
+    function handleAppAction(key, targetUrl, appName) {
       const isInstalled = localStorage.getItem('site_installed_' + key);
       const btn = document.getElementById('btn-' + key);
       const progressContainer = document.getElementById('progress-box-' + key);
       const progressBar = document.getElementById('progress-bar-' + key);
 
+      // If already installed, launch immediately using Admin's Database rule
       if (isInstalled) {
-        smartLaunch(targetUrl, appName, btn);
+        openApp(key, targetUrl, appName);
         return;
       }
 
@@ -481,20 +455,20 @@
       if (progressContainer) progressContainer.style.display = 'block';
 
       let progress = 0;
+
       const downloadInterval = setInterval(() => {
         progress += Math.floor(Math.random() * 18) + 12;
         
         if (progress >= 100) {
           progress = 100;
           clearInterval(downloadInterval);
+          
           markAsInstalled(key, targetUrl);
 
           btn.disabled = false;
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
 
-          // Launch automatically after installation
-          smartLaunch(targetUrl, appName, btn);
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
@@ -505,6 +479,14 @@
     function markAsInstalled(key, url) {
       localStorage.setItem('site_installed_' + key, 'true');
       if (url) localStorage.setItem('site_installed_url_' + key, url);
+
+      // Save Admin's database decision into local state for offline access
+      const appItem = allAppsData.find(item => item.key === key);
+      let isValid = false;
+      if (appItem && appItem.app) {
+        isValid = appItem.app.canIframe === true || appItem.app.category === 'valid';
+      }
+      localStorage.setItem('site_iframe_valid_' + key, isValid ? 'true' : 'false');
 
       const btn = document.getElementById('btn-' + key);
       const uninstallBtn = document.getElementById('uninstall-' + key);
@@ -522,6 +504,7 @@
       if (confirm(`Remove ${appName} from your installed list?`)) {
         localStorage.removeItem('site_installed_' + key);
         localStorage.removeItem('site_installed_url_' + key);
+        localStorage.removeItem('site_iframe_valid_' + key);
 
         const btn = document.getElementById('btn-' + key);
         const uninstallBtn = document.getElementById('uninstall-' + key);
@@ -592,6 +575,7 @@
       });
     }
 
+    // REAL-TIME DATABASE LISTENER
     db.ref('pwa_apps').on('value', (snapshot) => {
       allAppsData = [];
       if (!snapshot.exists()) {
