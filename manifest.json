@@ -1,10 +1,10 @@
 {
-  "id": "/AppNews.html",
-  "name": "Birr Go - App News",
-  "short_name": "App News",
-  "description": "Latest news, sports, entertainment, and tech updates on Birr Go.",
-  "start_url": "/AppNews.html",
-  "scope": "/AppNews.html",
+  "id": "/",
+  "name": "Birr Go",
+  "short_name": "Birr Go",
+  "description": "Welcome to Birr Go - Your digital platform.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "display_override": [
     "standalone",
@@ -15,8 +15,8 @@
   "background_color": "#8B0018",
   "theme_color": "#8B0018",
   "categories": [
-    "news",
-    "utilities"
+    "utilities",
+    "finance"
   ],
   "icons": [
     {
@@ -52,10 +52,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Latest News",
-      "short_name": "News",
-      "description": "Read top stories",
-      "url": "/AppNews.html",
+      "name": "Home",
+      "short_name": "Home",
+      "description": "Open Birr Go",
+      "url": "/",
       "icons": [
         {
           "src": "/icon.png",
