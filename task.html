@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        <!-- Matched Bottom Navigation Bar -->
+        <!-- 5-ITEM BOTTOM NAVIGATION BAR -->
         <nav class="bottom-nav-bar" id="bottomNavBar">
             <div id="navHome" class="nav-item">
                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -128,6 +128,17 @@
                     </svg>
                 </div>
                 Tasks
+            </div>
+            <div id="navAppsCenter" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="2" />
+                        <rect x="14" y="3" width="7" height="7" rx="2" />
+                        <rect x="14" y="14" width="7" height="7" rx="2" />
+                        <rect x="3" y="14" width="7" height="7" rx="2" />
+                    </svg>
+                </div>
+                Apps
             </div>
             <div id="navCampaign" class="nav-item">
                 <svg viewBox="0 0 24 24" stroke-width="2">
@@ -212,16 +223,16 @@
             if (targetPanel === 'watch') {
                 btnWatch.classList.add('active-view-tab');
                 panelWatch.classList.add('panel-active');
-                window.AppLoader.hide();
+                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
             } else if (targetPanel === 'invite') {
                 btnInvite.classList.add('active-view-tab');
                 panelInvite.classList.add('panel-active');
                 await loadReferredUsers();
-                window.AppLoader.hide();
+                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
             } else if (targetPanel === 'giveaway') {
                 btnGiveaway.classList.add('active-view-tab');
                 panelGiveaway.classList.add('panel-active');
-                window.AppLoader.hide();
+                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
             }
         };
 
@@ -253,6 +264,8 @@
 
         function setupNavigationHandlers() {
             document.getElementById('navHome').addEventListener('click', () => window.location.href = 'dashboard.html');
+            document.getElementById('navTasks').addEventListener('click', () => {});
+            document.getElementById('navAppsCenter').addEventListener('click', () => window.location.href = 'Apps.html');
             document.getElementById('navCampaign').addEventListener('click', () => window.location.href = 'lottery.html');
             document.getElementById('navWallet').addEventListener('click', () => window.location.href = 'wallet.html');
             document.getElementById('headerProfileBtn').addEventListener('click', () => window.location.href = 'profile.html');
@@ -328,7 +341,7 @@
                 if (targetBtn.classList.contains('cooldown')) {
                     targetBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        window.AppLoader.hide();
+                        if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
                         displayAppModal('lock', 'Task Locked', `This video row is locked. Please come back after ${remainingMinutes} minutes!`);
                     });
                 } else {

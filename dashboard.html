@@ -280,7 +280,6 @@
             z-index: 0;
         }
 
-        /* Adjusted: Larger size (115px height) and shifted left (right: 75px) */
         .card-af-watermark {
             position: absolute;
             right: 75px;
@@ -572,7 +571,7 @@
             font-weight: 600 !important;
             gap: 2px;
             flex: 1 1 0;
-            width: 25%;
+            width: 20%;
             height: 100%;
             cursor: pointer;
             transition: color 0.2s ease;
@@ -881,6 +880,7 @@
             <img src="ai.png" alt="AI Assistant" class="ai-button-img">
         </a>
 
+        <!-- 5-ITEM BOTTOM NAVIGATION BAR -->
         <nav class="bottom-nav-bar">
             <div class="bottom-nav-container">
                 <a href="#" class="nav-item-bottom active-tab" id="navHome">
@@ -900,6 +900,17 @@
                         </svg>
                     </div>
                     Tasks
+                </a>
+                <a href="Apps.html" class="nav-item-bottom" id="navAppsCenter">
+                    <div class="tab-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="2" />
+                            <rect x="14" y="3" width="7" height="7" rx="2" />
+                            <rect x="14" y="14" width="7" height="7" rx="2" />
+                            <rect x="3" y="14" width="7" height="7" rx="2" />
+                        </svg>
+                    </div>
+                    Apps
                 </a>
                 <a href="lottery.html" class="nav-item-bottom" id="navCampaign">
                     <div class="tab-icon-wrapper">
@@ -1162,6 +1173,11 @@
                 e.preventDefault();
                 showGlobalLoader("Loading Tasks...");
                 goToPage('task.html');
+            });
+            document.getElementById('navAppsCenter').addEventListener('click', (e) => {
+                e.preventDefault();
+                showGlobalLoader("Loading Apps...");
+                goToPage('Apps.html');
             });
             document.getElementById('navCampaign').addEventListener('click', (e) => {
                 e.preventDefault();

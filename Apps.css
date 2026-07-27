@@ -22,66 +22,108 @@ body {
   background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 16px 16px;
   color: var(--text-dark); 
-  padding-bottom: 90px;
+  padding-bottom: 85px;
   overflow-x: hidden;
 }
 
-/* --- TOP HEADER UI --- */
-.header-container {
-  position: sticky;
+.btn-subtext {
+  display: block;
+  font-size: 10px;
+  color: #5d0017;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.store-curved-header {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  padding-top: 2px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.store-curved-header .bg-wave-top {
+  position: absolute;
   top: 0;
-  z-index: 1000;
-  background: var(--burgundy-header);
-  padding: 10px 14px 12px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  left: 0;
+  width: 100%;
+  height: 24px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .header-top-row {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.nav-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  text-decoration: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.nav-btn:active {
-  background: rgba(255, 255, 255, 0.4);
+  padding: 0 24px;
 }
 
 .header-title {
-  font-size: 18px;
+  color: #ffffff;
+  font-size: 15px;
   font-weight: 800;
-  color: #FFFFFF;
-  text-align: center;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* --- HORIZONTAL PILL CATEGORY MENU --- */
+.store-nav-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: auto;
+  height: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0px 3px 0px #2b000a) 
+          drop-shadow(0px 5px 6px rgba(0, 0, 0, 0.6)) 
+          drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.6));
+}
+
+.store-nav-btn.back-btn {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  transform: translateY(-2px);
+  filter: drop-shadow(0px 4px 0px #1a0006) 
+          drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75)) 
+          drop-shadow(0px -1px 2px rgba(255, 255, 255, 0.8));
+}
+
+.store-nav-btn:active {
+  transform: scale(0.9) translateY(2px);
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.8));
+}
+
 .category-menu-wrapper {
-  background: #FFFFFF;
-  padding: 12px 14px;
-  border-bottom: 1px solid #EAEAEA;
+  background: transparent;
+  padding: 4px 0;
+  width: 96%;
+  margin: 32px auto 8px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(1.12);
+  transform-origin: center top;
 }
 
 .category-menu {
   display: flex;
-  gap: 10px;
-  max-width: 600px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
   margin: 0 auto;
   overflow-x: auto;
   scrollbar-width: none;
@@ -93,37 +135,38 @@ body {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   color: #4A5568;
-  padding: 8px 18px;
-  border-radius: 24px;
-  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .menu-tab.active {
   background: var(--burgundy-active);
   color: #FFFFFF;
   border-color: var(--burgundy-active);
-  box-shadow: 0 3px 8px rgba(110, 0, 24, 0.3);
+  box-shadow: 0 3px 8px rgba(110, 0, 24, 0.35);
 }
 
-/* --- MAIN CONTENT AREA --- */
 .app-container {
-  max-width: 600px;
-  margin: 16px auto;
-  padding: 0 14px;
+  width: 100% !important;
+  max-width: 600px !important;
+  padding: 6px 6px !important;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
-/* Installed App Grid Layout */
 .installed-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: 12px;
   background: #FFFFFF;
-  padding: 16px;
+  padding: 14px;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   border: 1px solid #EAEAEA;
@@ -142,10 +185,10 @@ body {
   width: 58px;
   height: 58px;
   border-radius: 12px;
-  object-fit: cover;
-  background: #FFF;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #EAEAEA;
+  object-fit: contain;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
   margin-bottom: 6px;
 }
 
@@ -159,55 +202,57 @@ body {
   max-width: 68px;
 }
 
-/* Clean Card Layout With Action Button */
 .app-card {
+  width: 98% !important;
+  max-width: 600px !important;
+  margin: 0 auto 10px auto !important;
   background: #FFFFFF;
   border-radius: 12px;
-  padding: 14px 18px;
-  margin-bottom: 12px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: 1px solid #EAEAEA;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  gap: 10px;
   cursor: pointer;
+  box-sizing: border-box;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .app-card:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .app-info { 
   display: flex; 
   align-items: center; 
-  gap: 14px; 
+  gap: 10px; 
   flex: 1; 
   overflow: hidden; 
 }
 
 .app-icon { 
-  width: 56px; 
-  height: 56px; 
-  border-radius: 12px; 
-  object-fit: cover; 
-  background-color: #F0F0F0; 
+  width: 50px; 
+  height: 50px; 
+  border-radius: 10px; 
+  object-fit: contain; 
+  background-color: transparent !important; 
+  box-shadow: none !important;
+  border: none !important;
   flex-shrink: 0; 
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 .app-details { flex: 1; min-width: 0; }
 
 .app-details h2 { 
-  font-size: 16px; 
+  font-size: 14px; 
   font-weight: 800; 
   color: var(--text-dark); 
   white-space: nowrap; 
   overflow: hidden; 
   text-overflow: ellipsis; 
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .app-meta-badges {
@@ -217,35 +262,25 @@ body {
 }
 
 .app-details .app-size-badge {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #777777;
   background: #F0F2F5;
-  padding: 2px 8px;
-  border-radius: 8px;
-  display: inline-block;
-}
-
-.app-details .price-pill {
-  font-size: 11px;
-  font-weight: 800;
-  color: #b45309;
-  background: #fef3c7;
-  padding: 2px 8px;
-  border-radius: 8px;
+  padding: 2px 6px;
+  border-radius: 6px;
   display: inline-block;
 }
 
 .main-install-btn {
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 18px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   border: none;
   background: var(--burgundy-active);
   color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(110, 0, 24, 0.2);
+  box-shadow: 0 2px 6px rgba(110, 0, 24, 0.15);
   white-space: nowrap;
   flex-shrink: 0;
   transition: background 0.2s, transform 0.1s;
@@ -253,21 +288,20 @@ body {
 
 .main-install-btn.is-paid {
   background: var(--gold-paid);
-  box-shadow: 0 3px 8px rgba(217, 119, 6, 0.25);
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2);
 }
 
 .main-install-btn.is-open {
   background: var(--green-open);
-  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.25);
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
 }
 
 .main-install-btn:active {
   transform: scale(0.95);
 }
 
-.loading-text { text-align: center; color: #777; padding: 40px 20px; font-size: 14px; font-weight: 700; }
+.loading-text { text-align: center; color: #777; padding: 30px 20px; font-size: 13px; font-weight: 700; }
 
-/* --- FULL-SCREEN APP DETAILS & ARTICLE PAGE --- */
 .full-screen-app-page {
   position: fixed;
   top: 0;
@@ -283,7 +317,7 @@ body {
 
 .details-top-bar {
   background: var(--burgundy-header);
-  padding: 12px 16px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -297,20 +331,15 @@ body {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: #FFFFFF;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s;
-}
-
-.close-x-btn:active {
-  background: rgba(255, 255, 255, 0.4);
 }
 
 .details-page-content {
@@ -349,9 +378,10 @@ body {
   width: 68px;
   height: 68px;
   border-radius: 10px;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #EAEAEA;
+  object-fit: contain;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
   flex-shrink: 0;
 }
 
@@ -373,7 +403,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -390,12 +420,6 @@ body {
   white-space: nowrap;
   min-width: 110px;
   text-align: center;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.details-header-btn.is-paid {
-  background: var(--gold-paid);
-  box-shadow: 0 3px 8px rgba(217, 119, 6, 0.3);
 }
 
 .details-header-btn.is-open {
@@ -407,7 +431,6 @@ body {
   background: #EAEAEA;
   color: var(--burgundy-active);
   cursor: wait;
-  box-shadow: none;
 }
 
 .app-meta-grid {
@@ -435,7 +458,6 @@ body {
   font-weight: 800;
   color: var(--text-dark);
   margin-bottom: 2px;
-  white-space: nowrap;
 }
 
 .meta-box-label {
@@ -443,7 +465,6 @@ body {
   font-weight: 700;
   color: #718096;
   text-transform: uppercase;
-  letter-spacing: 0.2px;
 }
 
 .details-article-card {
@@ -472,7 +493,119 @@ body {
   white-space: pre-line;
 }
 
-/* --- SEARCH OVERLAY POPUP --- */
+/* Security and Payment Modal */
+.security-modal-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000000 !important;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.security-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 28px;
+  padding: 30px 24px 24px 24px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.security-modal-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.security-modal-desc {
+  margin: 0 0 20px 0;
+  font-size: 13.5px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+.security-password-input {
+  width: 100%;
+  height: 52px;
+  border: 1.5px solid #5d0017;
+  border-radius: 26px;
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 6px;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  color: #333333;
+  background: #ffffff;
+}
+
+.security-password-input::placeholder {
+  color: #999999;
+  letter-spacing: 4px;
+}
+
+.modal-error-banner {
+  display: none;
+  color: #d9534f;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.security-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-modal-submit {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(180deg, #5d0017 0%, #3a000e 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 26px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(93, 0, 23, 0.3);
+  transition: opacity 0.2s;
+}
+
+.btn-modal-submit:active {
+  opacity: 0.85;
+}
+
+.btn-modal-cancel {
+  width: 100%;
+  height: 50px;
+  background: #f0f3f8;
+  color: #222222;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-modal-cancel:active {
+  background: #e2e7f0;
+}
+
 .search-modal-overlay {
   position: fixed;
   top: 0;
@@ -493,7 +626,6 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .search-input-pill {
@@ -506,8 +638,6 @@ body {
   gap: 10px;
 }
 
-.search-input-pill span { font-size: 16px; color: #777; }
-
 .search-input-pill input {
   border: none;
   outline: none;
@@ -515,10 +645,7 @@ body {
   font-size: 14px;
   font-weight: 700;
   color: #111111;
-  background: transparent;
 }
-
-.search-input-pill input::placeholder { color: #888888; font-weight: 600; }
 
 .search-cancel-btn {
   background: #EAEAEA;
@@ -529,7 +656,6 @@ body {
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  white-space: nowrap;
 }
 
 .search-hint-text {
@@ -538,8 +664,6 @@ body {
   font-size: 13px;
   font-weight: 700;
   margin-top: 30px;
-  padding: 0 20px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 .search-results-container {
@@ -551,7 +675,6 @@ body {
   flex: 1;
 }
 
-/* --- UNINSTALL DIALOG & MODALS --- */
 .confirm-overlay {
   position: fixed;
   top: 0;
@@ -560,7 +683,6 @@ body {
   height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   z-index: 999999;
   display: none;
   align-items: center;
@@ -579,21 +701,16 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
 }
 
 .dialog-app-icon {
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  border: 1px solid #EAEAEA;
+  object-fit: contain;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
   margin-bottom: 12px;
 }
 
@@ -602,63 +719,25 @@ body {
 
 .confirm-actions { display: flex; gap: 10px; width: 100%; }
 
-.dialog-btn-cancel {
+.dialog-btn-cancel, .dialog-btn-remove {
   flex: 1;
   padding: 10px;
   border-radius: 24px;
   font-size: 13px;
   font-weight: 800;
+  cursor: pointer;
+}
+
+.dialog-btn-cancel {
   border: 1px solid #E2E8F0;
   background: #FFFFFF;
   color: var(--text-dark);
-  cursor: pointer;
 }
 
 .dialog-btn-remove {
-  flex: 1;
-  padding: 10px;
-  border-radius: 24px;
-  font-size: 13px;
-  font-weight: 800;
   border: none;
   background: var(--burgundy-active);
   color: #FFFFFF;
-  box-shadow: 0 3px 8px rgba(110, 0, 24, 0.3);
-  cursor: pointer;
-}
-
-/* --- REAL DEPOSIT PAYMENT MODAL --- */
-.payment-card {
-  background: #FFFFFF;
-  width: 100%;
-  max-width: 360px;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  text-align: left;
-}
-.payment-card h3 { font-size: 16px; color: var(--burgundy-header); text-align: center; }
-.payment-box-info { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; font-size: 13px; }
-.payment-box-info strong { color: #1b5e20; }
-.payment-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; margin-top: 4px; }
-
-.ad-box {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #FFFFFF;
-  border-top: 1px solid #EAEAEA;
-  padding: 12px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: #666;
-  z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
 }
 
 .web-preview-modal {
@@ -702,4 +781,9 @@ body {
   background: #FFFFFF;
 }
 
-
+.nav-item .tab-icon-wrapper svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: inherit;
+}

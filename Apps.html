@@ -2,104 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birr Go - Web Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>BirrGo Store - Web Store</title>
   
   <link rel="stylesheet" href="Apps.css">
+  <link rel="stylesheet" href="wallet.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-  <style>
-    /* Subtext under install buttons */
-    .btn-subtext {
-      display: block;
-      font-size: 10px;
-      color: #800020;
-      font-weight: 700;
-      text-align: center;
-      margin-top: 3px;
-    }
-
-    .details-header-right {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Highest Priority Modal Overlay */
-    .security-modal-backdrop {
-      position: fixed !important;
-      top: 0 !important; 
-      left: 0 !important; 
-      right: 0 !important; 
-      bottom: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      background: rgba(0, 0, 0, 0.8) !important;
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999999 !important; /* Forces PIN popup above all screens */
-    }
-    .security-modal-card {
-      background: #ffffff;
-      width: 90%;
-      max-width: 340px;
-      border-radius: 20px;
-      padding: 24px 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      text-align: center;
-      box-sizing: border-box;
-      position: relative;
-      z-index: 1000000 !important;
-    }
-    .security-modal-icon {
-      width: 48px; height: 48px;
-      background: rgba(128, 0, 32, 0.1);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 12px;
-    }
-    .security-modal-icon svg {
-      width: 24px; height: 24px; stroke: #800020; fill: none; stroke-width: 2;
-    }
-    .security-modal-title {
-      font-size: 18px; font-weight: 700; color: #1f0007; margin-bottom: 6px;
-    }
-    .security-modal-desc {
-      font-size: 13px; color: #6b5257; margin-bottom: 14px; line-height: 1.4;
-    }
-    .security-password-input {
-      width: 100%; padding: 12px; font-size: 18px; text-align: center;
-      letter-spacing: 6px; border-radius: 12px; border: 1.5px solid #ccc;
-      box-sizing: border-box; margin-bottom: 14px; outline: none;
-    }
-    .security-password-input:focus {
-      border-color: #800020;
-    }
-    .modal-error-banner {
-      font-size: 11px; color: #d32f2f; margin-bottom: 10px; display: none; font-weight: 600;
-    }
-    .security-modal-actions {
-      display: flex; gap: 10px;
-    }
-    .btn-modal-cancel, .btn-modal-submit {
-      flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700;
-      border: none; cursor: pointer;
-    }
-    .btn-modal-cancel { background: #f1f1f1; color: #333; }
-    .btn-modal-submit { background: #800020; color: #fff; }
-  </style>
 </head>
 <body>
 
-  <div class="header-container">
+  <script src="loader.js"></script>
+
+  <!-- Smooth Curved Top Header -->
+  <div class="store-curved-header">
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 1000 24" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 H1000 V8 Q500 24 0 8 Z" fill="url(#store_dark_burgundy_linear)"/>
+      <defs>
+        <linearGradient id="store_dark_burgundy_linear" x1="500" y1="0" x2="500" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#2b000a"/>
+          <stop offset="0.6" stop-color="#400010"/>
+          <stop offset="1" stop-color="#5d0017"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
     <div class="header-top-row">
-      <a href="wallet.html" class="nav-btn" title="Back">&#8592;</a>
+      <button class="store-nav-btn icon-3d" onclick="goToPage('news.html')" title="News Menu" style="display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
       <h1 class="header-title">BirrGo Store</h1>
-      <button class="nav-btn" onclick="openSearchModal()" title="Search">&#128065;</button>
+
+      <button class="store-nav-btn icon-3d" onclick="openSearchModal()" title="Search" style="display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -116,81 +61,11 @@
     <div class="loading-text">Loading store apps...</div>
   </main>
 
-  <!-- FULL ARTICLE APP DETAILS PAGE -->
-  <div class="full-screen-app-page" id="appDetailsPage">
-    <div class="details-top-bar">
-      <div class="header-title" id="pageBarTitle">App Details</div>
-      <button class="close-x-btn" onclick="closeFullScreenAppPage()" title="Close">&#10005;</button>
-    </div>
-
-    <div class="details-page-content">
-      <div class="details-header-card">
-        <div class="details-header-top">
-          <div class="details-header-left">
-            <img id="pageAppIcon" src="" class="details-app-icon" alt="App Icon">
-            <div class="details-app-meta">
-              <h2 id="pageAppName">App Name</h2>
-            </div>
-          </div>
-          <div class="details-header-right">
-            <button class="details-header-btn" id="pageInstallBtn">Install App</button>
-            <span id="pageInstallSubtext" class="btn-subtext"></span>
-          </div>
-        </div>
-
-        <div class="app-meta-grid">
-          <div class="meta-box">
-            <span class="meta-box-value" id="pageUserRating">--</span>
-            <span class="meta-box-label">User Rating</span>
-          </div>
-          <div class="meta-box">
-            <span class="meta-box-value" id="pageSystemRating">--</span>
-            <span class="meta-box-label">System Rate</span>
-          </div>
-          <div class="meta-box">
-            <span class="meta-box-value" id="pageAppSize">--</span>
-            <span class="meta-box-label">Size</span>
-          </div>
-          <div class="meta-box">
-            <span class="meta-box-value" id="pageDownloadCount">--</span>
-            <span class="meta-box-label">Downloads</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="details-article-card">
-        <div class="details-article-title">About this App</div>
-        <div class="details-article-body" id="pageAppDescription">
-          Loading article description...
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PURCHASE CONFIRMATION & PIN POPUP -->
-  <div class="security-modal-backdrop" id="walletPurchaseModal">
-    <div class="security-modal-card">
-      <div class="security-modal-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      </div>
-      <h3 class="security-modal-title">Confirm Purchase</h3>
-      <p class="security-modal-desc" id="purchaseModalDesc">This app costs 0 ETB. Enter your 6-digit Wallet PIN/Password to continue.</p>
-      
-      <div class="modal-error-banner" id="purchaseModalError"></div>
-
-      <input type="password" maxlength="6" inputmode="numeric" class="security-password-input" id="walletPinInput" placeholder="••••••">
-
-      <div class="security-modal-actions">
-        <button class="btn-modal-cancel" onclick="closeWalletPurchaseModal()">Cancel</button>
-        <button class="btn-modal-submit" id="btnConfirmPurchase" onclick="submitWalletPurchase()">Confirm</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- SEARCH MODAL -->
   <div class="search-modal-overlay" id="searchModal">
     <div class="search-modal-header">
       <div class="search-input-pill">
-        <span>🔍</span>
+        <span> 🔍 </span>
         <input type="text" id="globalSearchInput" placeholder="Enter App Name..." onkeyup="performGlobalSearch()">
       </div>
       <button class="search-cancel-btn" onclick="closeSearchModal()">Cancel</button>
@@ -200,6 +75,7 @@
     <div class="search-results-container" id="searchResults"></div>
   </div>
 
+  <!-- UNINSTALL CONFIRMATION MODAL -->
   <div class="confirm-overlay" id="confirmModal">
     <div class="confirm-card">
       <img id="dialogIcon" class="dialog-app-icon" src="" alt="App Icon">
@@ -212,10 +88,7 @@
     </div>
   </div>
 
-  <div class="ad-box">
-    <span>Advertisement Space</span>
-  </div>
-
+  <!-- WEB PREVIEW MODAL -->
   <div id="webPreviewModal" class="web-preview-modal">
     <div class="preview-header">
       <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
@@ -224,6 +97,52 @@
     </div>
     <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
   </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav-bar" id="bottomNavBar">
+    <div id="navHome" class="nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      Home
+    </div>
+    
+    <div id="navTasks" class="nav-item">
+      <svg viewBox="0 0 24 24">
+        <polyline points="9 11 12 14 22 4"></polyline>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+      Tasks
+    </div>
+
+    <div id="navAppsCenter" class="nav-item active-tab">
+      <div class="tab-icon-wrapper">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="9.5" height="9.5" rx="2.5" ry="2.5" stroke="currentColor" stroke-width="2" fill="none" />
+          <rect x="15.5" y="3" width="9.5" height="9.5" rx="2.5" ry="2.5" stroke="currentColor" stroke-width="2" fill="none" />
+          <rect x="3" y="15.5" width="9.5" height="9.5" rx="2.5" ry="2.5" stroke="currentColor" stroke-width="2" fill="none" />
+          <rect x="15.5" y="15.5" width="9.5" height="9.5" rx="2.5" ry="2.5" stroke="currentColor" stroke-width="2" fill="none" />
+        </svg>
+      </div>
+      Apps
+    </div>
+
+    <div id="navLottery" class="nav-item">
+      <svg viewBox="0 0 24 24">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+      Campaign
+    </div>
+
+    <div id="navWallet" class="nav-item">
+      <svg viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+        <line x1="2" y1="10" x2="22" y2="10"></line>
+      </svg>
+      Wallet
+    </div>
+  </nav>
 
   <script>
     const firebaseConfig = {
@@ -242,9 +161,36 @@
     let allAppsData = [];
     let activeCategory = 'installed';
     let pendingUninstallKey = null;
-    let activePurchaseKey = null;
 
-    const activeUserPhone = localStorage.getItem('auth_session_phone');
+    function showGlobalLoader(msg = "Loading...") {
+      if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+        window.AppLoader.show(msg);
+      }
+    }
+
+    function hideGlobalLoader() {
+      if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+        window.AppLoader.hide();
+      }
+    }
+
+    window.goToPage = function(page) {
+      if (page === '#') return;
+      showGlobalLoader("Navigating...");
+      window.location.replace(page);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupBottomNavigation();
+    });
+
+    function setupBottomNavigation() {
+      document.getElementById('navHome').addEventListener('click', () => goToPage('dashboard.html'));
+      document.getElementById('navTasks').addEventListener('click', () => goToPage('task.html'));
+      document.getElementById('navAppsCenter').addEventListener('click', () => {});
+      document.getElementById('navLottery').addEventListener('click', () => goToPage('lottery.html'));
+      document.getElementById('navWallet').addEventListener('click', () => goToPage('wallet.html'));
+    }
 
     function getAdminSize(app) {
       if (app.size || app.appSize) {
@@ -254,283 +200,13 @@
       return '12.5 MB';
     }
 
-    function getAdminUserRating(app) {
-      if (app.userRating || app.rating) {
-        let val = app.userRating || app.rating;
-        return val.toString().includes('★') ? val : val + ' ★';
-      }
-      return '4.8 ★';
-    }
-
-    function getAdminSystemRating(app) {
-      return app.systemRating || app.pegi || 'PEGI 3';
-    }
-
-    function getAdminDownloadCount(app) {
-      if (app.downloads || app.downloadCount) {
-        let val = app.downloads || app.downloadCount;
-        return val.toString().includes('+') ? val : val + '+';
-      }
-      return '50K+';
-    }
-
     function isAppPaid(app) {
       return app.pricingType === 'paid' && parseFloat(app.price) > 0;
     }
 
     function openFullScreenAppPage(key) {
-      const item = allAppsData.find(a => a.key === key);
-      if (!item) return;
-
-      const app = item.app;
-      const name = app.name || 'App';
-      const description = app.description || 'No detailed article provided for this application.';
-      const targetUrl = app.url || '#';
-      const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
-      const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
-      const safeName = name.replace(/'/g, "\\'");
-
-      document.getElementById('pageBarTitle').textContent = name;
-      document.getElementById('pageAppName').textContent = name;
-      document.getElementById('pageAppIcon').src = icon;
-      document.getElementById('pageAppDescription').textContent = description;
-
-      document.getElementById('pageUserRating').textContent = getAdminUserRating(app);
-      document.getElementById('pageSystemRating').textContent = getAdminSystemRating(app);
-      document.getElementById('pageAppSize').textContent = getAdminSize(app);
-      document.getElementById('pageDownloadCount').textContent = getAdminDownloadCount(app);
-
-      setupInstallButtonState(key, app, targetUrl, safeName, isStore);
-
-      document.getElementById('appDetailsPage').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function setupInstallButtonState(key, app, targetUrl, safeName, isStore) {
-      const installBtn = document.getElementById('pageInstallBtn');
-      const subtextElem = document.getElementById('pageInstallSubtext');
-      
-      const isInstalled = localStorage.getItem('site_installed_' + key);
-      const isPaid = isAppPaid(app);
-      const isPurchased = localStorage.getItem('site_purchased_' + key);
-
-      if (isPaid && !isPurchased && !isInstalled) {
-        subtextElem.textContent = `Paid (${app.price} ETB)`;
-      } else {
-        subtextElem.textContent = '';
-      }
-
-      if (isInstalled) {
-        installBtn.textContent = 'Open App';
-        installBtn.className = 'details-header-btn is-open';
-        installBtn.onclick = function() {
-          closeFullScreenAppPage();
-          openApp(key, targetUrl, safeName, isStore);
-        };
-      } else if (isPaid && !isPurchased) {
-        installBtn.textContent = 'Install App';
-        installBtn.className = 'details-header-btn';
-        installBtn.onclick = function() {
-          promptWalletPurchase(key);
-        };
-      } else {
-        installBtn.textContent = isStore ? 'Get App' : 'Install App';
-        installBtn.className = 'details-header-btn';
-        installBtn.onclick = function() {
-          if (isStore) {
-            handleAppAction(key, targetUrl, safeName, isStore);
-          } else {
-            startDownloadCount(key, targetUrl, safeName, isStore, installBtn);
-          }
-        };
-      }
-    }
-
-    function promptWalletPurchase(key) {
-      if (!activeUserPhone) {
-        alert("Please log into your account first to make a purchase.");
-        window.location.href = "new2.html";
-        return;
-      }
-      activePurchaseKey = key;
-      const appItem = allAppsData.find(a => a.key === key);
-      const app = appItem ? appItem.app : {};
-      
-      const modal = document.getElementById('walletPurchaseModal');
-      // Ensure the modal is strictly appended to the end of body to avoid stacking context issues
-      document.body.appendChild(modal);
-
-      document.getElementById('purchaseModalDesc').textContent = `This app costs ${app.price || 0} ETB. Enter your 6-digit Wallet PIN/Password to continue.`;
-      document.getElementById('purchaseModalError').style.display = 'none';
-      document.getElementById('walletPinInput').value = '';
-      modal.style.display = 'flex';
-      setTimeout(() => document.getElementById('walletPinInput').focus(), 100);
-    }
-
-    function closeWalletPurchaseModal() {
-      document.getElementById('walletPurchaseModal').style.display = 'none';
-      activePurchaseKey = null;
-    }
-
-    async function submitWalletPurchase() {
-      const pinInput = document.getElementById('walletPinInput').value.trim();
-      const errBanner = document.getElementById('purchaseModalError');
-      const confirmBtn = document.getElementById('btnConfirmPurchase');
-
-      if (!pinInput || pinInput.length !== 6) {
-        errBanner.textContent = "Please enter your 6-digit PIN.";
-        errBanner.style.display = 'block';
-        return;
-      }
-
-      const item = allAppsData.find(a => a.key === activePurchaseKey);
-      if (!item) return;
-
-      const app = item.app;
-      const price = parseFloat(app.price) || 0;
-      const appAdminPhone = app.adminPhone || app.ownerPhone || app.creatorPhone || null;
-
-      try {
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = "Processing...";
-
-        // 1. Check PIN
-        const pinSnap = await db.ref(`users/${activeUserPhone}/securityPin`).once('value');
-        if (!pinSnap.exists() || String(pinSnap.val()) !== pinInput) {
-          errBanner.textContent = "Incorrect PIN. Try again.";
-          errBanner.style.display = 'block';
-          confirmBtn.disabled = false;
-          confirmBtn.textContent = "Confirm";
-          return;
-        }
-
-        // 2. Check Wallet Balance
-        const balSnap = await db.ref(`users/${activeUserPhone}/walletBalance`).once('value');
-        const currentBalance = parseFloat(balSnap.val()) || 0;
-
-        if (currentBalance < price) {
-          errBanner.textContent = "Insufficient wallet balance.";
-          errBanner.style.display = 'block';
-          confirmBtn.disabled = false;
-          confirmBtn.textContent = "Confirm";
-          return;
-        }
-
-        const now = new Date();
-        const timestampStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
-                             now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-        // 3. Deduct Balance from Buyer
-        const newBuyerBalance = currentBalance - price;
-        await db.ref(`users/${activeUserPhone}/walletBalance`).set(newBuyerBalance);
-
-        // 4. Add Expense Record
-        await db.ref(`users/${activeUserPhone}/transactions`).push({
-          title: `Purchased ${app.name || 'App'}`,
-          amount: -price,
-          type: 'expense',
-          timestamp: timestampStr,
-          timestampISO: now.toISOString(),
-          sortingTime: Date.now(),
-          balanceAfter: newBuyerBalance
-        });
-
-        // 5. Transfer Funds to App Creator or Global Admin
-        if (appAdminPhone) {
-          const adminBalRef = db.ref(`users/${appAdminPhone}/walletBalance`);
-          const adminSnap = await adminBalRef.once('value');
-          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
-          const newAdminBalance = currentAdminBalance + price;
-          
-          await adminBalRef.set(newAdminBalance);
-
-          await db.ref(`users/${appAdminPhone}/transactions`).push({
-            title: `App Sale: ${app.name || 'App'}`,
-            amount: price,
-            type: 'income',
-            sender: activeUserPhone,
-            timestamp: timestampStr,
-            timestampISO: now.toISOString(),
-            sortingTime: Date.now(),
-            balanceAfter: newAdminBalance
-          });
-        } else {
-          const adminBalRef = db.ref('admin/walletBalance');
-          const adminSnap = await adminBalRef.once('value');
-          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
-          await adminBalRef.set(currentAdminBalance + price);
-        }
-
-        // 6. Public Transaction Log
-        await db.ref('transactions').push({
-          appName: app.name || 'App',
-          amount: price,
-          sender: activeUserPhone,
-          recipientAdmin: appAdminPhone || 'Global Admin',
-          timestamp: Date.now(),
-          type: 'web_deposit'
-        });
-
-        // Mark local purchase state
-        localStorage.setItem('site_purchased_' + activePurchaseKey, 'true');
-
-        const purchasedKey = activePurchaseKey;
-        const targetUrl = app.url || '#';
-        const safeName = (app.name || 'App').replace(/'/g, "\\'");
-        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
-
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = "Confirm";
-
-        closeWalletPurchaseModal();
-
-        document.getElementById('pageInstallSubtext').textContent = '';
-        renderAppList(allAppsData);
-
-        const installBtn = document.getElementById('pageInstallBtn');
-        startDownloadCount(purchasedKey, targetUrl, safeName, isStore, installBtn);
-
-      } catch (err) {
-        console.error("Purchase error:", err);
-        errBanner.textContent = "Transaction failed. Try again.";
-        errBanner.style.display = 'block';
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = "Confirm";
-      }
-    }
-
-    function startDownloadCount(key, targetUrl, safeName, isStore, buttonElem) {
-      let progress = 0;
-      buttonElem.disabled = true;
-      buttonElem.className = 'details-header-btn is-progress';
-
-      const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 10;
-        if (progress > 100) progress = 100;
-
-        buttonElem.textContent = `${progress}%`;
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          localStorage.setItem('site_installed_' + key, 'true');
-          
-          buttonElem.disabled = false;
-          buttonElem.textContent = 'Open App';
-          buttonElem.className = 'details-header-btn is-open';
-
-          buttonElem.onclick = function() {
-            closeFullScreenAppPage();
-            openApp(key, targetUrl, safeName, isStore);
-          };
-
-          renderAppList(allAppsData);
-        }
-      }, 200);
-    }
-
-    function closeFullScreenAppPage() {
-      document.getElementById('appDetailsPage').style.display = 'none';
-      document.body.style.overflow = 'auto';
+      showGlobalLoader("Opening Details...");
+      window.location.href = `Fullap.html?key=${encodeURIComponent(key)}`;
     }
 
     function openSearchModal() {
@@ -608,10 +284,14 @@
     }
 
     function switchCategory(categoryKey, tabBtn) {
-      activeCategory = categoryKey;
-      document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
-      if (tabBtn) tabBtn.classList.add('active');
-      renderAppList(allAppsData);
+      showGlobalLoader("Loading Category...");
+      setTimeout(() => {
+        activeCategory = categoryKey;
+        document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+        if (tabBtn) tabBtn.classList.add('active');
+        renderAppList(allAppsData);
+        hideGlobalLoader();
+      }, 150);
     }
 
     function getDomain(url) {
@@ -655,13 +335,6 @@
       document.getElementById('webPreviewModal').style.display = 'none';
       document.getElementById('previewIframe').src = '';
       document.body.style.overflow = 'auto';
-    }
-
-    function handleAppAction(key, targetUrl, appName, isStore) {
-      if (isStore) {
-        window.location.href = targetUrl;
-        return;
-      }
     }
 
     function promptUninstallApp(key, appName, iconUrl) {

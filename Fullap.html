@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>App Details - BirrGo Store</title>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f5f8;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* FULL PAGE WRAPPER */
+    .full-screen-app-page {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 100vh;
+      background: #f4f5f8;
+    }
+
+    /* TOP BAR */
+    .details-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #5d0017;
+      color: #ffffff;
+      padding: 14px 18px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .close-x-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* CONTENT WRAPPER */
+    .details-page-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* WHITE CARDS */
+    .details-header-card, .details-article-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .details-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .details-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* IMAGE LOADING & BLUR EFFECT */
+    .details-app-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #e2e8f0;
+      filter: blur(12px);
+      opacity: 0.3;
+      transition: filter 0.4s ease-out, opacity 0.4s ease-out;
+      will-change: filter, opacity;
+    }
+
+    .details-app-icon.img-loaded {
+      filter: blur(0px);
+      opacity: 1;
+    }
+
+    .details-app-meta h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .details-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .details-header-btn {
+      background: #5d0017;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(93, 0, 23, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .details-header-btn.is-open {
+      background: #107c41;
+      box-shadow: 0 4px 10px rgba(16, 124, 65, 0.3);
+    }
+
+    .details-header-btn.is-progress {
+      background: #444444;
+      cursor: wait;
+    }
+
+    .btn-subtext {
+      font-size: 11px;
+      color: #5d0017;
+      font-weight: 700;
+    }
+
+    /* META GRID BOXES */
+    .app-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .meta-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .meta-box-value {
+      font-size: 13px;
+      font-weight: 800;
+      color: #222222;
+      margin-bottom: 3px;
+    }
+
+    .meta-box-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #888888;
+      text-transform: uppercase;
+    }
+
+    /* ARTICLE SECTION */
+    .details-article-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .details-article-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #444444;
+    }
+
+    /* POPUP PIN MODAL */
+    .security-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .security-modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 28px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .security-modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 8px;
+    }
+
+    .security-modal-desc {
+      font-size: 12px;
+      color: #666666;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .modal-error-banner {
+      background: #ffebe9;
+      color: #d93025;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .security-password-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #7a1528;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 22px;
+      letter-spacing: 8px;
+      color: #111111;
+      outline: none;
+      margin-bottom: 20px;
+      background: #ffffff;
+    }
+
+    .security-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-modal-submit {
+      width: 100%;
+      height: 48px;
+      background: #5d0017;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-modal-cancel {
+      width: 100%;
+      height: 48px;
+      background: #f0f3f8;
+      color: #222222;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* WEB PREVIEW MODAL */
+    .web-preview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+    }
+
+    .preview-header {
+      height: 50px;
+      background: #5d0017;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .preview-back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .preview-title {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <script src="loader.js"></script>
+
+  <!-- FULL ARTICLE APP DETAILS PAGE -->
+  <div class="full-screen-app-page" id="appDetailsPage">
+    <div class="details-top-bar">
+      <div class="header-title" id="pageBarTitle">App Details</div>
+      <button class="close-x-btn" onclick="goBackToStore()" title="Close">&#10005;</button>
+    </div>
+
+    <div class="details-page-content">
+      <div class="details-header-card">
+        <div class="details-header-top">
+          <div class="details-header-left">
+            <img id="pageAppIcon" src="" class="details-app-icon" alt="App Icon" onload="handleImageLoaded(this)">
+            <div class="details-app-meta">
+              <h2 id="pageAppName">Loading App...</h2>
+            </div>
+          </div>
+          <div class="details-header-right">
+            <button class="details-header-btn" id="pageInstallBtn">Install App</button>
+            <span id="pageInstallSubtext" class="btn-subtext"></span>
+          </div>
+        </div>
+
+        <div class="app-meta-grid">
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageUserRating">--</span>
+            <span class="meta-box-label">User Rating</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageSystemRating">--</span>
+            <span class="meta-box-label">System Rate</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageAppSize">--</span>
+            <span class="meta-box-label">Size</span>
+          </div>
+          <div class="meta-box">
+            <span class="meta-box-value" id="pageDownloadCount">--</span>
+            <span class="meta-box-label">Downloads</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-article-card">
+        <div class="details-article-title">About this App</div>
+        <div class="details-article-body" id="pageAppDescription">
+          Loading article description...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURCHASE CONFIRMATION & PIN POPUP -->
+  <div class="security-modal-backdrop" id="walletPurchaseModal">
+    <div class="security-modal-card">
+      <h3 class="security-modal-title" id="purchaseModalTitle">Confirm Payment</h3>
+      <p class="security-modal-desc" id="purchaseModalDesc">
+        Enter your 6-digit PIN to confirm purchase.
+      </p>
+      
+      <div class="modal-error-banner" id="purchaseModalError"></div>
+
+      <input type="password" maxlength="6" inputmode="numeric" class="security-password-input" id="walletPinInput" placeholder="••••••">
+
+      <div class="security-modal-actions">
+        <button class="btn-modal-submit" id="btnConfirmPurchase" onclick="submitWalletPurchase()">Pay & Install</button>
+        <button class="btn-modal-cancel" onclick="closeWalletPurchaseModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEB PREVIEW MODAL -->
+  <div id="webPreviewModal" class="web-preview-modal">
+    <div class="preview-header">
+      <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
+      <div class="preview-title" id="previewTitle">App Name</div>
+      <div style="width: 40px;"></div>
+    </div>
+    <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+      authDomain: "birrgo-fdf7e.firebaseapp.com",
+      databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+      projectId: "birrgo-fdf7e",
+      storageBucket: "birrgo-fdf7e.firebasestorage.app",
+      messagingSenderId: "2317445154",
+      appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const activeUserPhone = localStorage.getItem('auth_session_phone');
+    const urlParams = new URLSearchParams(window.location.search);
+    const appKey = urlParams.get('key');
+
+    let currentAppData = null;
+
+    function handleImageLoaded(imgElem) {
+      if (imgElem.complete) {
+        imgElem.classList.add('img-loaded');
+      }
+    }
+
+    function showGlobalLoader(msg = "Loading...") {
+      if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+        window.AppLoader.show(msg);
+      }
+    }
+
+    function hideGlobalLoader() {
+      if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+        window.AppLoader.hide();
+      }
+    }
+
+    function goBackToStore() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "Apps.html";
+      }
+    }
+
+    function getDomain(url) {
+      try {
+        const u = new URL(url.startsWith('http') ? url : 'https://' + url);
+        return u.hostname;
+      } catch(e) { return url; }
+    }
+
+    function getAdminSize(app) {
+      if (app.size || app.appSize) {
+        let raw = app.size || app.appSize;
+        return raw.toString().includes('MB') ? raw : raw + ' MB';
+      }
+      return '12.5 MB';
+    }
+
+    function getAdminUserRating(app) {
+      if (app.userRating || app.rating) {
+        let val = app.userRating || app.rating;
+        return val.toString().includes('★') ? val : val + ' ★';
+      }
+      return '4.8 ★';
+    }
+
+    function getAdminSystemRating(app) {
+      return app.systemRating || app.pegi || 'PEGI 3';
+    }
+
+    function getAdminDownloadCount(app) {
+      if (app.downloads || app.downloadCount) {
+        let val = app.downloads || app.downloadCount;
+        return val.toString().includes('+') ? val : val + '+';
+      }
+      return '50K+';
+    }
+
+    function isAppPaid(app) {
+      return app.pricingType === 'paid' && parseFloat(app.price) > 0;
+    }
+
+    function loadAppDetails() {
+      if (!appKey) {
+        alert("Invalid app key specified.");
+        goBackToStore();
+        return;
+      }
+
+      showGlobalLoader("Loading App...");
+
+      db.ref(`pwa_apps/${appKey}`).on('value', (snapshot) => {
+        hideGlobalLoader();
+        if (!snapshot.exists()) {
+          document.getElementById('pageAppName').textContent = 'App Not Found';
+          document.getElementById('pageAppDescription').textContent = 'The requested app could not be found.';
+          return;
+        }
+
+        const app = snapshot.val();
+        currentAppData = app;
+
+        const name = app.name || 'App';
+        const description = app.description || 'No detailed article provided for this application.';
+        const targetUrl = app.url || '#';
+        const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+        const safeName = name.replace(/'/g, "\\'");
+
+        document.getElementById('pageBarTitle').textContent = name;
+        document.getElementById('pageAppName').textContent = name;
+        
+        const iconElem = document.getElementById('pageAppIcon');
+        iconElem.classList.remove('img-loaded');
+        iconElem.src = icon;
+
+        document.getElementById('pageAppDescription').textContent = description;
+
+        document.getElementById('pageUserRating').textContent = getAdminUserRating(app);
+        document.getElementById('pageSystemRating').textContent = getAdminSystemRating(app);
+        document.getElementById('pageAppSize').textContent = getAdminSize(app);
+        document.getElementById('pageDownloadCount').textContent = getAdminDownloadCount(app);
+
+        setupInstallButtonState(appKey, app, targetUrl, safeName, isStore);
+      });
+    }
+
+    function setupInstallButtonState(key, app, targetUrl, safeName, isStore) {
+      const installBtn = document.getElementById('pageInstallBtn');
+      const subtextElem = document.getElementById('pageInstallSubtext');
+      
+      const isInstalled = localStorage.getItem('site_installed_' + key);
+      const isPaid = isAppPaid(app);
+      const isPurchased = localStorage.getItem('site_purchased_' + key);
+
+      if (isPaid && !isPurchased && !isInstalled) {
+        subtextElem.textContent = `Paid (${app.price} ETB)`;
+      } else {
+        subtextElem.textContent = '';
+      }
+
+      if (isInstalled) {
+        installBtn.textContent = 'Open App';
+        installBtn.className = 'details-header-btn is-open';
+        installBtn.onclick = function() {
+          openApp(key, targetUrl, safeName, isStore);
+        };
+      } else if (isPaid && !isPurchased) {
+        installBtn.textContent = 'Install App';
+        installBtn.className = 'details-header-btn';
+        installBtn.onclick = function() {
+          promptWalletPurchase(key);
+        };
+      } else {
+        installBtn.textContent = isStore ? 'Get App' : 'Install App';
+        installBtn.className = 'details-header-btn';
+        installBtn.onclick = function() {
+          if (isStore) {
+            window.location.href = targetUrl;
+          } else {
+            startDownloadCount(key, targetUrl, safeName, isStore, installBtn);
+          }
+        };
+      }
+    }
+
+    function promptWalletPurchase(key) {
+      if (!activeUserPhone) {
+        alert("Please log into your account first to make a purchase.");
+        window.location.href = "new2.html";
+        return;
+      }
+
+      const app = currentAppData || {};
+      const actualPrice = parseFloat(app.price) || 0;
+      const appName = app.name || 'App';
+      
+      const modal = document.getElementById('walletPurchaseModal');
+
+      document.getElementById('purchaseModalTitle').textContent = `Confirm Payment`;
+      document.getElementById('purchaseModalDesc').textContent = `${appName} costs ${actualPrice} Birr. Enter your 6-digit PIN to pay and install.`;
+      document.getElementById('btnConfirmPurchase').textContent = `Pay ${actualPrice} Birr & Install`;
+      
+      document.getElementById('purchaseModalError').style.display = 'none';
+      document.getElementById('walletPinInput').value = '';
+      modal.style.display = 'flex';
+      setTimeout(() => document.getElementById('walletPinInput').focus(), 100);
+    }
+
+    function closeWalletPurchaseModal() {
+      document.getElementById('walletPurchaseModal').style.display = 'none';
+    }
+
+    async function submitWalletPurchase() {
+      const pinInput = document.getElementById('walletPinInput').value.trim();
+      const errBanner = document.getElementById('purchaseModalError');
+      const confirmBtn = document.getElementById('btnConfirmPurchase');
+
+      if (!pinInput || pinInput.length !== 6) {
+        errBanner.textContent = "Please enter your 6-digit PIN.";
+        errBanner.style.display = 'block';
+        return;
+      }
+
+      const app = currentAppData;
+      if (!app) return;
+
+      const price = parseFloat(app.price) || 0;
+      const appAdminPhone = app.adminPhone || app.ownerPhone || app.creatorPhone || null;
+
+      try {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "Processing...";
+
+        const pinSnap = await db.ref(`users/${activeUserPhone}/securityPin`).once('value');
+        if (!pinSnap.exists() || String(pinSnap.val()) !== pinInput) {
+          errBanner.textContent = "Incorrect PIN. Try again.";
+          errBanner.style.display = 'block';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = `Pay ${price} Birr & Install`;
+          return;
+        }
+
+        const balSnap = await db.ref(`users/${activeUserPhone}/walletBalance`).once('value');
+        const currentBalance = parseFloat(balSnap.val()) || 0;
+
+        if (currentBalance < price) {
+          errBanner.textContent = "Insufficient wallet balance.";
+          errBanner.style.display = 'block';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = `Pay ${price} Birr & Install`;
+          return;
+        }
+
+        const now = new Date();
+        const timestampStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
+                             now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        const newBuyerBalance = currentBalance - price;
+        await db.ref(`users/${activeUserPhone}/walletBalance`).set(newBuyerBalance);
+
+        await db.ref(`users/${activeUserPhone}/transactions`).push({
+          title: `Purchased ${app.name || 'App'}`,
+          amount: -price,
+          type: 'expense',
+          timestamp: timestampStr,
+          timestampISO: now.toISOString(),
+          sortingTime: Date.now(),
+          balanceAfter: newBuyerBalance
+        });
+
+        if (appAdminPhone) {
+          const adminBalRef = db.ref(`users/${appAdminPhone}/walletBalance`);
+          const adminSnap = await adminBalRef.once('value');
+          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
+          const newAdminBalance = currentAdminBalance + price;
+          
+          await adminBalRef.set(newAdminBalance);
+
+          await db.ref(`users/${appAdminPhone}/transactions`).push({
+            title: `App Sale: ${app.name || 'App'}`,
+            amount: price,
+            type: 'income',
+            sender: activeUserPhone,
+            timestamp: timestampStr,
+            timestampISO: now.toISOString(),
+            sortingTime: Date.now(),
+            balanceAfter: newAdminBalance
+          });
+        } else {
+          const adminBalRef = db.ref('admin/walletBalance');
+          const adminSnap = await adminBalRef.once('value');
+          const currentAdminBalance = parseFloat(adminSnap.val()) || 0;
+          await adminBalRef.set(currentAdminBalance + price);
+        }
+
+        await db.ref('transactions').push({
+          appName: app.name || 'App',
+          amount: price,
+          sender: activeUserPhone,
+          recipientAdmin: appAdminPhone || 'Global Admin',
+          timestamp: Date.now(),
+          type: 'web_deposit'
+        });
+
+        localStorage.setItem('site_purchased_' + appKey, 'true');
+
+        const targetUrl = app.url || '#';
+        const safeName = (app.name || 'App').replace(/'/g, "\\'");
+        const isStore = app.sourceType === 'playstore' || app.sourceType === 'appstore' || app.category === 'store';
+
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = `Pay ${price} Birr & Install`;
+
+        closeWalletPurchaseModal();
+
+        document.getElementById('pageInstallSubtext').textContent = '';
+        const installBtn = document.getElementById('pageInstallBtn');
+        startDownloadCount(appKey, targetUrl, safeName, isStore, installBtn);
+
+      } catch (err) {
+        console.error("Purchase error:", err);
+        errBanner.textContent = "Transaction failed. Try again.";
+        errBanner.style.display = 'block';
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = `Pay ${price} Birr & Install`;
+      }
+    }
+
+    function startDownloadCount(key, targetUrl, safeName, isStore, buttonElem) {
+      let progress = 0;
+      buttonElem.disabled = true;
+      buttonElem.className = 'details-header-btn is-progress';
+
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 10;
+        if (progress > 100) progress = 100;
+
+        buttonElem.textContent = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          localStorage.setItem('site_installed_' + key, 'true');
+          
+          buttonElem.disabled = false;
+          buttonElem.textContent = 'Open App';
+          buttonElem.className = 'details-header-btn is-open';
+
+          buttonElem.onclick = function() {
+            openApp(key, targetUrl, safeName, isStore);
+          };
+        }
+      }, 200);
+    }
+
+    function launchWebsite(url, appName) {
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) formattedUrl = 'https://' + formattedUrl;
+      document.getElementById('previewTitle').textContent = appName || 'Web View';
+      document.getElementById('previewIframe').src = formattedUrl;
+      document.getElementById('webPreviewModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openApp(key, url, appName, isStore) {
+      if (isStore) {
+        window.location.href = url;
+        return;
+      }
+      let isValidForIframe = currentAppData ? (currentAppData.canIframe === true || currentAppData.category === 'valid') : false;
+      
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) formattedUrl = 'https://' + formattedUrl;
+
+      if (isValidForIframe) launchWebsite(formattedUrl, appName);
+      else window.open(formattedUrl, '_blank');
+    }
+
+    function closeWebPreview() {
+      document.getElementById('webPreviewModal').style.display = 'none';
+      document.getElementById('previewIframe').src = '';
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAppDetails);
+  </script>
+
+</body>
+</html>
