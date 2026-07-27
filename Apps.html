@@ -8,8 +8,10 @@
   <style>
     :root {
       --bg-color: #F8F9FA;
-      --card-bg: #4A030D;
-      --primary-red: #8B0018;
+      --shiny-burgundy-top: #5E0012;
+      --shiny-burgundy-mid: #3B000B;
+      --shiny-burgundy-dark: #210006;
+      --primary-red: #3B000B;
       --green-open: #28a745;
       --red-uninstall: #dc3545;
       --text-white: #FFFFFF;
@@ -25,17 +27,16 @@
       padding-bottom: 90px;
     }
 
-    /* Fixed Top Header Container */
+    /* Straight Fixed Top Header with Shiny Dark Burgundy Gradient */
     .header-container {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background-color: var(--primary-red);
+      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-mid) 60%, var(--shiny-burgundy-dark) 100%);
       color: white;
-      padding: 16px 16px 24px 16px;
-      border-bottom-left-radius: 50% 20px;
-      border-bottom-right-radius: 50% 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      padding: 14px 16px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
     .top-bar {
@@ -94,15 +95,17 @@
       padding: 0 16px;
     }
 
+    /* Shiny Dark Burgundy App Cards */
     .app-card {
-      background: var(--card-bg);
+      background: linear-gradient(135deg, #4A000E 0%, #290007 70%, #170004 100%);
       border-radius: 16px;
       padding: 12px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 6px 14px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       gap: 12px;
       color: white;
       position: relative;
@@ -117,6 +120,7 @@
       object-fit: cover; 
       background-color: #FFF; 
       flex-shrink: 0; 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     .app-details { flex: 1; min-width: 0; }
     .app-details h2 { font-size: 15px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -245,6 +249,81 @@
       font-size: 9px;
       color: #AAA;
     }
+
+    /* FULL-SCREEN PWA VIEWER WITH STRAIGHT SHINY BURGUNDY HEADER */
+    #pwaViewerModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #FFFFFF;
+      z-index: 999999;
+      flex-direction: column;
+    }
+
+    .pwa-viewer-header {
+      position: relative;
+      z-index: 1000000;
+      background: linear-gradient(180deg, var(--shiny-burgundy-top) 0%, var(--shiny-burgundy-mid) 60%, var(--shiny-burgundy-dark) 100%);
+      color: white;
+      padding: 12px 16px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .pwa-close-btn {
+      width: 36px;
+      height: 36px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3B000B;
+      border: none;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .pwa-close-btn:active {
+      transform: scale(0.9);
+    }
+
+    .pwa-viewer-title {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #FFFFFF;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 65%;
+    }
+
+    .pwa-iframe-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #FFFFFF;
+    }
+
+    .pwa-iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 
   <!-- Firebase App & Realtime Database SDKs -->
@@ -253,7 +332,7 @@
 </head>
 <body>
 
-  <!-- Fixed Top Bar with Curve -->
+  <!-- Straight Fixed Top Bar -->
   <div class="header-container">
     <div class="top-bar">
       <a href="wallet.html" class="back-btn">&#8592;</a>
@@ -274,6 +353,18 @@
   <div class="ad-box">
     <span class="ad-tag">AD</span>
     📢 <span>Advertisement Space</span>
+  </div>
+
+  <!-- Full-Screen Custom PWA Modal with Straight Shiny Header -->
+  <div id="pwaViewerModal">
+    <div class="pwa-viewer-header">
+      <button class="pwa-close-btn" onclick="closePwaViewer()">✕</button>
+      <div class="pwa-viewer-title" id="pwaViewerTitle">App Viewer</div>
+      <div style="width: 36px;"></div>
+    </div>
+    <div class="pwa-iframe-container">
+      <iframe id="pwaFrame" allow="geolocation; microphone; camera; midi; encrypted-media; autoplay; clipboard-write"></iframe>
+    </div>
   </div>
 
   <script>
@@ -333,13 +424,38 @@
       }
     }
 
-    // Direct Full-Screen Navigation (No iframe error & No top preview header bar)
-    function launchPwaFullScreen(url) {
+    // Opens PWA with straight shiny header, real title & X back button
+    function launchPwaFullScreen(url, appName) {
       let formattedUrl = url.trim();
       if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
         formattedUrl = 'https://' + formattedUrl;
       }
-      window.location.href = formattedUrl;
+
+      const modal = document.getElementById('pwaViewerModal');
+      const frame = document.getElementById('pwaFrame');
+      const titleEl = document.getElementById('pwaViewerTitle');
+
+      if (titleEl) {
+        titleEl.textContent = appName || 'App Viewer';
+      }
+
+      const frameBlockedDomains = ['bbc.com', 'google.com', 'youtube.com', 'facebook.com', 'twitter.com', 'x.com', 'instagram.com'];
+      const isBlockedDomain = frameBlockedDomains.some(domain => formattedUrl.toLowerCase().includes(domain));
+
+      if (isBlockedDomain) {
+        frame.src = 'https://corsproxy.io/?' + encodeURIComponent(formattedUrl);
+      } else {
+        frame.src = formattedUrl;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closePwaViewer() {
+      const modal = document.getElementById('pwaViewerModal');
+      const frame = document.getElementById('pwaFrame');
+      frame.src = '';
+      modal.style.display = 'none';
     }
 
     async function handleAppAction(key, targetUrl, appName) {
@@ -348,9 +464,8 @@
       const progressContainer = document.getElementById('progress-box-' + key);
       const progressBar = document.getElementById('progress-bar-' + key);
 
-      // If already installed, open directly full screen
       if (isInstalled) {
-        launchPwaFullScreen(targetUrl);
+        launchPwaFullScreen(targetUrl, appName);
         return;
       }
 
@@ -372,8 +487,7 @@
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
 
-          // Launch target app on completion
-          launchPwaFullScreen(targetUrl);
+          launchPwaFullScreen(targetUrl, appName);
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
