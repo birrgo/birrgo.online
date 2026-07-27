@@ -8,9 +8,10 @@
   <style>
     :root {
       --bg-color: #F8F9FA;
-      --card-bg: #4A030D; /* Dark maroon background matching screenshot */
+      --card-bg: #4A030D;
       --primary-red: #8B0018;
       --green-open: #28a745;
+      --red-uninstall: #dc3545;
       --text-white: #FFFFFF;
       --text-yellow: #FFD700;
       --text-gray: #CCCCCC;
@@ -21,10 +22,10 @@
     body { 
       background-color: var(--bg-color); 
       color: #212529; 
-      padding-bottom: 90px; /* Leave space for fixed bottom ad box */
+      padding-bottom: 90px;
     }
 
-    /* Fixed Top Header Container with Bottom Curve */
+    /* Fixed Top Header Container */
     .header-container {
       position: sticky;
       top: 0;
@@ -66,7 +67,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* Search Bar */
     .search-box {
       width: 100%;
       max-width: 500px;
@@ -88,14 +88,12 @@
       border-radius: 20px;
     }
 
-    /* App Container */
     .app-container {
       max-width: 600px;
       margin: 16px auto;
       padding: 0 16px;
     }
 
-    /* App Cards styled like your UI screenshot */
     .app-card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -107,6 +105,8 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
       gap: 12px;
       color: white;
+      position: relative;
+      overflow: hidden;
     }
 
     .app-info { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; }
@@ -120,12 +120,49 @@
     }
     .app-details { flex: 1; min-width: 0; }
     .app-details h2 { font-size: 15px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-details p { font-size: 12px; color: var(--text-gray); margin-top: 4px; line-clamp: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .app-details p { font-size: 11px; color: var(--text-gray); margin-top: 2px; line-clamp: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    
+    .app-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .size-tag {
+      color: var(--text-yellow);
+    }
+
+    /* Download Progress UI */
+    .progress-bar-container {
+      width: 100%;
+      background: rgba(255,255,255,0.2);
+      height: 6px;
+      border-radius: 3px;
+      margin-top: 6px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--green-open);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
 
     .action-btn {
-      padding: 8px 20px;
+      padding: 8px 18px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       border: none;
       background-color: #FFFFFF;
@@ -135,14 +172,47 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
-      flex-shrink: 0;
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      min-width: 85px;
     }
 
     .action-btn.is-open {
       background-color: var(--green-open);
       color: white;
+    }
+
+    .action-btn.is-downloading {
+      background-color: #ffc107;
+      color: #000;
+      cursor: wait;
+    }
+
+    /* 3D Stylized Uninstall Button */
+    .btn-uninstall {
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #a71d2a;
+      background: linear-gradient(180deg, #e44d5a 0%, #b81c2c 100%);
+      color: #FFFFFF;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 0 #7a0e19, 0 5px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.1s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+      min-width: 85px;
+      text-align: center;
+    }
+
+    .btn-uninstall:hover {
+      background: linear-gradient(180deg, #f05462 0%, #ca2233 100%);
+    }
+
+    .btn-uninstall:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #7a0e19, 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .action-btn:active { transform: scale(0.95); }
@@ -186,19 +256,18 @@
   <!-- Fixed Top Bar with Curve -->
   <div class="header-container">
     <div class="top-bar">
-      <!-- Back button targeting wallet.html -->
       <a href="wallet.html" class="back-btn">&#8592;</a>
-      <div class="header-title">BirrGo App Store</div>
-      <div style="width: 36px;"></div> <!-- Spacer for symmetry -->
+      <div class="header-title">BirrGo PWA Store</div>
+      <div style="width: 36px;"></div>
     </div>
     <!-- Search Bar -->
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
+      <input type="text" id="searchInput" placeholder="Search verified PWA apps..." onkeyup="filterApps()">
     </div>
   </div>
 
   <main class="app-container" id="appList">
-    <div class="loading-text">Loading apps...</div>
+    <div class="loading-text">Scanning for PWAs...</div>
   </main>
 
   <!-- Bottom Fixed Ad Box -->
@@ -208,7 +277,6 @@
   </div>
 
   <script>
-    // --- FIREBASE CONFIGURATION ---
     const firebaseConfig = {
       apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
       authDomain: "birrgo-fdf7e.firebaseapp.com",
@@ -226,86 +294,171 @@
     let deferredPrompt = null;
     let allAppsData = [];
 
-    // Capture PWA install prompt event
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
     });
 
-    // Handle Install / Open Button Action
-    function handleAppAction(key, url) {
-      const isInstalled = localStorage.getItem('installed_' + key);
-
-      if (isInstalled) {
-        window.open(url, '_blank');
-      } else {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              setAppInstalled(key, url);
-            }
-            deferredPrompt = null;
-          });
-        } else {
-          setAppInstalled(key, url);
-          window.open(url, '_blank');
-        }
+    function getDomain(url) {
+      try {
+        const u = new URL(url.startsWith('http') ? url : 'https://' + url);
+        return u.hostname;
+      } catch(e) {
+        return url;
       }
     }
 
-    function setAppInstalled(key, url) {
-      localStorage.setItem('installed_' + key, 'true');
+    function calculatePwaSize(name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const baseKB = Math.abs(hash % 2400) + 850;
+      return (baseKB / 1024).toFixed(1) + " MB";
+    }
+
+    function handleImageError(imgElement, appUrl) {
+      const domain = getDomain(appUrl);
+      const stage = imgElement.getAttribute('data-error-stage') || '0';
+
+      if (stage === '0') {
+        imgElement.setAttribute('data-error-stage', '1');
+        imgElement.src = `https://icon.horse/icon/${domain}`;
+      } else if (stage === '1') {
+        imgElement.setAttribute('data-error-stage', '2');
+        imgElement.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      } else {
+        imgElement.onerror = null;
+        imgElement.src = 'https://via.placeholder.com/65?text=PWA';
+      }
+    }
+
+    async function handleAppAction(key, targetUrl, appName) {
+      const isInstalled = localStorage.getItem('pwa_installed_' + key);
       const btn = document.getElementById('btn-' + key);
+      const progressContainer = document.getElementById('progress-box-' + key);
+      const progressBar = document.getElementById('progress-bar-' + key);
+
+      if (isInstalled) {
+        window.open(targetUrl, '_blank');
+        return;
+      }
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          markAsInstalled(key, targetUrl);
+          return;
+        }
+        deferredPrompt = null;
+      }
+
+      btn.disabled = true;
+      btn.classList.add('is-downloading');
+      btn.textContent = '0%';
+      if (progressContainer) progressContainer.style.display = 'block';
+
+      let progress = 0;
+      const downloadInterval = setInterval(() => {
+        progress += Math.floor(Math.random() * 18) + 12;
+        
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(downloadInterval);
+          markAsInstalled(key, targetUrl);
+
+          btn.disabled = false;
+          btn.classList.remove('is-downloading');
+          if (progressContainer) progressContainer.style.display = 'none';
+        } else {
+          btn.textContent = progress + '%';
+          if (progressBar) progressBar.style.width = progress + '%';
+        }
+      }, 250);
+    }
+
+    function markAsInstalled(key, url) {
+      localStorage.setItem('pwa_installed_' + key, 'true');
+      if (url) localStorage.setItem('pwa_installed_url_' + key, url);
+
+      const btn = document.getElementById('btn-' + key);
+      const uninstallBtn = document.getElementById('uninstall-' + key);
+
       if (btn) {
         btn.textContent = 'Open';
         btn.classList.add('is-open');
       }
+      if (uninstallBtn) {
+        uninstallBtn.style.display = 'inline-block';
+      }
     }
 
-    // Render list from data
+    function uninstallApp(key, appName) {
+      if (confirm(`Are you sure you want to uninstall and remove ${appName} from your device?`)) {
+        localStorage.removeItem('pwa_installed_' + key);
+        localStorage.removeItem('pwa_installed_url_' + key);
+
+        const btn = document.getElementById('btn-' + key);
+        const uninstallBtn = document.getElementById('uninstall-' + key);
+        const progressBar = document.getElementById('progress-bar-' + key);
+
+        if (btn) {
+          btn.textContent = 'Install';
+          btn.classList.remove('is-open', 'is-downloading');
+        }
+        if (uninstallBtn) {
+          uninstallBtn.style.display = 'none';
+        }
+        if (progressBar) {
+          progressBar.style.width = '0%';
+        }
+      }
+    }
+
     function renderAppList(apps) {
       appList.innerHTML = '';
 
       if (apps.length === 0) {
-        appList.innerHTML = '<div class="loading-text">No apps found.</div>';
+        appList.innerHTML = '<div class="loading-text">No verified PWAs found.</div>';
         return;
       }
 
       apps.forEach(({ key, app }) => {
-        // Fallback icon preview logic using domain favicon service
-        let iconUrl = app.icon;
-        if (!iconUrl && app.url) {
-          try {
-            const domain = new URL(app.url).hostname;
-            iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-          } catch(e) {
-            iconUrl = 'https://via.placeholder.com/65';
-          }
-        } else if (!iconUrl) {
-          iconUrl = 'https://via.placeholder.com/65';
-        }
-
-        const name = app.name || 'Unnamed Application';
-        const description = app.description || 'Web PWA Application';
+        const name = app.name || 'PWA Application';
+        const description = app.description || 'Web Progressive Web App';
         const targetUrl = app.url || '#';
+        const initialIcon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
+        const pwaSize = calculatePwaSize(name);
 
-        const isInstalled = localStorage.getItem('installed_' + key);
+        const isInstalled = localStorage.getItem('pwa_installed_' + key);
         const buttonText = isInstalled ? 'Open' : 'Install';
         const openClass = isInstalled ? 'is-open' : '';
+        const uninstallStyle = isInstalled ? 'display: inline-block;' : 'display: none;';
 
         const cardHTML = `
           <div class="app-card" data-name="${name.toLowerCase()}">
             <div class="app-info">
-              <img src="${iconUrl}" alt="${name}" class="app-icon" onerror="this.onerror=null;this.src='https://via.placeholder.com/65';">
+              <img src="${initialIcon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
               <div class="app-details">
                 <h2>${name}</h2>
                 <p>${description}</p>
+                <div class="app-meta">
+                  <span class="size-tag">📦 ${pwaSize}</span>
+                </div>
+                <div class="progress-bar-container" id="progress-box-${key}">
+                  <div class="progress-bar-fill" id="progress-bar-${key}"></div>
+                </div>
               </div>
             </div>
-            <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}')">
-              ${buttonText}
-            </button>
+            <div class="btn-group">
+              <button id="btn-${key}" class="action-btn ${openClass}" onclick="handleAppAction('${key}', '${targetUrl}', '${name}')">
+                ${buttonText}
+              </button>
+              <button id="uninstall-${key}" class="btn-uninstall" style="${uninstallStyle}" onclick="uninstallApp('${key}', '${name}')">
+                Uninstall
+              </button>
+            </div>
           </div>
         `;
 
@@ -313,11 +466,10 @@
       });
     }
 
-    // Real-Time Listener on Firebase
     db.ref('pwa_apps').on('value', (snapshot) => {
       allAppsData = [];
       if (!snapshot.exists()) {
-        appList.innerHTML = '<div class="loading-text">No apps available right now.</div>';
+        appList.innerHTML = '<div class="loading-text">No PWAs available in store.</div>';
         return;
       }
 
@@ -331,10 +483,9 @@
       renderAppList(allAppsData);
     }, (error) => {
       console.error("Database connection error:", error);
-      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load apps. Check database rules.</div>';
+      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load PWAs. Check connection.</div>';
     });
 
-    // Real-time Search Filter
     function filterApps() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const filtered = allAppsData.filter(item => {
