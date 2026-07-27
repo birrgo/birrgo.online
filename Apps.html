@@ -294,6 +294,7 @@
     let deferredPrompt = null;
     let allAppsData = [];
 
+    // Capture install prompt if user is installing the Store itself
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -339,21 +340,24 @@
       const progressContainer = document.getElementById('progress-box-' + key);
       const progressBar = document.getElementById('progress-bar-' + key);
 
+      // 1. If already installed, open the app
       if (isInstalled) {
         window.open(targetUrl, '_blank');
         return;
       }
 
+      // 2. If native prompt is available for this current domain
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
         if (choice.outcome === 'accepted') {
           markAsInstalled(key, targetUrl);
+          deferredPrompt = null;
           return;
         }
-        deferredPrompt = null;
       }
 
+      // 3. For third-party PWAs: simulate installation prep, then launch URL so browser triggers "Add to Home Screen"
       btn.disabled = true;
       btn.classList.add('is-downloading');
       btn.textContent = '0%';
@@ -371,11 +375,14 @@
           btn.disabled = false;
           btn.classList.remove('is-downloading');
           if (progressContainer) progressContainer.style.display = 'none';
+
+          // Launch target app so browser can prompt user to add to home screen
+          window.open(targetUrl, '_blank');
         } else {
           btn.textContent = progress + '%';
           if (progressBar) progressBar.style.width = progress + '%';
         }
-      }, 250);
+      }, 200);
     }
 
     function markAsInstalled(key, url) {
@@ -395,7 +402,9 @@
     }
 
     function uninstallApp(key, appName) {
-      if (confirm(`Are you sure you want to uninstall and remove ${appName} from your device?`)) {
+      const userConfirmed = confirm(`To uninstall ${appName}:\n\n1. It will be removed from your store list.\n2. To remove the icon from your device, long-press the ${appName} app icon on your home screen and select "Uninstall" or "Remove".\n\nProceed?`);
+      
+      if (userConfirmed) {
         localStorage.removeItem('pwa_installed_' + key);
         localStorage.removeItem('pwa_installed_url_' + key);
 
