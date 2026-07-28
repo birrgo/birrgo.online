@@ -11,21 +11,20 @@
     <!-- Point the app launch source directly to your domain -->
     <content src="https://test.birrgo.online" />
 
-    <!-- Default App Launcher Icon -->
+    <!-- Fallback App Launcher Icon -->
     <icon src="icon.png" />
 
-    <!-- Splash Screen Preferences (Forces white splash screen background) -->
+    <!-- Global Window & Splash Screen Preferences -->
+    <preference name="BackgroundColor" value="#ffffff" />
     <preference name="SplashScreenSpinnerColor" value="#ffffff" />
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon.png" />
     <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" />
-    <preference name="BackgroundColor" value="#ffffff" />
+    <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#ffffff" />
 
     <platform name="android">
-        <!-- Main launcher icon mapping -->
-        <icon src="icon.png" />
+        <!-- Modern Adaptive Icon Configuration for Android (Forces White Background) -->
+        <icon src="icon.png" foreground="icon.png" background="#ffffff" />
 
-        <!-- Foreground and Background for Android Adaptive Icons -->
-        <!-- If Android clips your icon into a squircle, setting background color ensures it stays white -->
         <preference name="AndroidLaunchMode" value="singleTop" />
 
         <!-- Generic / Firebase Notification status bar icon -->
