@@ -3,44 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>App Preview</title>
+  <title>App Viewer</title>
+  
+  <link rel="stylesheet" href="Apps.css">
+  <link rel="stylesheet" href="wallet.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
+    body, html {
       margin: 0;
       padding: 0;
-    }
-    body, html {
       width: 100%;
       height: 100%;
-      background-color: #121212;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
+      background-color: #0d0d0d;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    .preview-header {
-      height: 56px;
-      background: linear-gradient(180deg, #2b000a 0%, #400010 100%);
+    .app-header-bar {
+      height: 54px;
+      background: linear-gradient(180deg, #2b000a 0%, #400010 60%, #5d0017 100%);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
       position: relative;
       z-index: 10;
     }
 
-    .preview-back-btn {
+    .back-btn {
       background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      padding: 8px 16px;
-      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -50,66 +50,65 @@
       transition: background 0.2s ease;
     }
 
-    .preview-back-btn:active {
+    .back-btn:active {
       background: rgba(255, 255, 255, 0.3);
     }
 
-    .preview-title {
-      font-size: 17px;
+    .app-title-display {
+      font-size: 16px;
       font-weight: 700;
       color: #ffffff;
       text-align: center;
+      flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 60%;
+      margin: 0 12px;
     }
 
-    .preview-iframe {
+    .app-frame-container {
       width: 100%;
-      height: calc(100% - 56px);
-      border: none;
+      height: calc(100% - 54px);
+      position: relative;
       background: #ffffff;
     }
 
-    .loading-container {
+    .app-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #121212;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: calc(100% - 56px);
-      color: #cccccc;
-      gap: 12px;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 4px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #800020;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      z-index: 5;
     }
   </style>
 </head>
 <body>
 
-  <div class="preview-header">
-    <button class="preview-back-btn" onclick="goBack()">&#8592; Back</button>
-    <div class="preview-title" id="previewTitle">Loading App...</div>
+  <script src="loader.js"></script>
+
+  <div class="app-header-bar">
+    <button class="back-btn" onclick="goBackToStore()">&#8592; Back</button>
+    <div class="app-title-display" id="appTitle">Loading...</div>
     <div style="width: 60px;"></div>
   </div>
 
-  <div id="loadingView" class="loading-container">
-    <div class="spinner"></div>
-    <span>Loading Application...</span>
+  <div class="app-frame-container">
+    <div class="loading-overlay" id="frameLoader">
+      <div style="font-size: 15px; font-weight: 500;">Launching Application...</div>
+    </div>
+    <iframe id="appIframe" class="app-iframe" src="" allowfullscreen></iframe>
   </div>
-
-  <iframe id="previewIframe" class="preview-iframe" style="display: none;" allowfullscreen></iframe>
 
   <script>
     const firebaseConfig = {
@@ -125,52 +124,50 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function goBack() {
-      if (document.referrer && document.referrer.includes('Apps.html')) {
-        window.history.back();
-      } else {
-        window.location.replace('Apps.html');
-      }
+    function goBackToStore() {
+      window.location.replace('Apps.html');
     }
 
-    function getQueryParam(param) {
+    document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+      const appKey = urlParams.get('key');
 
-    const appKey = getQueryParam('key');
+      if (!appKey) {
+        alert("Invalid app key specified.");
+        goBackToStore();
+        return;
+      }
 
-    if (!appKey) {
-      document.getElementById('loadingView').innerHTML = '<span style="color:#ff6b6b;">Error: No app specified.</span>';
-    } else {
       db.ref('pwa_apps/' + appKey).once('value').then((snapshot) => {
         if (!snapshot.exists()) {
-          document.getElementById('loadingView').innerHTML = '<span style="color:#ff6b6b;">App not found.</span>';
+          alert("App data not found.");
+          goBackToStore();
           return;
         }
 
-        const app = snapshot.val();
-        let targetUrl = app.url || '';
-        if (targetUrl && !targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+        const appData = snapshot.val();
+        const appName = appData.name || 'Application';
+        let targetUrl = (appData.url || '').trim();
+
+        if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
           targetUrl = 'https://' + targetUrl;
         }
 
-        document.getElementById('previewTitle').textContent = app.name || 'App Preview';
-
-        const iframe = document.getElementById('previewIframe');
-        const loadingView = document.getElementById('loadingView');
-
+        document.getElementById('appTitle').textContent = appName;
+        
+        const iframe = document.getElementById('appIframe');
         iframe.src = targetUrl;
+
         iframe.onload = () => {
-          loadingView.style.display = 'none';
-          iframe.style.display = 'block';
+          const loader = document.getElementById('frameLoader');
+          if (loader) loader.style.display = 'none';
         };
       }).catch((err) => {
-        console.error("Error loading app details:", err);
-        document.getElementById('loadingView').innerHTML = '<span style="color:#ff6b6b;">Failed to load app data.</span>';
+        console.error("Failed to fetch app info:", err);
+        alert("Error loading app details.");
+        goBackToStore();
       });
-    }
+    });
   </script>
-
 </body>
 </html>

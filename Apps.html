@@ -112,7 +112,6 @@
     /* Pin Badge Indicator */
     .installed-app-item {
       position: relative;
-      cursor: pointer;
     }
     .pin-badge {
       position: absolute;
@@ -206,6 +205,16 @@
     </div>
   </div>
 
+  <!-- WEB PREVIEW MODAL -->
+  <div id="webPreviewModal" class="web-preview-modal">
+    <div class="preview-header">
+      <button class="preview-back-btn" onclick="closeWebPreview()">&#8592; Back</button>
+      <div class="preview-title" id="previewTitle">App Name</div>
+      <div style="width: 40px;"></div>
+    </div>
+    <iframe id="previewIframe" class="preview-iframe" src="" allowfullscreen></iframe>
+  </div>
+
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav-bar" id="bottomNavBar">
     <div id="navHome" class="nav-item">
@@ -270,14 +279,6 @@
     let activeCategory = 'installed';
     let selectedAppKey = null;
 
-    // Direct mapping for system/internal standalone files
-    const SYSTEM_APP_FILES = {
-      'news': 'news.html',
-      'sp': 'sp.html',
-      'wo': 'wo.html',
-      'bu': 'bu.html'
-    };
-
     function showGlobalLoader(msg = "Loading...") {
       if (window.AppLoader && typeof window.AppLoader.show === 'function') {
         window.AppLoader.show(msg);
@@ -320,30 +321,9 @@
       return app.pricingType === 'paid' && parseFloat(app.price) > 0;
     }
 
-    function openFullScreenAppPage(key, appData = null) {
-      showGlobalLoader("Opening App...");
-
-      // Check if key directly matches or system app property maps to standalone local files
-      const normalizedKey = (key || '').toLowerCase();
-      let targetFile = SYSTEM_APP_FILES[normalizedKey];
-
-      if (!targetFile && appData) {
-        const appUrl = (appData.url || '').toLowerCase();
-        const appName = (appData.name || '').toLowerCase();
-
-        for (const [sysKey, file] of Object.entries(SYSTEM_APP_FILES)) {
-          if (appUrl.includes(file) || appName === sysKey || key.toLowerCase() === sysKey) {
-            targetFile = file;
-            break;
-          }
-        }
-      }
-
-      if (targetFile) {
-        window.location.href = targetFile;
-      } else {
-        window.location.href = `Apps2.html?key=${encodeURIComponent(key)}`;
-      }
+    function openFullScreenAppPage(key) {
+      showGlobalLoader("Opening Details...");
+      window.location.href = `Fullap.html?key=${encodeURIComponent(key)}`;
     }
 
     function openSearchModal() {
@@ -403,7 +383,7 @@
         const subtextHtml = (isPaid && !isPurchased && !isInstalled) ? `<span class="btn-subtext">Paid (${app.price} ETB)</span>` : '';
 
         const cardHTML = `
-          <div class="app-card" onclick="closeSearchModal(); openFullScreenAppPage('${key}', ${JSON.stringify(app).replace(/"/g, '&quot;')});">
+          <div class="app-card" onclick="closeSearchModal(); openFullScreenAppPage('${key}');">
             <div class="app-info">
               <img src="${icon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
               <div class="app-details">
@@ -412,7 +392,7 @@
               </div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
-              <button class="${btnClass}" onclick="event.stopPropagation(); closeSearchModal(); openFullScreenAppPage('${key}', ${JSON.stringify(app).replace(/"/g, '&quot;')});">${btnLabel}</button>
+              <button class="${btnClass}" onclick="event.stopPropagation(); closeSearchModal(); openFullScreenAppPage('${key}');">${btnLabel}</button>
               ${subtextHtml}
             </div>
           </div>
@@ -443,6 +423,35 @@
       const domain = getDomain(appUrl);
       imgElement.onerror = null;
       imgElement.src = `https://icon.horse/icon/${domain}`;
+    }
+
+    function launchWebsite(url, appName) {
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) formattedUrl = 'https://' + formattedUrl;
+      document.getElementById('previewTitle').textContent = appName || 'Web View';
+      document.getElementById('previewIframe').src = formattedUrl;
+      document.getElementById('webPreviewModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openApp(key, url, appName, isStore) {
+      showGlobalLoader("Opening App...");
+      
+      const systemApps = ['news.html', '2sp.html', '3wo.html', '3bu.html'];
+      const targetUrl = (url || '').trim().toLowerCase();
+      const isSystem = systemApps.some(sysApp => targetUrl.endsWith(sysApp));
+
+      if (isSystem) {
+        window.location.href = url;
+      } else {
+        window.location.href = `Apps2.html?key=${encodeURIComponent(key)}`;
+      }
+    }
+
+    function closeWebPreview() {
+      document.getElementById('webPreviewModal').style.display = 'none';
+      document.getElementById('previewIframe').src = '';
+      document.body.style.overflow = 'auto';
     }
 
     function openAppActions(key, appName, iconUrl) {
@@ -509,16 +518,16 @@
           const aSystem = a.app.isSystem === true || a.app.isSystemApp === true;
           const bSystem = b.app.isSystem === true || b.app.isSystemApp === true;
 
-          if (aSystem !== bSystem) return bSystem - aSystem;
+          if (aSystem !== bSystem) return bSystem - aSystem; // 1. System Apps locked on top
 
           const aPinned = localStorage.getItem('site_pinned_' + a.key) === 'true';
           const bPinned = localStorage.getItem('site_pinned_' + b.key) === 'true';
 
-          if (aPinned !== bPinned) return bPinned - aPinned;
+          if (aPinned !== bPinned) return bPinned - aPinned; // 2. Pinned Apps under system apps
 
           const aTime = parseInt(localStorage.getItem('site_installed_time_' + a.key) || '0');
           const bTime = parseInt(localStorage.getItem('site_installed_time_' + b.key) || '0');
-          return bTime - aTime;
+          return bTime - aTime; // 3. Newest installed apps next
         });
 
         let html = '<div class="installed-grid">';
@@ -535,7 +544,7 @@
           const pinBadgeHtml = isPinned ? `<span class="pin-badge">📌</span>` : '';
 
           html += `
-            <div class="installed-app-item" onclick="openFullScreenAppPage('${key}', ${JSON.stringify(app).replace(/"/g, '&quot;')})" ${contextMenuAttr}>
+            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" ${contextMenuAttr}>
               ${pinBadgeHtml}
               <img src="${icon}" class="installed-app-icon" onerror="handleImageError(this, '${targetUrl}')" alt="${name}">
               <span class="installed-app-name">${name}</span>
@@ -564,7 +573,7 @@
         const subtextHtml = (isPaid && !isPurchased && !isInstalled) ? `<span class="btn-subtext">Paid (${app.price} ETB)</span>` : '';
 
         const cardHTML = `
-          <div class="app-card" onclick="openFullScreenAppPage('${key}', ${JSON.stringify(app).replace(/"/g, '&quot;')})">
+          <div class="app-card" onclick="openFullScreenAppPage('${key}')">
             <div class="app-info">
               <img src="${icon}" alt="${name}" class="app-icon" onerror="handleImageError(this, '${targetUrl}')">
               <div class="app-details">
@@ -575,7 +584,7 @@
               </div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
-              <button class="${btnClass}" onclick="event.stopPropagation(); openFullScreenAppPage('${key}', ${JSON.stringify(app).replace(/"/g, '&quot;')});">${btnLabel}</button>
+              <button class="${btnClass}" onclick="event.stopPropagation(); openFullScreenAppPage('${key}');">${btnLabel}</button>
               ${subtextHtml}
             </div>
           </div>
