@@ -10,8 +10,10 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://birrgo.online/">
 
-    <!-- WEBSITE FAVICON -->
-    <link rel="icon" href="/birrgo-logo.png" type="image/png" sizes="32x32">
+    <!-- WEBSITE FAVICON / GOOGLE SEARCH ICON (192x192 & Standard Icons) -->
+    <link rel="icon" href="/birrgo-logo.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/birrgo-logo.png">
+    <link rel="shortcut icon" href="/birrgo-logo.png">
 
     <!-- SOCIAL MEDIA RICH LINK PREVIEWS -->
     <meta property="og:type" content="website">
@@ -20,12 +22,28 @@
     <meta property="og:url" content="https://birrgo.online/">
     <meta property="og:image" content="https://birrgo.online/birrgo-logo.png">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
 
     <!-- TWITTER / X CARD LINK PREVIEWS -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="summary">
     <meta name="twitter:image" content="https://birrgo.online/birrgo-logo.png">
+
+    <!-- GOOGLE STRUCTURED DATA (JSON-LD) FOR OFFICIAL LOGO RECOGNITION -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "BirrGo",
+      "url": "https://birrgo.online/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://birrgo.online/birrgo-logo.png",
+        "width": "512",
+        "height": "512"
+      }
+    }
+    </script>
 
     <link rel="manifest" href="manifest.json">
     
@@ -430,7 +448,6 @@
             margin-bottom: 0px;
         }
         
-        /* PLACES FOOTER COMFORTABLY OVER THE RED/BURGUNDY CURVE WITHOUT DISTURBING THE FLEX FLOW */
         .footer-area { 
             position: absolute;
             bottom: calc(14px + env(safe-area-inset-bottom));
@@ -449,7 +466,7 @@
             justify-content: center; 
             flex-wrap: wrap; 
             gap: 6px; 
-            font-size: 9.5px; /* Reduced from 11px */
+            font-size: 9.5px;
             color: #ffffff; 
             font-weight: 700; 
             text-align: center; 
@@ -469,7 +486,7 @@
         .footer-icon { 
             color: var(--primary-burgundy); 
             background: #ffffff; 
-            padding: 3.5px; /* Slightly adjusted to fit new scale */
+            padding: 3.5px; 
             border-radius: 50%; 
             display: flex; 
             align-items: center; 
@@ -611,7 +628,6 @@
                 </div>
             </main>
 
-            <!-- FOOTER LAYERED PERFECTLY ABOVE THE DESIGN MATRIX -->
             <footer class="footer-area">
                 <div class="footer-links">
                     <div class="footer-icon">
