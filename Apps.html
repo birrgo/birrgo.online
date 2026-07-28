@@ -438,15 +438,16 @@
       document.body.style.overflow = 'hidden';
     }
 
+    /* System Apps Redirect: news.html, sp.html, wo.html, bu.html */
     function openApp(key, url, appName, isStore) {
       showGlobalLoader("Opening App...");
       
-      const systemApps = ['news.html', '2sp.html', '3wo.html', '3bu.html'];
+      const systemApps = ['news.html', 'sp.html', 'wo.html', 'bu.html'];
       const targetUrl = (url || '').trim().toLowerCase();
-      const isSystem = systemApps.some(sysApp => targetUrl.endsWith(sysApp));
+      const matchedSystemApp = systemApps.find(sysApp => targetUrl.endsWith(sysApp));
 
-      if (isSystem) {
-        window.location.href = url;
+      if (matchedSystemApp) {
+        window.location.href = matchedSystemApp;
       } else {
         window.location.href = `Apps2.html?key=${encodeURIComponent(key)}`;
       }
