@@ -18,6 +18,7 @@
     "utilities",
     "finance"
   ],
+  "badge": "/badge-icon.png",
   "icons": [
     {
       "src": "/icon.png",
