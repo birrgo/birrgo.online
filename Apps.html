@@ -272,7 +272,10 @@
       appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    
     const db = firebase.database();
     const appList = document.getElementById('appList');
     let allAppsData = [];
@@ -299,6 +302,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       setupBottomNavigation();
+      initAppData();
     });
 
     function setupBottomNavigation() {
@@ -518,16 +522,16 @@
           const aSystem = a.app.isSystem === true || a.app.isSystemApp === true;
           const bSystem = b.app.isSystem === true || b.app.isSystemApp === true;
 
-          if (aSystem !== bSystem) return bSystem - aSystem; // 1. System Apps locked on top
+          if (aSystem !== bSystem) return bSystem - aSystem;
 
           const aPinned = localStorage.getItem('site_pinned_' + a.key) === 'true';
           const bPinned = localStorage.getItem('site_pinned_' + b.key) === 'true';
 
-          if (aPinned !== bPinned) return bPinned - aPinned; // 2. Pinned Apps under system apps
+          if (aPinned !== bPinned) return bPinned - aPinned;
 
           const aTime = parseInt(localStorage.getItem('site_installed_time_' + a.key) || '0');
           const bTime = parseInt(localStorage.getItem('site_installed_time_' + b.key) || '0');
-          return bTime - aTime; // 3. Newest installed apps next
+          return bTime - aTime;
         });
 
         let html = '<div class="installed-grid">';
@@ -593,25 +597,42 @@
       });
     }
 
-    db.ref('pwa_apps').on('value', (snapshot) => {
-      allAppsData = [];
-      if (!snapshot.exists()) {
-        appList.innerHTML = '<div class="loading-text">No apps available in store.</div>';
-        return;
+    function initAppData() {
+      const cached = localStorage.getItem('birrgo_cached_apps');
+      if (cached) {
+        try {
+          allAppsData = JSON.parse(cached);
+          renderAppList(allAppsData);
+        } catch(e) {
+          console.error("Cache parsing error", e);
+        }
       }
 
-      snapshot.forEach((childSnapshot) => {
-        allAppsData.push({
-          key: childSnapshot.key,
-          app: childSnapshot.val()
-        });
-      });
+      db.ref('pwa_apps').once('value').then((snapshot) => {
+        allAppsData = [];
+        if (!snapshot.exists()) {
+          if (allAppsData.length === 0) {
+            appList.innerHTML = '<div class="loading-text">No apps available in store.</div>';
+          }
+          return;
+        }
 
-      renderAppList(allAppsData);
-    }, (error) => {
-      console.error("Database error:", error);
-      appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load. Check connection.</div>';
-    });
+        snapshot.forEach((childSnapshot) => {
+          allAppsData.push({
+            key: childSnapshot.key,
+            app: childSnapshot.val()
+          });
+        });
+
+        localStorage.setItem('birrgo_cached_apps', JSON.stringify(allAppsData));
+        renderAppList(allAppsData);
+      }).catch((error) => {
+        console.error("Database error:", error);
+        if (allAppsData.length === 0) {
+          appList.innerHTML = '<div class="loading-text" style="color:red;">Failed to load. Check connection.</div>';
+        }
+      });
+    }
   </script>
 
 </body>
