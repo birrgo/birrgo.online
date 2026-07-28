@@ -54,7 +54,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- ONESIGNAL SDK FOR PRODUCTION -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -646,6 +646,13 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // Register of.js Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./of.js')
+                    .then(() => console.log('Service Worker (of.js) registered successfully.'))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            }
+
             const targetLogo = document.querySelector('.logo-image');
             if (targetLogo && targetLogo.complete && targetLogo.naturalWidth > 0) {
                 targetLogo.classList.add('loaded');

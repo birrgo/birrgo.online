@@ -1,31 +1,11 @@
-const CACHE_NAME = 'appnews-offline-v3';
-const JS_OFFLINE_INJECTOR = 'off.js';
+const CACHE_NAME = 'birrgo-offline-v3';
 
-// Pre-cache essential App News PWA resources on installation
-const PRECACHE_RESOURCES = [
-    '/AppNews.html',
-    '/news.html',
-    '/sp.html',
-    '/wo.html',
-    '/bu.html',
-    '/news-manifest.json',
-    '/icon.png',
-    JS_OFFLINE_INJECTOR
-];
-
-// Cache the off.js file and core PWA assets on installation
+// Activate new service worker version immediately
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(
-                PRECACHE_RESOURCES.map(url => new Request(url, { cache: 'reload' }))
-            ).catch((err) => console.log("Offline script/assets caching failed: ", err));
-        })
-    );
     self.skipWaiting();
 });
 
-// Force active service worker activation immediately across all open tabs
+// Force active service worker activation immediately across all open tabs & clean old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -40,52 +20,246 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Intercept network failures for navigation and asset requests
+// Intercept network failures for navigation and serve the full offline HTML interface
 self.addEventListener('fetch', (event) => {
     if (event.request.mode === 'navigate') {
         event.respondWith(
-            fetch(event.request)
-                .then((networkResponse) => {
-                    // Save successful page navigations into cache automatically
-                    if (networkResponse && networkResponse.status === 200) {
-                        const responseClone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseClone);
-                        });
-                    }
-                    return networkResponse;
-                })
-                .catch(async () => {
-                    // 1. Try to serve the cached version of the exact requested page first
-                    const cachedPage = await caches.match(event.request);
-                    if (cachedPage) {
-                        return cachedPage;
-                    }
+            fetch(event.request).catch(async () => {
+                // 1. Try to serve the cached version of the exact requested page first
+                const cachedPage = await caches.match(event.request);
+                if (cachedPage) {
+                    return cachedPage;
+                }
 
-                    // 2. If the page isn't in cache, return an HTML wrapper that automatically loads off.js over the view
-                    return new Response(
-                        `<!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Connection Lost | App News</title>
-                            <link rel="preconnect" href="https://fonts.googleapis.com">
-                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                            <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-                        </head>
-                        <body>
-                            <script src="${JS_OFFLINE_INJECTOR}"></script>
-                        </body>
-                        </html>`,
-                        {
-                            headers: { 'Content-Type': 'text/html' }
-                        }
-                    );
-                })
+                // 2. If the page isn't in cache, return the complete custom BirrGo offline UI directly
+                return new Response(
+                    `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+                        <title>Connection Lost | BirrGo</title>
+                        <link rel="preconnect" href="https://fonts.googleapis.com">
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+                        
+                        <style>
+                            :root {
+                                --primary-burgundy: #6b0519;
+                                --primary-gradient: linear-gradient(135deg, #7a0014 0%, #3a000a 100%);
+                                --text-dark: #111827; 
+                                --text-muted: #64748b; 
+                            }
+
+                            * {
+                                box-sizing: border-box;
+                                margin: 0;
+                                padding: 0;
+                                font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                                letter-spacing: -0.2px;
+                                -webkit-tap-highlight-color: transparent;
+                            }
+
+                            html, body {
+                                width: 100%;
+                                height: 100dvh; 
+                                overflow: hidden;
+                                background: rgba(15, 23, 42, 0.55);
+                                backdrop-filter: blur(6px);
+                                -webkit-backdrop-filter: blur(6px);
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                            }
+
+                            .offline-card {
+                                width: 90%;
+                                max-width: 310px;
+                                background: #ffffff;
+                                border-radius: 20px;
+                                overflow: hidden;
+                                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                animation: popupBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                            }
+
+                            @keyframes popupBounce {
+                                from {
+                                    transform: scale(0.85) translateY(12px);
+                                    opacity: 0;
+                                }
+                                to {
+                                    transform: scale(1) translateY(0);
+                                    opacity: 1;
+                                }
+                            }
+
+                            .offline-header-banner {
+                                width: 100%;
+                                background: var(--primary-gradient);
+                                padding: 18px 16px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                            }
+
+                            .birrgo-logo-row {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                            }
+
+                            .birrgo-badge-icon {
+                                width: 28px;
+                                height: 28px;
+                                background: #ffffff;
+                                border-radius: 8px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: var(--primary-burgundy);
+                                font-weight: 800;
+                                font-size: 14px;
+                                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                            }
+
+                            .brand-text {
+                                display: flex;
+                                flex-direction: column;
+                            }
+
+                            .brand-title {
+                                font-size: 15px;
+                                font-weight: 800;
+                                color: #ffffff;
+                                line-height: 1;
+                            }
+
+                            .brand-sub {
+                                font-size: 8px;
+                                font-weight: 700;
+                                color: rgba(255, 255, 255, 0.65);
+                                letter-spacing: 0.5px;
+                            }
+
+                            .error-icon-circle {
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                background: rgba(255, 255, 255, 0.18);
+                                border: 1px solid rgba(255, 255, 255, 0.25);
+                                color: #ffffff;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            .offline-body {
+                                padding: 20px 18px 18px 18px;
+                                text-align: center;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                width: 100%;
+                            }
+
+                            .offline-title {
+                                font-size: 16px;
+                                font-weight: 800;
+                                color: var(--text-dark);
+                                margin-bottom: 6px;
+                            }
+
+                            .offline-desc {
+                                font-size: 12px;
+                                font-weight: 500;
+                                color: var(--text-muted);
+                                line-height: 1.45;
+                                margin-bottom: 16px;
+                            }
+
+                            .btn-retry {
+                                width: 100%;
+                                height: 42px; 
+                                border-radius: 12px;
+                                font-size: 13px;
+                                font-weight: 700; 
+                                background: var(--primary-gradient);
+                                color: #ffffff;
+                                box-shadow: 0 6px 16px rgba(107, 5, 25, 0.25);
+                                border: none;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 8px;
+                                transition: transform 0.15s ease, opacity 0.15s ease;
+                            }
+
+                            .btn-retry:active {
+                                transform: scale(0.96);
+                            }
+                        </style>
+                    </head>
+                    <body>
+
+                        <div class="offline-card">
+                            <div class="offline-header-banner">
+                                <div class="birrgo-logo-row">
+                                    <div class="birrgo-badge-icon">B</div>
+                                    <div class="brand-text">
+                                        <span class="brand-title">BirrGo</span>
+                                        <span class="brand-sub">PREMIUM</span>
+                                    </div>
+                                </div>
+
+                                <div class="error-icon-circle">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22.61 16.95A5 5 0 0 0 18 10h-1.26a8 8 0 0 0-7.05-6M5 5l14 14"></path>
+                                        <path d="M17 17H5a5 5 0 0 1-1.66-9.72"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="offline-body">
+                                <h2 class="offline-title">Connection Lost</h2>
+                                <p class="offline-desc">Your balance is secure. Reconnect to internet to process transactions.</p>
+
+                                <button id="retryBtn" class="btn-retry" onclick="tryToReconnect()">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                                    </svg>
+                                    <span id="btnText">Try Again</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <script>
+                            function tryToReconnect() {
+                                const btnText = document.getElementById('btnText');
+                                if (navigator.onLine) {
+                                    btnText.innerText = "Connecting...";
+                                    window.location.reload();
+                                } else {
+                                    btnText.innerText = "Still Offline...";
+                                    setTimeout(() => { btnText.innerText = "Try Again"; }, 1400);
+                                }
+                            }
+
+                            window.addEventListener('online', () => { window.location.reload(); });
+                        </script>
+                    </body>
+                    </html>`,
+                    {
+                        headers: { 'Content-Type': 'text/html' }
+                    }
+                );
+            })
         );
     } else {
-        // Fallback for static assets (e.g., off.js itself, images) when offline
+        // Fallback for static assets when offline
         event.respondWith(
             fetch(event.request).catch(() => caches.match(event.request))
         );
