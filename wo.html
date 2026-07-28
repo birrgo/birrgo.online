@@ -1,14 +1,3 @@
-<script>
-  atOptions = {
-    'key' : 'd2f535e8108b02e972de2d20b1d66e98',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="news.css">
+    
+    <!-- Google AdSense Script (Replace ca-pub-3940256099942544 with your real Publisher ID when live) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544" crossorigin="anonymous"></script>
+    
     <style>
-        /* Responsive YouTube Video Wrapper inside Full Article */
         .reader-video-container {
             width: 100%;
             margin: 16px 0;
@@ -28,7 +20,7 @@
             overflow: hidden;
             background: #000000;
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
             height: 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -39,6 +31,39 @@
             width: 100%;
             height: 100%;
             border: 0;
+        }
+        
+        .native-ad-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .partner-line-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .ad-slot-wrapper {
+            width: 100%;
+            display: block;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .ad-slot-wrapper ins.adsbygoogle {
+            display: block !important;
+            width: 100% !important;
+            min-height: 250px;
         }
     </style>
 </head>
@@ -227,7 +252,6 @@
             });
         }
 
-        // DATABASE STREAMING (`newNews/wold` and fallback `news`)
         function streamLiveAdminUpdatesLog() {
             const worldNewsRef = ref(db, `newNews/wold`);
             
@@ -315,52 +339,6 @@
             }
         }
 
-        function triggerNativeAdExecution(containerId) {
-            const target = document.getElementById(containerId);
-            if (!target) return;
-
-            target.innerHTML = '';
-
-            const iframe = document.createElement('iframe');
-            iframe.style.width = '300px';
-            iframe.style.height = '250px';
-            iframe.style.border = 'none';
-            iframe.style.overflow = 'hidden';
-            iframe.style.display = 'block';
-            iframe.style.margin = '0 auto';
-            iframe.scrolling = 'no';
-
-            target.appendChild(iframe);
-
-            const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
-                    </style>
-                </head>
-                <body>
-                    <script type="text/javascript">
-                        var atOptions = {
-                            'key' : 'd2f535e8108b02e972de2d20b1d66e98',
-                            'format' : 'iframe',
-                            'height' : 250,
-                            'width' : 300,
-                            'params' : {}
-                        };
-                    <\/script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
-        }
-
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || "News Update";
             const fullContent = item.content || item.message || "";
@@ -439,13 +417,11 @@
             const isSocial = category.trim().toLowerCase() === "social review";
             const pillBadgeClass = isSocial ? "spotlight-pill system-badge" : "spotlight-pill";
 
-            // Cover Image Logic
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0 && duplicateCoverInArticle) {
                 imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
             }
 
-            // Embedded Video Logic
             let videoHTML = "";
             const embedUrl = getYouTubeEmbedUrl(videoUrl);
             if (embedUrl) {
@@ -519,29 +495,47 @@
                 return;
             }
 
-            filtered.forEach((item, index) => {
+            filtered.forEach((item) => {
+                // News Card
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 container.appendChild(card);
 
-                const adCard = document.createElement('article');
-                adCard.className = "featured-broadcast-card native-ad-card";
-                
-                const dynamicAdSlotId = `live-inline-ad-${index}-${Date.now()}`;
+                // Native Ad Card
+                const adCard = document.createElement('div');
+                adCard.className = "native-ad-card";
                 
                 adCard.innerHTML = `
-                    <div class="badge-meta-row" style="margin-bottom: 8px;">
-                        <span class="spotlight-pill inline-ad-badge">Our Partner</span>
-                        <span class="timestamp-log-text">Verified Partner Content</span>
+                    <div class="partner-line-header">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="spotlight-pill inline-ad-badge" style="font-size: 10px; background: rgba(255,255,255,0.15); padding: 2px 8px;">Sponsored</span>
+                        </div>
+                        <span class="timestamp-log-text" style="font-size: 10px; color: rgba(255,255,255,0.5);">Advertisement</span>
                     </div>
-                    <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
+                    <div class="ad-slot-wrapper">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-3940256099942544"
+                             data-ad-slot="6300978111"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                    </div>
+                    <div class="card-footer-branding-row">
+                        <div></div>
+                        <img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token">
+                    </div>
                 `;
                 container.appendChild(adCard);
 
+                // Push ad call toqueue asynchronously
                 setTimeout(() => {
-                    triggerNativeAdExecution(dynamicAdSlotId);
-                }, index * 100 + 20);
+                    try {
+                        (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {
+                        console.error("AdSense Push Error:", e);
+                    }
+                }, 50);
             });
         }
 
@@ -628,7 +622,6 @@
             });
         }
 
-        // PROMO CLAIM
         async function processPromoClaim() {
             const inputField = document.getElementById('promoCodeInput');
             const claimBtn = document.getElementById('claimPromoBtn');
