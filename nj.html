@@ -38,7 +38,7 @@
         .header-right-tools { display: flex; align-items: center; gap: 10px; }
         .btn-notif-bell { position: relative; background: rgba(255, 255, 255, 0.15); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; cursor: pointer; }
         .notif-badge-count { position: absolute; top: 2px; right: 2px; background: var(--danger-red); color: white; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 10px; }
-        .birrgo-badge-icon { width: 28px; height: 28px; background: #ffffff; color: var(--primary-burgundy); font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .birrgo-badge-icon { width: 28px; height: 28px; background: #ffffff; color: var(--primary-burgundy); font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
 
         .app-content { flex: 1; overflow-y: auto; background-color: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none; }
         .app-content::-webkit-scrollbar { display: none; }
@@ -84,36 +84,44 @@
         .ad-tag-label { position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800; color: #94a3b8; }
         .ad-content-inner { font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
 
-        .modal-overlay { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); z-index: 5000; justify-content: center; align-items: center; padding: 20px; }
+        /* Modal Base */
+        .modal-overlay { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); z-index: 5000; justify-content: center; align-items: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .centered-popup-card { background: #ffffff; width: 100%; max-width: 360px; border-radius: var(--border-radius-lg); padding: 20px 18px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .popup-icon { width: 44px; height: 44px; margin: 0 auto 10px auto; border-radius: 50%; background: rgba(107, 0, 27, 0.1); color: var(--primary-burgundy); display: flex; align-items: center; justify-content: center; }
+        .centered-popup-card { background: #ffffff; width: 100%; max-width: 380px; border-radius: var(--border-radius-lg); padding: 20px 18px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+        .popup-icon { width: 48px; height: 48px; margin: 0 auto 12px auto; border-radius: 50%; background: rgba(107, 0, 27, 0.1); color: var(--primary-burgundy); display: flex; align-items: center; justify-content: center; }
+        .success-icon-box { background: rgba(16, 185, 129, 0.1); color: var(--success-green); }
         .danger-icon-box { background: rgba(239, 68, 68, 0.1); color: var(--danger-red); }
         .warning-icon-box { background: rgba(245, 158, 11, 0.1); color: var(--warning-gold); }
-        .popup-title { font-size: 1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-        .popup-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4; font-weight: 600; }
-        .password-input-field { width: 100%; height: 42px; background: var(--bg-light); border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 0 10px; font-size: 16px; font-weight: 800; outline: none; text-align: center; letter-spacing: 6px; margin-bottom: 14px; }
+        .popup-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin-bottom: 6px; }
+        .popup-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.45; font-weight: 600; }
+        .password-input-field { width: 100%; height: 44px; background: var(--bg-light); border: 1px solid var(--border-light); border-radius: var(--border-radius-md); padding: 0 10px; font-size: 18px; font-weight: 800; outline: none; text-align: center; letter-spacing: 6px; margin-bottom: 16px; }
         .popup-action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn-popup-cancel { height: 40px; background: #f1f5f9; color: var(--text-dark); border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
-        .btn-popup-confirm { height: 40px; background: var(--primary-gradient); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
-        .btn-popup-danger { height: 40px; background: var(--danger-red); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-cancel { height: 42px; background: #f1f5f9; color: var(--text-dark); border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-confirm { height: 42px; background: var(--primary-gradient); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-danger { height: 42px; background: var(--danger-red); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-popup-success { height: 42px; background: var(--success-green); color: white; border: none; border-radius: var(--border-radius-md); font-size: 0.88rem; font-weight: 800; cursor: pointer; }
 
-        .payment-gateway-card { text-align: left; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .drawer-title { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); }
-        .drawer-close-btn { background: none; border: none; font-size: 20px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
-        .drawer-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
-        .p2p-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
-        .p2p-card { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); background: var(--bg-light); cursor: pointer; transition: border-color 0.15s; }
-        .p2p-card:hover { border-color: var(--primary-burgundy); }
-        .p2p-info { display: flex; align-items: center; gap: 10px; }
-        .p2p-icon-img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
-        .p2p-name { font-size: 12px; font-weight: 800; color: var(--text-dark); }
-        .p2p-limits { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-        .btn-card-action { font-size: 10px; font-weight: 800; color: var(--primary-burgundy); background: #ffffff; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-light); }
+        /* Payment Gateway Modal Improvements */
+        .payment-gateway-card { text-align: left; padding: 18px 16px 14px 16px; max-width: 400px; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .drawer-title { font-size: 1rem; font-weight: 800; color: var(--text-dark); }
+        .drawer-close-btn { background: none; border: none; font-size: 22px; font-weight: 700; color: var(--text-muted); cursor: pointer; line-height: 1; }
+        .drawer-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+        
+        .p2p-list { display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px; padding-top: 6px; scrollbar-width: thin; }
+        .p2p-list::-webkit-scrollbar { width: 4px; }
+        .p2p-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .p2p-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid var(--border-light); border-radius: var(--border-radius-md); background: var(--bg-light); cursor: pointer; transition: all 0.15s ease; }
+        .p2p-card:hover { border-color: var(--primary-burgundy); background: #ffffff; }
+        .p2p-info { display: flex; align-items: center; gap: 12px; }
+        .p2p-icon-img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+        .p2p-name { font-size: 13px; font-weight: 800; color: var(--text-dark); }
+        .p2p-limits { font-size: 10.5px; color: var(--text-muted); font-weight: 600; margin-top: 1px; }
+        .btn-card-action { font-size: 11px; font-weight: 800; color: var(--primary-burgundy); background: #ffffff; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-light); white-space: nowrap; }
 
-        .p2p-card.recommended { background: #fff8f9; border: 1.5px solid var(--primary-burgundy); position: relative; }
-        .rec-badge { position: absolute; top: -8px; right: 10px; background: var(--primary-burgundy); color: #ffffff; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .p2p-card.recommended { background: #fff8f9; border: 1.5px solid var(--primary-burgundy); position: relative; margin-top: 4px; }
+        .rec-badge { position: absolute; top: -9px; right: 12px; background: var(--primary-burgundy); color: #ffffff; font-size: 8px; font-weight: 800; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .wallet-balance-highlight { font-size: 11px; font-weight: 800; color: var(--success-green); }
         .wallet-balance-insufficient { font-size: 11px; font-weight: 800; color: var(--danger-red); }
     </style>
@@ -161,8 +169,9 @@
                 <div class="premium-card-box">
                     <div class="form-heading" style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); font-weight: 700;">Participant Verification</div>
                     <div class="field-group" style="margin-top: 4px;">
-                        <label style="font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;">LOCATION</label>
-                        <input type="text" id="userLocation" class="premium-input" placeholder="Enter Location">
+                        <label style="font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;">LOCATION / COUNTRY (LETTERS ONLY, MIN 4)</label>
+                        <input type="text" id="userLocation" class="premium-input" placeholder="e.g. Ethiopia, Addis" pattern="[A-Za-z\s]+" minlength="4">
+                        <span id="locationErrorHint" style="font-size: 9px; color: var(--danger-red); display: none; font-weight: 700; margin-top: 2px;">Minimum 4 letters required. Numbers are not allowed.</span>
                     </div>
                 </div>
 
@@ -198,6 +207,7 @@
             </div>
         </div>
 
+        <!-- Unpaid Order Modal -->
         <div class="modal-overlay" id="unpaidOrderModal">
             <div class="centered-popup-card">
                 <div class="popup-icon warning-icon-box">
@@ -212,6 +222,7 @@
             </div>
         </div>
 
+        <!-- Cancel Confirmation Modal -->
         <div class="modal-overlay" id="cancelConfirmModal">
             <div class="centered-popup-card">
                 <div class="popup-icon danger-icon-box">
@@ -226,6 +237,7 @@
             </div>
         </div>
 
+        <!-- Payment Gateway Selection Modal -->
         <div class="modal-overlay" id="paymentMethodModal">
             <div class="centered-popup-card payment-gateway-card">
                 <div class="drawer-header">
@@ -241,6 +253,7 @@
             </div>
         </div>
 
+        <!-- Security PIN Modal -->
         <div class="modal-overlay" id="passwordModal">
             <div class="centered-popup-card">
                 <div class="popup-icon">
@@ -256,6 +269,21 @@
             </div>
         </div>
 
+        <!-- Success Popup Modal -->
+        <div class="modal-overlay" id="successModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon success-icon-box">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="popup-title">Order Successful!</div>
+                <div class="popup-subtitle" id="successModalText">Your ticket has been purchased using your BirrGo Wallet.</div>
+                <div class="popup-action-row" style="grid-template-columns: 1fr;">
+                    <button class="btn-popup-success" id="closeSuccessModalBtn">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
         <div class="modal-overlay" id="errorModal">
             <div class="centered-popup-card">
                 <div class="popup-icon danger-icon-box">
@@ -341,6 +369,11 @@
             document.getElementById('errorModal').classList.add('active');
         }
 
+        function showCustomSuccess(message) {
+            document.getElementById('successModalText').innerText = message;
+            document.getElementById('successModal').classList.add('active');
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const rawStoredPhone = getStoredUserKey();
             activeUserPhone = rawStoredPhone;
@@ -354,6 +387,10 @@
 
             document.getElementById('closeErrorModalBtn').addEventListener('click', () => {
                 document.getElementById('errorModal').classList.remove('active');
+            });
+
+            document.getElementById('closeSuccessModalBtn').addEventListener('click', () => {
+                document.getElementById('successModal').classList.remove('active');
             });
         });
 
@@ -585,7 +622,7 @@
             walletCard.innerHTML = `
                 <div class="rec-badge">Recommended • Instant</div>
                 <div class="p2p-info">
-                    <div class="birrgo-badge-icon" style="width:32px; height:32px; background:var(--primary-burgundy); color:#fff; font-size:16px;">B</div>
+                    <div class="birrgo-badge-icon" style="width:34px; height:34px; background:var(--primary-burgundy); color:#fff; font-size:16px;">B</div>
                     <div>
                         <div class="p2p-name">BirrGo Wallet</div>
                         <div class="p2p-limits ${balanceStyleClass}">
@@ -630,11 +667,34 @@
         function setupFormEngineListeners() {
             const numInput = document.getElementById('ticketNumberInput');
             const locInput = document.getElementById('userLocation');
+            const locHint = document.getElementById('locationErrorHint');
+
+            /* Strictly filter out numbers/special characters in real-time */
+            locInput.addEventListener('input', () => {
+                let cleanValue = locInput.value.replace(/[^a-zA-Z\s]/g, '');
+                if (locInput.value !== cleanValue) {
+                    locInput.value = cleanValue;
+                }
+                
+                if (cleanValue.trim().length > 0 && cleanValue.trim().length < 4) {
+                    locHint.style.display = 'block';
+                } else {
+                    locHint.style.display = 'none';
+                }
+
+                validateGlobalInputsState();
+            });
 
             numInput.addEventListener('input', executeLiveTicketStatusCheck);
-            locInput.addEventListener('input', validateGlobalInputsState);
             
             document.getElementById('confirmPurchaseBtn').addEventListener('click', () => {
+                const location = document.getElementById('userLocation').value.trim();
+                
+                if (location.length < 4) {
+                    showCustomError("Please enter a valid Location/Country name with at least 4 letters.");
+                    return;
+                }
+
                 if (activeUnpaidOrder) {
                     document.getElementById('unpaidOrderModal').classList.add('active');
                     return;
@@ -768,7 +828,9 @@
         function validateGlobalInputsState() {
             const location = document.getElementById('userLocation').value.trim();
             const submitBtn = document.getElementById('confirmPurchaseBtn');
-            if(location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null && userDailyTicketCount < maxDailyTicketsLimit && !activeUnpaidOrder) {
+            const isLocationValid = /^[a-zA-Z\s]{4,}$/.test(location);
+
+            if(isLocationValid && isTicketAvailable && validatedTicketNumber !== null && userDailyTicketCount < maxDailyTicketsLimit && !activeUnpaidOrder) {
                 submitBtn.disabled = false;
             } else {
                 submitBtn.disabled = true;
@@ -817,10 +879,12 @@
                 showCustomError("Please enter a valid 6-digit security PIN.");
                 return;
             }
-            if (!userCity) {
-                showCustomError("Please enter your current location/city.");
+            
+            if (!/^[a-zA-Z\s]{4,}$/.test(userCity)) {
+                showCustomError("Please enter a location with at least 4 letters. Numbers are not allowed.");
                 return;
             }
+
             if (finalTicketNum === null || finalTicketNum === undefined || isNaN(finalTicketNum)) {
                 showCustomError("Please enter a valid ticket position number.");
                 return;
@@ -939,9 +1003,11 @@
                 try {
                     await update(ref(db), atomicUpdates);
                     userWalletBalance = newWalletBalance;
-                    alert(`Order Successful! Ticket #${finalTicketNum} has been purchased using your BirrGo Wallet.`);
+                    
+                    showCustomSuccess(`Order Successful! Ticket #${finalTicketNum} has been purchased using your BirrGo Wallet.`);
                     
                     document.getElementById('ticketNumberInput').value = '';
+                    document.getElementById('userLocation').value = '';
                     document.getElementById('feedbackBadge').style.display = 'none';
                     validateGlobalInputsState();
                 } catch (err) {

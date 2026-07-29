@@ -139,7 +139,6 @@
                     </button>
                     <button class="activity-tab-btn" id="tab-approved" onclick="filterActivity('approved')">Approved</button>
                     <button class="activity-tab-btn" id="tab-rejected" onclick="filterActivity('rejected')">Declined / Appeals</button>
-                    <button class="activity-tab-btn" id="tab-cancelled" onclick="filterActivity('cancelled')">Cancelled</button>
                 </div>
 
                 <div id="status-popup-area"></div>
@@ -595,7 +594,6 @@
                 if (currentActivityFilter === 'pending') return status === 'pending' || status === 'pending approval' || status === 'review';
                 if (currentActivityFilter === 'approved') return status === 'approved' || status === 'success' || status === 'completed';
                 if (currentActivityFilter === 'rejected') return status === 'rejected' || status === 'failed' || status === 'declined' || status === 'appeal submitted';
-                if (currentActivityFilter === 'cancelled') return status === 'cancelled';
                 return false;
             });
 
@@ -684,21 +682,6 @@
                                 Appeal Ticket Under Support Review
                             </div>
                         `}
-                    `;
-                } else if (currentActivityFilter === 'cancelled') {
-                    card.classList.add('cancelled-card');
-                    card.innerHTML = `
-                        <div class="activity-item-header">
-                            <span class="activity-item-title">Cancelled Deposit [${item.method || 'P2P'}]</span>
-                            <span class="activity-badge cancelled">CANCELLED</span>
-                        </div>
-                        <div class="activity-meta">
-                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
-                            <span class="activity-item-amount" style="color: #6b7280">${cleanAmount} ETB</span>
-                        </div>
-                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
-                            <span>Date: ${formattedTime}</span>
-                        </div>
                     `;
                 }
 
