@@ -658,7 +658,7 @@
                 node.innerHTML = `<span class="status-checking">Checking (${initialM}:${formattedS})...</span>`;
             }
 
-            document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
+            document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('task.html'));
             document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').classList.remove('active'));
 
             renderTasks();
