@@ -6,13 +6,69 @@
     <title>BirrGo - የኢትዮጵያ ታሪክ አብይ ፈተና</title>
     <link rel="stylesheet" href="wallet.css">
     <style>
+        body {
+            background-color: #2b000a;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* Straight Top Header Bar with Back Button */
+        .straight-header-bar {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #ffd700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .header-back-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            padding: 0;
+        }
+
+        .header-back-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.95);
+        }
+
+        .header-back-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: #ffffff;
+        }
+
+        .straight-header-title {
+            color: #ffffff;
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            flex-grow: 1;
+            text-align: center;
+            padding-right: 38px; /* Centers text by offsetting back button width */
+        }
+
         .quiz-hero-card {
             background: linear-gradient(135deg, rgba(74, 0, 18, 0.95), rgba(128, 0, 32, 0.9));
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
             text-align: center;
             color: #ffffff;
-            margin-bottom: 20px;
+            margin: 20px 15px;
             border: 1px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 8px 24px rgba(0,0,0,0.25);
         }
@@ -24,7 +80,7 @@
             background: #ffffff;
             border-radius: 14px;
             padding: 12px 18px;
-            margin-bottom: 18px;
+            margin: 0 15px 18px 15px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.08);
             border: 1.5px solid #800020;
         }
@@ -41,7 +97,7 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            margin-bottom: 25px;
+            margin: 0 15px 25px 15px;
         }
 
         .question-tracker {
@@ -59,10 +115,11 @@
             margin-bottom: 18px;
         }
 
+        /* 2-Column Grid Layout for Options (A C / B D) */
         .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -70,14 +127,17 @@
             background: #f8f9fa;
             border: 1.5px solid #e9ecef;
             border-radius: 12px;
-            padding: 14px 16px;
+            padding: 14px 12px;
             text-align: left;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             color: #333;
             cursor: pointer;
             transition: all 0.2s;
             box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
         }
 
         .option-button:hover {
@@ -119,6 +179,7 @@
             padding: 24px;
             text-align: center;
             box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            margin: 0 15px 25px 15px;
         }
 
         .result-stats-box {
@@ -151,43 +212,17 @@
 
     <div class="app-view" id="mainAppView">
 
-        <!-- Top Wave Header -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#4a0012"/>
-                    <stop offset="1" stop-color="#800020"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <div class="top-wave-badge-wrapper">
-            <button class="badge-button" onclick="goToPage('task.html')">
-                <span class="badge-dot" style="background: #ffd700;"></span>
-                <span class="badge-text" style="color: #ffd700;">የኢትዮጵያ ታሪክ ጥያቄዎች</span>
+        <!-- Straight Line Header with Back Icon -->
+        <div class="straight-header-bar">
+            <button class="header-back-btn" onclick="goToPage('task.html')" aria-label="Back to Task">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
             </button>
+            <h3 class="straight-header-title">የኢትዮጵያ ታሪክ ጥያቄዎች</h3>
         </div>
 
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#2b000a"/>
-        </svg>
-
         <div class="app-content">
-
-            <div class="brand-header">
-                <button class="menu-btn" onclick="goToPage('task.html')" aria-label="Back">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
-                <h3 style="color: #ffffff; margin: 0; font-size: 18px;">30 የከበዱ ጥያቄዎች</h3>
-                <button class="profile-btn" onclick="goToPage('support.html')" aria-label="Support">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
-                    </svg>
-                </button>
-            </div>
 
             <!-- Quiz Banner -->
             <div class="quiz-hero-card">
@@ -209,8 +244,9 @@
                 <div class="question-tracker" id="qTracker">ጥያቄ 1 ከ 30</div>
                 <div class="question-text" id="qText">ጥያቄዎች በመጫን ላይ ናቸው...</div>
 
+                <!-- 2-Column Options Grid (A C / B D) -->
                 <div class="options-list" id="optionsContainer">
-                    <!-- Dynamic option buttons -->
+                    <!-- Dynamic option buttons inserted via Script -->
                 </div>
 
                 <div class="nav-controls">
@@ -219,7 +255,7 @@
                 </div>
             </div>
 
-            <!-- Score Summary (Hidden until finish) -->
+            <!-- Score Summary -->
             <div class="score-summary-card" id="scoreCard">
                 <h2 style="margin: 0 0 10px 0; color: #4a0012;">የፈተናው ማጠቃለያ ውጤት</h2>
                 <p style="font-size: 13.5px; color: #666; margin-bottom: 15px;">የሰጧቸውን መልሶች የቁጥር ዝርዝር ከዚህ በታች ይመልከቱ፡</p>
@@ -282,10 +318,9 @@
         let currentQuestionIndex = 0;
         let selectedAnswers = {};
         let activeQuestions = [];
-        let timerSeconds = 300; // 5 ደቂቃ
+        let timerSeconds = 300;
         let timerInterval = null;
 
-        // --- የኦሮሞ ታሪክ ጥያቄዎች (Oromo History Base Questions - ~30%) ---
         const oromoHistoryQuestions = [
             {
                 q: "በኦሮሞ ባህላዊ የገዳ ሥርዓት (Gadaa System) የሥልጣን ዘመን ቆይታ ስንት ዓመት ነው?",
@@ -334,7 +369,6 @@
             }
         ];
 
-        // --- የኢትዮጵያ العامة ታሪክ ጥያቄዎች (General Ethiopian History Base Questions) ---
         const historyBaseQuestionsAmharic = [
             {
                 q: "በ3ኛው ክፍለ ዘመን መጀመሪያ ላይ በግሪክ ጽሑፍ የተቀረጹ የወርቅ ሳንቲሞችን ለመጀመሪያ ጊዜ ያተመው የአክሱም ንጉሥ ማን ነው?",
@@ -452,11 +486,9 @@
                 return;
             }
 
-            // 1. Check 24-hour Play Limit (Max 2 Times per 24 hours per user)
             const canPlay = await checkUser24HourPlayLimit();
             if (!canPlay) return;
 
-            // 2. Generate and Pick 30 Dynamic Questions (30% Oromo History)
             activeQuestions = generateProceduralQuestionPool();
 
             startTimer();
@@ -479,7 +511,6 @@
             });
         });
 
-        // Check Play Limit (Max 2 Attempts per 24 Hours)
         async function checkUser24HourPlayLimit() {
             showGlobalLoader("ተጠቃሚነቱን በማረጋገጥ ላይ...");
             try {
@@ -542,6 +573,7 @@
             }, 1000);
         }
 
+        // Render question options in A C / B D grid layout
         function renderQuestion(index) {
             currentQuestionIndex = index;
             const qObj = activeQuestions[index];
@@ -554,7 +586,11 @@
 
             const optionLetters = ["ሀ", "ለ", "ሐ", "መ"];
 
-            qObj.options.forEach((optText, optIdx) => {
+            // Layout mapping for 2-column Grid: Left column (0, 1 -> A, B), Right column (2, 3 -> C, D)
+            const layoutOrder = [0, 2, 1, 3]; 
+
+            layoutOrder.forEach(optIdx => {
+                const optText = qObj.options[optIdx];
                 const btn = document.createElement('button');
                 btn.className = 'option-button';
                 if (selectedAnswers[index] === optIdx) {
@@ -609,7 +645,6 @@
             });
 
             try {
-                // 1. Log Attempt under User
                 const attemptRef = push(ref(db, `users/${activeUserPhone}/historyQuizAttempts`));
                 await set(attemptRef, {
                     userPhone: activeUserPhone,
@@ -621,7 +656,6 @@
                     createdAt: now
                 });
 
-                // 2. If reward won, credit balance and add transaction log
                 if (rewardAmount > 0) {
                     const userRef = ref(db, `users/${activeUserPhone}`);
                     const userSnapshot = await get(userRef);
@@ -651,7 +685,6 @@
 
                 hideGlobalLoader();
 
-                // 3. Render Results ONLY at the End
                 document.getElementById('quizBox').style.display = 'none';
                 document.getElementById('timerBox').style.display = 'none';
                 document.getElementById('scoreCard').style.display = 'block';
