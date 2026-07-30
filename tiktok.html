@@ -6,146 +6,285 @@
     <title>BirrGo - TikTok Rewards</title>
     <link rel="stylesheet" href="wallet.css">
     <style>
-        .reward-tier-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 20px;
+        /* Top Burgundy Header */
+        .minimal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, #800020 0%, #5c0017 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Header Title Inside Burgundy Header */
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 15px;
+            font-weight: 800;
             color: #ffffff;
+            margin: 0;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* 3D Back Button Style */
+        .btn-back-only {
+            background: linear-gradient(135deg, #a00028 0%, #68001a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 2px rgba(255, 255, 255, 0.4);
+            transition: all 0.15s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-back-only:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Transparent Prize Grid Container */
+        .reward-tier-card {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin-bottom: 15px;
         }
 
         .tier-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 12px;
+            gap: 8px;
         }
 
+        /* Compact Shiny Burgundy Box Items */
         .tier-item {
-            background: rgba(128, 0, 32, 0.25);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 12px;
-            padding: 10px;
+            background: linear-gradient(135deg, #5c0017 0%, #800020 60%, #3d000f 100%);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 10px;
+            padding: 7px 5px;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tier-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+            pointer-events: none;
         }
 
         .tier-views {
-            font-size: 13px;
-            color: #d1d1d1;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #e0e0e0;
+            line-height: 1.1;
         }
 
         .tier-reward {
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 12.5px;
+            font-weight: 900;
             color: #ffd700;
             margin-top: 2px;
+            line-height: 1.1;
+            letter-spacing: 0.2px;
         }
 
         .claim-form-card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            margin-bottom: 25px;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            margin-bottom: 16px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 11.5px;
+            font-weight: 700;
             color: #4a0012;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
-        .form-input, .form-select {
+        .form-input, .custom-select-trigger {
             width: 100%;
-            padding: 12px 14px;
+            padding: 9px 12px;
             border: 1.5px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
             outline: none;
             transition: border-color 0.2s;
             box-sizing: border-box;
+            background: #ffffff;
+            color: #333;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
         }
 
-        .form-input:focus, .form-select:focus {
+        .form-input:focus {
             border-color: #800020;
         }
 
         .calculated-reward-banner {
             background: #fff8e1;
             border: 1px dashed #ffa000;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 8px;
             text-align: center;
-            font-size: 14px;
+            font-size: 12px;
             color: #5d4037;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .calculated-reward-banner strong {
             color: #2e7d32;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 900;
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 11px;
             color: #333;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .checkbox-container input {
-            width: 18px;
-            height: 18px;
+            width: 15px;
+            height: 15px;
             accent-color: #800020;
             cursor: pointer;
         }
 
         .btn-submit-claim {
             width: 100%;
-            padding: 14px;
+            padding: 11px;
             background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
             color: #ffffff;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
-            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 10px rgba(128, 0, 32, 0.35);
         }
 
         .btn-submit-claim:active {
             transform: scale(0.98);
         }
 
-        .btn-submit-claim:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .status-pill {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 14px;
+            font-size: 9.5px;
+            font-weight: 800;
             text-transform: uppercase;
         }
 
         .status-pending { background: #fff3e0; color: #ef6c00; }
         .status-approved { background: #e8f5e9; color: #2e7d32; }
         .status-rejected { background: #ffebee; color: #c62828; }
+
+        /* Custom Modal UI Select Window */
+        .tier-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .tier-modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .tier-option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .tier-option-item:last-child {
+            border-bottom: none;
+        }
+
+        .tier-option-item.title-item {
+            color: #aaa;
+            cursor: default;
+        }
+
+        .radio-circle {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .tier-option-item.selected .radio-circle {
+            border-color: #800020;
+        }
+
+        .tier-option-item.selected .radio-circle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #800020;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -157,67 +296,35 @@
 
     <div class="app-view" id="mainAppView">
 
-        <!-- Top Header Wave -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#4a0012"/>
-                    <stop offset="1" stop-color="#800020"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <div class="top-wave-badge-wrapper">
-            <button class="badge-button" onclick="goToPage('dashboard.html')">
-                <span class="badge-dot"></span>
-                <span class="badge-text">TikTok Creator Rewards</span>
+        <!-- Top Header Navigation (Title inside Header) -->
+        <div class="minimal-header">
+            <button class="btn-back-only" onclick="goToPage('task.html')" aria-label="Back to tasks">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
             </button>
+            <h1 class="header-title">TikTok Per View Payment</h1>
+            <div style="width: 38px;"></div> <!-- Spacer element to balance layout -->
         </div>
 
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#2b000a"/>
-        </svg>
+        <div class="app-content" style="padding-top: 10px;">
 
-        <div class="app-content">
-
-            <div class="brand-header">
-                <button class="menu-btn" onclick="goToPage('dashboard.html')" aria-label="Back">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
-                <h3 style="color: #ffffff; margin: 0; font-size: 18px;">TikTok Monetization</h3>
-                <button class="profile-btn" onclick="goToPage('support.html')" aria-label="Support">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Reward Tiers Breakdown -->
+            <!-- Shiny Burgundy Prize List Grid -->
             <div class="reward-tier-card">
-                <h4 style="margin: 0 0 6px 0; color: #ffd700;">🎵 Creator Reward Tiers</h4>
-                <p style="margin: 0; font-size: 12px; color: #e0e0e0; line-height: 1.4;">
-                    Post a TikTok video about <strong>BirrGo</strong>. Reach views and claim your cash payout directly into your account balance upon admin review!
-                </p>
-                
                 <div class="tier-grid">
-                    <div class="tier-item"><div class="tier-views">10K Views</div><div class="tier-reward">1,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">20K Views</div><div class="tier-reward">2,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">50K Views</div><div class="tier-reward">5,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">100K Views</div><div class="tier-reward">10,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">200K Views</div><div class="tier-reward">20,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">300K Views</div><div class="tier-reward">30,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">500K Views</div><div class="tier-reward">50,000 ETB</div></div>
-                    <div class="tier-item"><div class="tier-views">1M Views</div><div class="tier-reward">100,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">10K Views</div><div class="tier-reward">200 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">20K Views</div><div class="tier-reward">400 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">50K Views</div><div class="tier-reward">1,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">100K Views</div><div class="tier-reward">2,200 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">200K Views</div><div class="tier-reward">4,500 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">300K Views</div><div class="tier-reward">7,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">500K Views</div><div class="tier-reward">12,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">1M Views</div><div class="tier-reward">25,000 ETB</div></div>
                 </div>
             </div>
 
             <!-- Claim Submission Form -->
             <div class="claim-form-card">
-                <h3 style="margin: 0 0 15px 0; color: #4a0012; font-size: 16px;">Submit Video Link</h3>
-                
                 <form id="tiktokClaimForm">
                     <div class="form-group">
                         <label for="videoUrl">TikTok Video Link</label>
@@ -225,18 +332,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="viewTier">Select Reached Views</label>
-                        <select id="viewTier" class="form-select" required>
-                            <option value="" disabled selected>Select View Tier</option>
-                            <option value="10000">10,000 Views (10K)</option>
-                            <option value="20000">20,000 Views (20K)</option>
-                            <option value="50000">50,000 Views (50K)</option>
-                            <option value="100000">100,000 Views (100K)</option>
-                            <option value="200000">200,000 Views (200K)</option>
-                            <option value="300000">300,000 Views (300K)</option>
-                            <option value="500000">50,0000 Views (500K)</option>
-                            <option value="1000000">1,000,000 Views (1M)</option>
-                        </select>
+                        <label>Select Reached Views</label>
+                        <!-- Custom Select Trigger Button -->
+                        <div class="custom-select-trigger" id="selectTriggerBtn">
+                            <span id="selectedTierText" style="color:#888;">Select View Tier</span>
+                            <span style="font-size:10px; color:#666;">▼</span>
+                        </div>
                     </div>
 
                     <div class="calculated-reward-banner" id="rewardPreview">
@@ -245,7 +346,7 @@
 
                     <div class="checkbox-container">
                         <input type="checkbox" id="confirmBirrGoTopic" required>
-                        <label for="confirmBirrGoTopic">I confirm that this video is exclusively about <strong>BirrGo</strong> platform.</label>
+                        <label for="confirmBirrGoTopic">I confirm this video is about <strong>BirrGo</strong>.</label>
                     </div>
 
                     <button type="submit" class="btn-submit-claim" id="submitBtn">Submit for Admin Review</button>
@@ -253,9 +354,9 @@
             </div>
 
             <!-- User Submissions History -->
-            <h2 class="section-heading">Your Submitted Claims</h2>
+            <h2 class="section-heading" style="font-size: 13px; font-weight: 800; margin-bottom: 8px;">Your Submitted Claims</h2>
             <div class="history-stack" id="claimsHistoryContainer">
-                <div class="history-loading-msg">Loading claims history...</div>
+                <div class="history-loading-msg" style="font-size: 11px;">Loading claims history...</div>
             </div>
 
         </div>
@@ -271,7 +372,7 @@
                 </div>
                 Home
             </div>
-            <div onclick="goToPage('task.html')" class="nav-item">
+            <div onclick="goToPage('task.html')" class="nav-item active">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24">
                         <polyline points="9 11 12 14 22 4"></polyline>
@@ -310,7 +411,49 @@
             </div>
         </nav>
 
-        <!-- Dynamic Modal -->
+        <!-- Custom View Tier Selection Modal Popup -->
+        <div class="tier-modal-overlay" id="tierSelectModal">
+            <div class="tier-modal-card">
+                <div class="tier-option-item title-item">
+                    <span>Select View Tier</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="10000" data-label="10,000 Views (10K)">
+                    <span>10,000 Views (10K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="20000" data-label="20,000 Views (20K)">
+                    <span>20,000 Views (20K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="50000" data-label="50,000 Views (50K)">
+                    <span>50,000 Views (50K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="100000" data-label="100,000 Views (100K)">
+                    <span>100,000 Views (100K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="200000" data-label="200,000 Views (200K)">
+                    <span>200,000 Views (200K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="300000" data-label="300,000 Views (300K)">
+                    <span>300,000 Views (300K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="500000" data-label="500,000 Views (500K)">
+                    <span>500,000 Views (500K)</span>
+                    <div class="radio-circle"></div>
+                </div>
+                <div class="tier-option-item" data-value="1000000" data-label="1,000,000 Views (1M)">
+                    <span>1,000,000 Views (1M)</span>
+                    <div class="radio-circle"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Popup Modal -->
         <div class="custom-popup-backdrop" id="customPopup">
             <div class="custom-popup-card">
                 <div class="popup-status-badge bg-success" id="popupBadge">
@@ -346,16 +489,17 @@
         const db = getDatabase(app);
 
         let activeUserPhone = "";
+        let selectedViewValue = "";
 
         const rewardTiers = {
-            "10000": 1000,
-            "20000": 2000,
-            "50000": 5000,
-            "100000": 10000,
-            "200000": 20000,
-            "300000": 30000,
-            "500000": 50000,
-            "1000000": 100000
+            "10000": 200,
+            "20000": 400,
+            "50000": 1000,
+            "100000": 2200,
+            "200000": 4500,
+            "300000": 7000,
+            "500000": 12000,
+            "1000000": 25000
         };
 
         function showGlobalLoader(msg = "Loading...") {
@@ -382,39 +526,64 @@
                 return;
             }
 
-            setupTierCalculation();
+            setupCustomSelectModal();
             setupFormSubmission();
             listenToUserClaims();
         });
 
-        // Dynamic view to cash conversion
-        function setupTierCalculation() {
-            const selectEl = document.getElementById('viewTier');
+        function setupCustomSelectModal() {
+            const triggerBtn = document.getElementById('selectTriggerBtn');
+            const modal = document.getElementById('tierSelectModal');
+            const selectedText = document.getElementById('selectedTierText');
             const rewardAmountEl = document.getElementById('rewardAmount');
+            const options = modal.querySelectorAll('.tier-option-item:not(.title-item)');
 
-            selectEl.addEventListener('change', () => {
-                const views = selectEl.value;
-                const payout = rewardTiers[views] || 0;
-                rewardAmountEl.innerText = `${payout.toLocaleString()} ETB`;
+            triggerBtn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+
+                    selectedViewValue = option.getAttribute('data-value');
+                    const labelText = option.getAttribute('data-label');
+
+                    selectedText.innerText = labelText;
+                    selectedText.style.color = '#333';
+
+                    const payout = rewardTiers[selectedViewValue] || 0;
+                    rewardAmountEl.innerText = `${payout.toLocaleString()} ETB`;
+
+                    modal.style.display = 'none';
+                });
             });
         }
 
-        // Handle Claim Form Submit
         function setupFormSubmission() {
             const form = document.getElementById('tiktokClaimForm');
             const videoUrlInput = document.getElementById('videoUrl');
-            const viewTierSelect = document.getElementById('viewTier');
             const birrGoCheck = document.getElementById('confirmBirrGoTopic');
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
                 const videoUrl = videoUrlInput.value.trim();
-                const viewsCount = parseInt(viewTierSelect.value);
+                const viewsCount = parseInt(selectedViewValue);
                 const isBirrGoTopic = birrGoCheck.checked;
+
+                if (!selectedViewValue) {
+                    displayModal('error', 'Select View Tier', 'Please click and select your reached view tier.');
+                    return;
+                }
+
                 const rewardAmount = rewardTiers[viewsCount];
 
-                // TikTok Link Syntax Validation
                 if (!videoUrl.includes('tiktok.com')) {
                     displayModal('error', 'Invalid Link', 'Please enter a valid TikTok video URL.');
                     return;
@@ -431,23 +600,32 @@
                     const claimsRef = ref(db, `tiktokClaims`);
                     const newClaimRef = push(claimsRef);
 
+                    const now = Date.now();
+                    const formattedTime = new Date(now).toLocaleString('en-GB', {
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                    });
+
                     const claimPayload = {
                         claimId: newClaimRef.key,
                         userPhone: activeUserPhone,
                         videoUrl: videoUrl,
                         claimedViews: viewsCount,
                         rewardAmount: rewardAmount,
-                        status: 'pending', // Pending Admin approval
+                        status: 'pending',
                         isBirrGoTopic: true,
-                        timestamp: new Date().toLocaleString(),
-                        createdAt: Date.now()
+                        timestamp: formattedTime,
+                        createdAt: now
                     };
 
                     await set(newClaimRef, claimPayload);
                     hideGlobalLoader();
 
-                    displayModal('success', 'Submitted!', 'Your TikTok video claim has been submitted. The admin will review it shortly and credit your balance.', () => {
+                    displayModal('success', 'Submitted!', 'Your TikTok claim has been submitted. The admin will review it shortly.', () => {
                         form.reset();
+                        selectedViewValue = "";
+                        document.getElementById('selectedTierText').innerText = "Select View Tier";
+                        document.getElementById('selectedTierText').style.color = "#888";
                         document.getElementById('rewardAmount').innerText = "0.00 ETB";
                     });
 
@@ -459,7 +637,6 @@
             });
         }
 
-        // Render submitted history for current user
         function listenToUserClaims() {
             const container = document.getElementById('claimsHistoryContainer');
             const claimsRef = ref(db, `tiktokClaims`);
@@ -467,7 +644,7 @@
             onValue(claimsRef, (snapshot) => {
                 container.innerHTML = '';
                 if (!snapshot.exists()) {
-                    container.innerHTML = `<div class="history-empty-msg">No claims submitted yet.</div>`;
+                    container.innerHTML = `<div style="text-align:center; padding: 12px; color:#888; font-size: 11px;">No claims submitted yet.</div>`;
                     return;
                 }
 
@@ -482,7 +659,7 @@
                 });
 
                 if (userClaims.length === 0) {
-                    container.innerHTML = `<div class="history-empty-msg">No claims submitted yet.</div>`;
+                    container.innerHTML = `<div style="text-align:center; padding: 12px; color:#888; font-size: 11px;">No claims submitted yet.</div>`;
                     return;
                 }
 
@@ -499,16 +676,16 @@
                     card.innerHTML = `
                         <div class="history-left">
                             <div class="history-icon-box">
-                                <span style="font-size:16px;">🎵</span>
+                                <span style="font-size:13px;">🎵</span>
                             </div>
                             <div class="history-info">
-                                <h4>${claim.claimedViews.toLocaleString()} Views Claim</h4>
-                                <p><a href="${claim.videoUrl}" target="_blank" style="color:#800020; text-decoration:underline;">Watch Video</a></p>
-                                <p style="font-size:10px; color:#888;">${claim.timestamp}</p>
+                                <h4 style="font-size:11px; font-weight: 800;">${Number(claim.claimedViews).toLocaleString()} Views Claim</h4>
+                                <p><a href="${claim.videoUrl}" target="_blank" style="color:#800020; font-weight:700; font-size:10.5px; text-decoration:underline;">Watch Video</a></p>
+                                <p style="font-size:9px; color:#888;">${claim.timestamp || ''}</p>
                             </div>
                         </div>
                         <div class="history-right" style="text-align: right;">
-                            <div class="history-amount income">+${claim.rewardAmount.toLocaleString()} ETB</div>
+                            <div class="history-amount income" style="font-size:12px; font-weight: 900;">+${Number(claim.rewardAmount).toLocaleString()} ETB</div>
                             <span class="status-pill ${statusClass}">${claim.status}</span>
                         </div>
                     `;

@@ -163,7 +163,7 @@
         </svg>
 
         <div class="top-wave-badge-wrapper">
-            <button class="badge-button" onclick="goToPage('dashboard.html')">
+            <button class="badge-button" onclick="goToPage('task.html')">
                 <span class="badge-dot" style="background: #ffd700;"></span>
                 <span class="badge-text" style="color: #ffd700;">የኢትዮጵያ ታሪክ ጥያቄዎች</span>
             </button>
@@ -176,7 +176,7 @@
         <div class="app-content">
 
             <div class="brand-header">
-                <button class="menu-btn" onclick="goToPage('dashboard.html')" aria-label="Back">
+                <button class="menu-btn" onclick="goToPage('task.html')" aria-label="Back">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -194,7 +194,7 @@
                 <div style="font-size: 32px; margin-bottom: 4px;">📜</div>
                 <h2 style="margin: 0; font-size: 18px; color: #ffd700;">የታሪክ እና እውቀት ፈተና</h2>
                 <p style="margin: 4px 0 0 0; font-size: 12px; color: #e0e0e0;">
-                    30 ሙሉ ጥያቄ በትክክል ለመለሰ <b>100 ብር</b> ሽልማት! (በ24 ሰዓት 2 ጊዜ ብቻ ይፈቀዳል)
+                    እስከ <b>500 ብር</b> የሚያሸልም ፈተና! (በ24 ሰዓት 2 ጊዜ ብቻ ይፈቀዳል)
                 </p>
             </div>
 
@@ -238,7 +238,7 @@
                 <div style="font-size: 36px; font-weight: 800; color: #800020; margin: 15px 0 5px 0;" id="finalScoreText">0 / 30</div>
                 <p style="font-size: 13.5px; color: #333; font-weight: 700; margin-bottom: 20px;" id="rewardNotificationText"></p>
 
-                <button class="btn-quiz-nav btn-next" onclick="goToPage('dashboard.html')" style="width: 100%;">ወደ ዋናው ገጽ ተመለስ</button>
+                <button class="btn-quiz-nav btn-next" onclick="goToPage('task.html')" style="width: 100%;">ወደ ዋናው ገጽ ተመለስ</button>
             </div>
 
         </div>
@@ -262,7 +262,7 @@
     <!-- Firebase Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, set, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -304,7 +304,7 @@
             },
             {
                 q: "የጅማ አባ ጅፋር (Abba Jifar II) መንግሥት ዋና ከተማ የነበረችው ታሪካዊ ቦታ የትኛዋ ናት?",
-                options: ["ጅማ (ጂረን / Jiren)", "አጋሮ", "ቦንጋ", "ቢሻ his"],
+                options: ["ጅማ (ጂረን / Jiren)", "አጋሮ", "ቦንጋ", "ቢሻን ጉራቻ"],
                 correct: 0
             },
             {
@@ -334,7 +334,7 @@
             }
         ];
 
-        // --- የኢትዮጵያ عمومی ታሪክ ጥያቄዎች (General Ethiopian History Base Questions) ---
+        // --- የኢትዮጵያ العامة ታሪክ ጥያቄዎች (General Ethiopian History Base Questions) ---
         const historyBaseQuestionsAmharic = [
             {
                 q: "በ3ኛው ክፍለ ዘመን መጀመሪያ ላይ በግሪክ ጽሑፍ የተቀረጹ የወርቅ ሳንቲሞችን ለመጀመሪያ ጊዜ ያተመው የአክሱም ንጉሥ ማን ነው?",
@@ -357,7 +357,7 @@
                 correct: 0
             },
             {
-                q: "የሮሃ (ላሊበላ) ውቅር አብያተ ክርስቲያናትን ያነጹት የዛጉዌ ሥወ መንግሥት ንጉሥ ማን ናቸው?",
+                q: "የሮሃ (ላሊበላ) ውቅር አብያተ ክርስቲያናትን ያነጹት የዛጉዌ ሥርወ መንግሥት ንጉሥ ማን ናቸው?",
                 options: ["ቅዱስ ላሊበላ (ገብረ መስቀል)", "ይምርሐነ ክርስቶስ", "ሐርቤ", "ነአኩቶ ለአብ"],
                 correct: 0
             },
@@ -391,7 +391,6 @@
         function generateProceduralQuestionPool() {
             let pool = [];
             
-            // Procedural generator for additional Oromo history questions
             const gadaaRanks = ["ዳበሌ (Dabballee)", "ፎሌ (Foollee)", "ቁንዳሌ (Qondaala)", "ዶሪ (Doorii)", "ሉባ (Luuba)", "ጉባሳ (Guubasa)"];
             const gadaaRoles = ["የህጻናት ደረጃ", "የወጣቶችና ወታደራዊ ስልጠና", "የአመራር ዝግጅት", "የመንግስት አመራር አካል", "የአማካሪዎች ስብስብ"];
             for (let i = 0; i < 50; i++) {
@@ -404,7 +403,6 @@
                 });
             }
 
-            // Combine base pools
             const oromoPool = [...oromoHistoryQuestions, ...pool];
             const generalPool = [...historyBaseQuestionsAmharic];
 
@@ -424,7 +422,6 @@
                 });
             }
 
-            // Ensure exact 30% Oromo History (9 Oromo questions out of 30)
             const selectedOromo = shuffleArray(oromoPool).slice(0, 9);
             const selectedGeneral = shuffleArray(generalPool).slice(0, 21);
 
@@ -455,7 +452,7 @@
                 return;
             }
 
-            // 1. Check 24-hour Play Limit (Max 2 Times per 24 hours)
+            // 1. Check 24-hour Play Limit (Max 2 Times per 24 hours per user)
             const canPlay = await checkUser24HourPlayLimit();
             if (!canPlay) return;
 
@@ -486,7 +483,7 @@
         async function checkUser24HourPlayLimit() {
             showGlobalLoader("ተጠቃሚነቱን በማረጋገጥ ላይ...");
             try {
-                const attemptsRef = ref(db, `historyQuizAttempts`);
+                const attemptsRef = ref(db, `users/${activeUserPhone}/historyQuizAttempts`);
                 const snapshot = await get(attemptsRef);
 
                 let attemptsCount = 0;
@@ -496,7 +493,7 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     Object.values(data).forEach(entry => {
-                        if (entry.userPhone === activeUserPhone && (now - entry.createdAt) < twentyFourHours) {
+                        if ((now - entry.createdAt) < twentyFourHours) {
                             attemptsCount++;
                         }
                     });
@@ -506,7 +503,7 @@
 
                 if (attemptsCount >= 2) {
                     displayModal('error', 'የጨዋታ ገደብ አልፏል!', 'በ24 ሰዓት ውስጥ ለፈተና የተፈቀደሎትን 2 እድሎች ጨርሰዋል። እባክዎን ከ24 ሰዓት በኋላ ይሞክሩ።', () => {
-                        window.goToPage('dashboard.html');
+                        window.goToPage('task.html');
                     });
                     return false;
                 }
@@ -578,6 +575,17 @@
             document.getElementById('btnNext').innerText = index === activeQuestions.length - 1 ? "ፈተናውን ጨርስ" : "ቀጣይ";
         }
 
+        function getRewardByScore(correctCount) {
+            switch (correctCount) {
+                case 30: return 500;
+                case 29: return 400;
+                case 28: return 300;
+                case 27: return 200;
+                case 26: return 10;
+                default: return 0;
+            }
+        }
+
         async function finishQuiz() {
             if (timerInterval) clearInterval(timerInterval);
             showGlobalLoader("ውጤት በመስላት እና በማስቀመጥ ላይ...");
@@ -593,33 +601,52 @@
                 }
             });
 
-            const isPerfectScore = (correctCount === 30);
-            const rewardAmount = isPerfectScore ? 100.0 : 0.0;
+            const rewardAmount = getRewardByScore(correctCount);
+            const now = Date.now();
+            const formattedTime = new Date(now).toLocaleString('en-GB', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            });
 
             try {
-                // 1. Save Quiz Attempt to Firebase
-                const quizRef = push(ref(db, `historyQuizAttempts`));
-                await set(quizRef, {
+                // 1. Log Attempt under User
+                const attemptRef = push(ref(db, `users/${activeUserPhone}/historyQuizAttempts`));
+                await set(attemptRef, {
                     userPhone: activeUserPhone,
                     correctCount: correctCount,
                     wrongCount: wrongCount,
                     total: 30,
                     rewardEarned: rewardAmount,
-                    timestamp: new Date().toLocaleString(),
-                    createdAt: Date.now()
+                    timestamp: formattedTime,
+                    createdAt: now
                 });
 
-                // 2. If 30/30, Add 100 Birr Reward to User Wallet/Balance in Firebase
-                if (isPerfectScore) {
-                    const walletRef = push(ref(db, `userRewards`));
-                    await set(walletRef, {
-                        userPhone: activeUserPhone,
+                // 2. If reward won, credit balance and add transaction log
+                if (rewardAmount > 0) {
+                    const userRef = ref(db, `users/${activeUserPhone}`);
+                    const userSnapshot = await get(userRef);
+                    const userData = userSnapshot.val() || {};
+                    const currentBalance = parseFloat(userData.walletBalance || userData.balance || 0);
+                    const newBalance = currentBalance + rewardAmount;
+
+                    const newTxnRef = push(ref(db, `users/${activeUserPhone}/transactions`));
+                    const txnData = {
+                        title: `History Quiz Reward (${correctCount}/30)`,
                         amount: rewardAmount,
-                        type: 'history_quiz_perfect_bonus',
-                        status: 'credited',
-                        timestamp: new Date().toLocaleString(),
-                        createdAt: Date.now()
-                    });
+                        type: "income",
+                        status: "completed",
+                        timestamp: formattedTime,
+                        sortingTime: now,
+                        balance: newBalance,
+                        isPromo: true
+                    };
+
+                    const updates = {};
+                    updates[`users/${activeUserPhone}/walletBalance`] = newBalance;
+                    updates[`users/${activeUserPhone}/balance`] = newBalance;
+                    updates[`users/${activeUserPhone}/transactions/${newTxnRef.key}`] = txnData;
+
+                    await update(ref(db), updates);
                 }
 
                 hideGlobalLoader();
@@ -634,12 +661,12 @@
                 document.getElementById('finalScoreText').innerText = `${correctCount} / 30`;
 
                 const rewardNotice = document.getElementById('rewardNotificationText');
-                if (isPerfectScore) {
+                if (rewardAmount > 0) {
                     rewardNotice.style.color = "#28a745";
-                    rewardNotice.innerText = "🎉 እንኳን ደስ አለዎት! 30ሩንም ጥያቄ በትክክል በመመለስዎ 100 ብር ሽልማት ወደ ሂሳብዎ ተደምሯል!";
+                    rewardNotice.innerText = `🎉 እንኳን ደስ አለዎት! ${correctCount}/30 በመመለስዎ ${rewardAmount} ብር ሽልማት ወደ ሂሳብዎ ተደምሯል!`;
                 } else {
                     rewardNotice.style.color = "#dc3545";
-                    rewardNotice.innerText = `100 ብር ሽልማት ለማግኘት 30ሩንም ጥያቄ በትክክል መመለስ ያስፈልጋል። (የቀረዎት፡ ${30 - correctCount} ጥያቄ)`;
+                    rewardNotice.innerText = "ሽልማት ለማግኘት ቢያንስ 26 ጥያቄዎችን በትክክል መመለስ ያስፈልጋል። ሌላ ጊዜ ይሞክሩ!";
                 }
 
             } catch (err) {
