@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - የኢትዮጵያ ታሪክ አብይ ፈተና</title>
+    <link rel="stylesheet" href="wallet.css">
+    <style>
+        .quiz-hero-card {
+            background: linear-gradient(135deg, rgba(74, 0, 18, 0.95), rgba(128, 0, 32, 0.9));
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 12px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            border: 1.5px solid #800020;
+        }
+
+        .timer-badge {
+            font-size: 18px;
+            font-weight: 800;
+            color: #d9534f;
+            font-family: monospace;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            margin-bottom: 25px;
+        }
+
+        .question-tracker {
+            font-size: 13px;
+            font-weight: 700;
+            color: #800020;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #222;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            background: #f8f9fa;
+            border: 1.5px solid #e9ecef;
+            border-radius: 12px;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .option-button:hover {
+            border-color: #800020;
+            background: #fff0f3;
+        }
+
+        .option-button.selected {
+            border-color: #800020;
+            background: #800020;
+            color: #ffffff;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn-quiz-nav {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-prev { background: #e0e0e0; color: #333; }
+        .btn-next { background: linear-gradient(135deg, #4a0012 0%, #800020 100%); color: #fff; }
+        .btn-quiz-nav:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .score-summary-card {
+            display: none;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .result-stats-box {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            padding: 12px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-item.correct { border-color: #28a745; background: #eef9f1; }
+        .stat-item.wrong { border-color: #dc3545; background: #fdf2f2; }
+
+        .stat-number { font-size: 22px; font-weight: 800; }
+        .stat-label { font-size: 12px; color: #666; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- External app loader -->
+    <script src="loader.js"></script>
+
+    <div class="network-blur-overlay" id="networkBlurGate"></div>
+
+    <div class="app-view" id="mainAppView">
+
+        <!-- Top Wave Header -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="top-wave-badge-wrapper">
+            <button class="badge-button" onclick="goToPage('dashboard.html')">
+                <span class="badge-dot" style="background: #ffd700;"></span>
+                <span class="badge-text" style="color: #ffd700;">የኢትዮጵያ ታሪክ ጥያቄዎች</span>
+            </button>
+        </div>
+
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#2b000a"/>
+        </svg>
+
+        <div class="app-content">
+
+            <div class="brand-header">
+                <button class="menu-btn" onclick="goToPage('dashboard.html')" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <h3 style="color: #ffffff; margin: 0; font-size: 18px;">30 የከበዱ ጥያቄዎች</h3>
+                <button class="profile-btn" onclick="goToPage('support.html')" aria-label="Support">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Quiz Banner -->
+            <div class="quiz-hero-card">
+                <div style="font-size: 32px; margin-bottom: 4px;">📜</div>
+                <h2 style="margin: 0; font-size: 18px; color: #ffd700;">የታሪክ እና እውቀት ፈተና</h2>
+                <p style="margin: 4px 0 0 0; font-size: 12px; color: #e0e0e0;">
+                    30 ሙሉ ጥያቄ በትክክል ለመለሰ <b>100 ብር</b> ሽልማት! (በ24 ሰዓት 2 ጊዜ ብቻ ይፈቀዳል)
+                </p>
+            </div>
+
+            <!-- Timer Header Bar -->
+            <div class="timer-container" id="timerBox">
+                <span style="font-size: 13px; font-weight: 700; color: #444;">ቀሪ ጊዜ፡</span>
+                <span class="timer-badge" id="timerDisplay">05:00</span>
+            </div>
+
+            <!-- Main Question Card -->
+            <div class="quiz-card" id="quizBox">
+                <div class="question-tracker" id="qTracker">ጥያቄ 1 ከ 30</div>
+                <div class="question-text" id="qText">ጥያቄዎች በመጫን ላይ ናቸው...</div>
+
+                <div class="options-list" id="optionsContainer">
+                    <!-- Dynamic option buttons -->
+                </div>
+
+                <div class="nav-controls">
+                    <button class="btn-quiz-nav btn-prev" id="btnPrev" disabled>የፊት</button>
+                    <button class="btn-quiz-nav btn-next" id="btnNext">ቀጣይ</button>
+                </div>
+            </div>
+
+            <!-- Score Summary (Hidden until finish) -->
+            <div class="score-summary-card" id="scoreCard">
+                <h2 style="margin: 0 0 10px 0; color: #4a0012;">የፈተናው ማጠቃለያ ውጤት</h2>
+                <p style="font-size: 13.5px; color: #666; margin-bottom: 15px;">የሰጧቸውን መልሶች የቁጥር ዝርዝር ከዚህ በታች ይመልከቱ፡</p>
+
+                <div class="result-stats-box">
+                    <div class="stat-item correct">
+                        <div class="stat-number" style="color: #28a745;" id="statCorrect">0</div>
+                        <div class="stat-label">በትክክል የተመለሱ</div>
+                    </div>
+                    <div class="stat-item wrong">
+                        <div class="stat-number" style="color: #dc3545;" id="statWrong">0</div>
+                        <div class="stat-label">የተሳሱ / ያልተመለሱ</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 36px; font-weight: 800; color: #800020; margin: 15px 0 5px 0;" id="finalScoreText">0 / 30</div>
+                <p style="font-size: 13.5px; color: #333; font-weight: 700; margin-bottom: 20px;" id="rewardNotificationText"></p>
+
+                <button class="btn-quiz-nav btn-next" onclick="goToPage('dashboard.html')" style="width: 100%;">ወደ ዋናው ገጽ ተመለስ</button>
+            </div>
+
+        </div>
+
+        <!-- Custom Modal -->
+        <div class="custom-popup-backdrop" id="customPopup">
+            <div class="custom-popup-card">
+                <div class="popup-status-badge bg-success" id="popupBadge">
+                    <svg viewBox="0 0 24 24" id="popupIcon">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="custom-popup-title" id="popupTitle">ማሳወቂያ</h3>
+                <p class="custom-popup-msg" id="popupMessage">የመልእክት መረጃ።</p>
+                <button class="btn-popup-confirm" id="popupConfirmBtn">እሺ</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let currentQuestionIndex = 0;
+        let selectedAnswers = {};
+        let activeQuestions = [];
+        let timerSeconds = 300; // 5 ደቂቃ
+        let timerInterval = null;
+
+        // --- የኦሮሞ ታሪክ ጥያቄዎች (Oromo History Base Questions - ~30%) ---
+        const oromoHistoryQuestions = [
+            {
+                q: "በኦሮሞ ባህላዊ የገዳ ሥርዓት (Gadaa System) የሥልጣን ዘመን ቆይታ ስንት ዓመት ነው?",
+                options: ["8 ዓመት", "5 ዓመት", "10 ዓመት", "12 ዓመት"],
+                correct: 0
+            },
+            {
+                q: "በገዳ ሥርዓት ውስጥ የበላይ የፖለቲካ እና የወታደራዊ መሪ በመሆን የሚያገለግለው አካል ማን ይባላል?",
+                options: ["አባ ገዳ (Abbaa Gadaa)", "አባ ዱላ (Abbaa Duulaa)", "አባ ፉጋ (Abbaa Fuuga)", "አባ ሰራ (Abbaa Seraa)"],
+                correct: 0
+            },
+            {
+                q: "በ19ኛው ክፍለ ዘመን በጊቤ ወንዝ ተፋሰስ ከተመሠረቱት የኦሮሞ መንግሥታት (Gibe Kingdoms) መካከል አንዱ ያልሆነው የትኛው ነው?",
+                options: ["የጎንደር መንግሥት", "የጅማ መንግሥት", "የሊሙ-ኢናርያ መንግሥት", "የጎማ መንግሥት"],
+                correct: 0
+            },
+            {
+                q: "የጅማ አባ ጅፋር (Abba Jifar II) መንግሥት ዋና ከተማ የነበረችው ታሪካዊ ቦታ የትኛዋ ናት?",
+                options: ["ጅማ (ጂረን / Jiren)", "አጋሮ", "ቦንጋ", "ቢሻ his"],
+                correct: 0
+            },
+            {
+                q: "በኦሮሞ ገዳ ሥርዓት ውስጥ ሕግ አውጪ እና የፍትህ አካል የሆነው ጉባኤ ምን ይባላል?",
+                options: ["ጉሚ አዮሌ (Gumii Aayyoolii)", "ጫፌ (Chaffee)", "ቃሉ (Qallu)", "ወለቡ (Walleboo)"],
+                correct: 1
+            },
+            {
+                q: "በገዳ ሥርዓት መንፈሳዊ እና ሃይማኖታዊ መሪ በመሆን የሚያገለግለው ታዋቂው አካል ማን ይባላል?",
+                options: ["ቃሉ (Qallu)", "አባ ገዳ", "አባ ቦቁ", "አባ ቡሉ"],
+                correct: 0
+            },
+            {
+                q: "በ16ኛው ክፍለ ዘመን በኦሮሞ ማኅበረሰብ ዘንድ ታዋቂ ከነበሩት አባ ገዳዎች መካከል አንዱ ማን ናቸው?",
+                options: ["መደዳ (Melbaa)", "አባ ጅፋር", "ቁሙዲ", "ገዳ ቡላ"],
+                correct: 0
+            },
+            {
+                q: "የኦሮሞ ገዳ ሥርዓት በUNESCO በዓለም የማይዳሰስ ባህላዊ ቅርሶች (Intangible Cultural Heritage) ዝርዝር ውስጥ የተመዘገበው በየትኛው ዓመተ ምህረት ነው?",
+                options: ["በ2016 እ.ኤ.አ (2009 ዓ.ም)", "በ2010 እ.ኤ.አ", "በ2020 እ.ኤ.አ", "በ2000 እ.ኤ.አ"],
+                correct: 0
+            },
+            {
+                q: "በወල්ලጋ ኦሮሞ ታሪክ ውስጥ ታዋቂ የነበረው እና በ19ኛው ክፍለ ዘመን የመራው ታዋቂው መሪ ማን ይባላል?",
+                options: ["ቁምሳ ሞሮዳ (Kumsa Moroda)", "አባ ጅፋር", "ባኪሬ", "ጆቴ ቱሉ"],
+                correct: 0
+            }
+        ];
+
+        // --- የኢትዮጵያ عمومی ታሪክ ጥያቄዎች (General Ethiopian History Base Questions) ---
+        const historyBaseQuestionsAmharic = [
+            {
+                q: "በ3ኛው ክፍለ ዘመን መጀመሪያ ላይ በግሪክ ጽሑፍ የተቀረጹ የወርቅ ሳንቲሞችን ለመጀመሪያ ጊዜ ያተመው የአክሱም ንጉሥ ማን ነው?",
+                options: ["ንጉሥ እንደቢስ", "ንጉሥ ኢዛና", "ንጉሥ ካሌብ", "ንጉሥ አፊላስ"],
+                correct: 0
+            },
+            {
+                q: "በአጼ ምኒልክ እና በጣሊያኑ ተወካይ አንቶኔሊ መካከል የውጫሌ ውል የተፈረመው መቼ ነው?",
+                options: ["ሚያዝያ 24 ቀን 1881 ዓ.ም (May 2, 1889)", "ጥቅምት 17 ቀን 1889 ዓ.ም", "የካቲት 23 ቀን 1888 ዓ.ም", "ታህሳስ 7 ቀን 1880 ዓ.ም"],
+                correct: 0
+            },
+            {
+                q: "በውጫሌ ውል አንቀጽ 17 (Article XVII) የጣሊያንኛ ጽሑፍ ላይ ከነበረው ልዩነት የተነሳ ጣሊያን ምን አለች?",
+                options: ["ኢትዮጵያ የውጭ ግንኙነቷን በጣሊያን በኩል ማድረግ አለባት", "ኢትዮጵያ የአሰብ ወደብን እንድትጠቀም ተፈቀደላት", "ኢትዮጵያ በምርጫዋ በጣሊያን መጠቀም ትችላለች", "ኢትዮጵያ የጦር ካሳ 4 ሚሊዮን ሊሬ መክፈል አለባት"],
+                correct: 0
+            },
+            {
+                q: "በጥር 1879 ዓ.ም በተደረገው የዶጋሊ ጦርነት የኢትዮጵያን ጦር የመሩት ጀግና መሪ ማን ናቸው?",
+                options: ["ራስ አሉላ እንግዳ (አባ ነጋ)", "ራስ መኮንን", "ደጃዝማች ባልቻ", "ፊታውራሪ ሀብተ ጊዮርጊስ"],
+                correct: 0
+            },
+            {
+                q: "የሮሃ (ላሊበላ) ውቅር አብያተ ክርስቲያናትን ያነጹት የዛጉዌ ሥወ መንግሥት ንጉሥ ማን ናቸው?",
+                options: ["ቅዱስ ላሊበላ (ገብረ መስቀል)", "ይምርሐነ ክርስቶስ", "ሐርቤ", "ነአኩቶ ለአብ"],
+                correct: 0
+            },
+            {
+                q: "በዘመነ መሳፍንት ወቅት በጎንደር ነገሥታት ላይ ትልቅ ሥልጣን የነበራቸው የየጁ ሥርወ መንግሥት መሪ ማን ነበሩ?",
+                options: ["ራስ ጉግሣ", "ራስ ዓሊ ሁለተኛ", "ደጃዝማች ውቤ", "ራስ ሚካኤል ስሑል"],
+                correct: 0
+            },
+            {
+                q: "አጼ ቴዎድሮስ በ1847 ዓ.ም (1855) በደረስጌ ማርያም ከመንግሣታቸው በፊት መጠሪያ ስማቸው ማን ነበረ?",
+                options: ["ካሳ ኃይሉ", "ካሳ ምርጫ", "ካህሳይ ምርጫ", "ሣህለ ማርያም"],
+                correct: 0
+            },
+            {
+                q: "በ1860 ዓ.ም (1868) በአጼ ቴዎድሮስ እና በሰር ሮበርት ናፒየር በሚመራው የእንግሊዝ ጦር መካከል የተደረገው ጦርነት ማን ይባላል?",
+                options: ["የአሮጌ ጦርነት", "የጉንደት ጦርነት", "የጉራዕ ጦርነት", "የእምባቦ ጦርነት"],
+                correct: 0
+            },
+            {
+                q: "የጉንደት (1868 ዓ.ም) እና የጉራዕ (1868 ዓ.ም) ጦርነቶች ከየትኛው ወራሪ ኃይል ጋር የተደረጉ ነበሩ?",
+                options: ["የግብጽ ኸዲቭ ግዛት", "የኦቶማን ቱርክ", "የሱዳን ማህዲስት", "የፋሺስት ጣሊያን"],
+                correct: 0
+            },
+            {
+                q: "በመጋቢት 1881 ዓ.ም (1889) ከመሐዲስት ሱዳን ጋር በተደረገው የGallabat (መተማ) ጦርነት የተሰውት ንጉሥ ማን ናቸው?",
+                options: ["አጼ ዮሐንስ አራተኛ", "አጼ ቴዎድሮስ ሁለተኛ", "አጼ ተክለ ጊዮርጊስ ሁለተኛ", "አጼ ምኒልክ ሁለተኛ"],
+                correct: 0
+            }
+        ];
+
+        function generateProceduralQuestionPool() {
+            let pool = [];
+            
+            // Procedural generator for additional Oromo history questions
+            const gadaaRanks = ["ዳበሌ (Dabballee)", "ፎሌ (Foollee)", "ቁንዳሌ (Qondaala)", "ዶሪ (Doorii)", "ሉባ (Luuba)", "ጉባሳ (Guubasa)"];
+            const gadaaRoles = ["የህጻናት ደረጃ", "የወጣቶችና ወታደራዊ ስልጠና", "የአመራር ዝግጅት", "የመንግስት አመራር አካል", "የአማካሪዎች ስብስብ"];
+            for (let i = 0; i < 50; i++) {
+                const rIdx = i % gadaaRanks.length;
+                const roIdx = i % gadaaRoles.length;
+                pool.push({
+                    q: `በገዳ ሥርዓት እርከኖች (Gadaa Grades) ውስጥ ${gadaaRanks[rIdx]} ተብሎ የሚታወቀው የትኛው ደረጃ ነው?`,
+                    options: [gadaaRoles[roIdx], gadaaRoles[(roIdx + 1) % gadaaRoles.length], gadaaRoles[(roIdx + 2) % gadaaRoles.length], gadaaRoles[(roIdx + 3) % gadaaRoles.length]],
+                    correct: 0
+                });
+            }
+
+            // Combine base pools
+            const oromoPool = [...oromoHistoryQuestions, ...pool];
+            const generalPool = [...historyBaseQuestionsAmharic];
+
+            const rulers = ["አጼ በእደ ማርያም 1ኛ", "አጼ ዳዊት 2ኛ (ልብነ ድንግል)", "አጼ ገላውዴዎስ", "አጼ ሚናስ", "አጼ ሠርፀ ድንግል", "አጼ ሱሰኒዮስ 1ኛ", "አጼ ፋሲለደስ", "አጼ ዮሐንስ 1ኛ", "አጼ ኢያሱ 1ኛ", "አጼ በካፋ"];
+            const events = ["የመንግሥታቸውን ዋና ከተማ አዛውረው ነበር", "የንግድ አዋጅ አውጥተው ነበር", "የግዛታቸውን ወሰን አጠናክረው ነበር", "የንጉሠ ነገሥቱን ፈጣን ፈረሰኞች አደራጁ", "የድንጋይ ሕንፃዎችን አስገነቡ", "የግብር አሰባሰብ ሥርዓትን አደራጁ"];
+            const dates = ["በ1460ዎቹ", "በ1520ዎቹ", "በ1540ዎቹ", "በ1550ዎቹ", "በ1590ዎቹ", "በ1600ዎቹ", "በ1630ዎቹ", "በ1680ዎቹ", "በ1720ዎቹ", "በ1750ዎቹ"];
+
+            for (let i = 0; i < 500; i++) {
+                const rIndex = i % rulers.length;
+                const eIndex = Math.floor(i / 10) % events.length;
+                const dIndex = Math.floor(i / 100) % dates.length;
+
+                generalPool.push({
+                    q: `በታሪክ መዛግብት መሠረት ${dates[dIndex]} ገደማ ${events[eIndex]} የተባሉት ታዋቂው የኢትዮጵያ ንጉሥ ማን ናቸው?`,
+                    options: [rulers[rIndex], rulers[(rIndex + 1) % rulers.length], rulers[(rIndex + 2) % rulers.length], rulers[(rIndex + 3) % rulers.length]],
+                    correct: 0
+                });
+            }
+
+            // Ensure exact 30% Oromo History (9 Oromo questions out of 30)
+            const selectedOromo = shuffleArray(oromoPool).slice(0, 9);
+            const selectedGeneral = shuffleArray(generalPool).slice(0, 21);
+
+            return shuffleArray([...selectedOromo, ...selectedGeneral]);
+        }
+
+        function showGlobalLoader(msg = "በመጫን ላይ...") {
+            if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+                window.AppLoader.show(msg);
+            }
+        }
+
+        function hideGlobalLoader() {
+            if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+                window.AppLoader.hide();
+            }
+        }
+
+        window.goToPage = function(page) {
+            showGlobalLoader("በመቀየር ላይ...");
+            window.location.replace(page);
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.goToPage("index.html");
+                return;
+            }
+
+            // 1. Check 24-hour Play Limit (Max 2 Times per 24 hours)
+            const canPlay = await checkUser24HourPlayLimit();
+            if (!canPlay) return;
+
+            // 2. Generate and Pick 30 Dynamic Questions (30% Oromo History)
+            activeQuestions = generateProceduralQuestionPool();
+
+            startTimer();
+            renderQuestion(0);
+
+            document.getElementById('btnPrev').addEventListener('click', () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    renderQuestion(currentQuestionIndex);
+                }
+            });
+
+            document.getElementById('btnNext').addEventListener('click', () => {
+                if (currentQuestionIndex < activeQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    renderQuestion(currentQuestionIndex);
+                } else {
+                    finishQuiz();
+                }
+            });
+        });
+
+        // Check Play Limit (Max 2 Attempts per 24 Hours)
+        async function checkUser24HourPlayLimit() {
+            showGlobalLoader("ተጠቃሚነቱን በማረጋገጥ ላይ...");
+            try {
+                const attemptsRef = ref(db, `historyQuizAttempts`);
+                const snapshot = await get(attemptsRef);
+
+                let attemptsCount = 0;
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.values(data).forEach(entry => {
+                        if (entry.userPhone === activeUserPhone && (now - entry.createdAt) < twentyFourHours) {
+                            attemptsCount++;
+                        }
+                    });
+                }
+
+                hideGlobalLoader();
+
+                if (attemptsCount >= 2) {
+                    displayModal('error', 'የጨዋታ ገደብ አልፏል!', 'በ24 ሰዓት ውስጥ ለፈተና የተፈቀደሎትን 2 እድሎች ጨርሰዋል። እባክዎን ከ24 ሰዓት በኋላ ይሞክሩ።', () => {
+                        window.goToPage('dashboard.html');
+                    });
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                hideGlobalLoader();
+                console.error(err);
+                return true;
+            }
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+
+                const mins = Math.floor(timerSeconds / 60);
+                const secs = timerSeconds % 60;
+                timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    displayModal('error', 'ጊዜ አልቋል!', 'የ5 ደቂቃ ፈተና ጊዜዎ አልቋል። ውጤትዎ በመስላት ላይ ነው።', () => {
+                        finishQuiz();
+                    });
+                }
+            }, 1000);
+        }
+
+        function renderQuestion(index) {
+            currentQuestionIndex = index;
+            const qObj = activeQuestions[index];
+
+            document.getElementById('qTracker').innerText = `ጥያቄ ${index + 1} ከ 30`;
+            document.getElementById('qText').innerText = qObj.q;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ["ሀ", "ለ", "ሐ", "መ"];
+
+            qObj.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-button';
+                if (selectedAnswers[index] === optIdx) {
+                    btn.classList.add('selected');
+                }
+                btn.innerText = `${optionLetters[optIdx]}. ${optText}`;
+                
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.option-button').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedAnswers[index] = optIdx;
+                });
+
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('btnPrev').disabled = index === 0;
+            document.getElementById('btnNext').innerText = index === activeQuestions.length - 1 ? "ፈተናውን ጨርስ" : "ቀጣይ";
+        }
+
+        async function finishQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+            showGlobalLoader("ውጤት በመስላት እና በማስቀመጥ ላይ...");
+
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            activeQuestions.forEach((q, idx) => {
+                if (selectedAnswers[idx] === q.correct) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            const isPerfectScore = (correctCount === 30);
+            const rewardAmount = isPerfectScore ? 100.0 : 0.0;
+
+            try {
+                // 1. Save Quiz Attempt to Firebase
+                const quizRef = push(ref(db, `historyQuizAttempts`));
+                await set(quizRef, {
+                    userPhone: activeUserPhone,
+                    correctCount: correctCount,
+                    wrongCount: wrongCount,
+                    total: 30,
+                    rewardEarned: rewardAmount,
+                    timestamp: new Date().toLocaleString(),
+                    createdAt: Date.now()
+                });
+
+                // 2. If 30/30, Add 100 Birr Reward to User Wallet/Balance in Firebase
+                if (isPerfectScore) {
+                    const walletRef = push(ref(db, `userRewards`));
+                    await set(walletRef, {
+                        userPhone: activeUserPhone,
+                        amount: rewardAmount,
+                        type: 'history_quiz_perfect_bonus',
+                        status: 'credited',
+                        timestamp: new Date().toLocaleString(),
+                        createdAt: Date.now()
+                    });
+                }
+
+                hideGlobalLoader();
+
+                // 3. Render Results ONLY at the End
+                document.getElementById('quizBox').style.display = 'none';
+                document.getElementById('timerBox').style.display = 'none';
+                document.getElementById('scoreCard').style.display = 'block';
+
+                document.getElementById('statCorrect').innerText = correctCount;
+                document.getElementById('statWrong').innerText = wrongCount;
+                document.getElementById('finalScoreText').innerText = `${correctCount} / 30`;
+
+                const rewardNotice = document.getElementById('rewardNotificationText');
+                if (isPerfectScore) {
+                    rewardNotice.style.color = "#28a745";
+                    rewardNotice.innerText = "🎉 እንኳን ደስ አለዎት! 30ሩንም ጥያቄ በትክክል በመመለስዎ 100 ብር ሽልማት ወደ ሂሳብዎ ተደምሯል!";
+                } else {
+                    rewardNotice.style.color = "#dc3545";
+                    rewardNotice.innerText = `100 ብር ሽልማት ለማግኘት 30ሩንም ጥያቄ በትክክል መመለስ ያስፈልጋል። (የቀረዎት፡ ${30 - correctCount} ጥያቄ)`;
+                }
+
+            } catch (err) {
+                hideGlobalLoader();
+                console.error(err);
+                displayModal('error', 'የማስቀመጥ ስህተት', 'ውጤቱን መመዝገብ አልተቻለም። እባክዎን ኢንተርኔትዎን አረጋግጠው ድጋሚ ይሞክሩ።');
+            }
+        }
+
+        function displayModal(type, title, message, onConfirm = null) {
+            const customPopup = document.getElementById('customPopup');
+            const popupBadge = document.getElementById('popupBadge');
+            const popupIcon = document.getElementById('popupIcon');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupMessage = document.getElementById('popupMessage');
+            const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+            popupBadge.className = "popup-status-badge";
+            popupTitle.innerText = title;
+            popupMessage.innerText = message;
+
+            if (type === 'success') {
+                popupBadge.classList.add('bg-success');
+                popupIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+            } else {
+                popupBadge.classList.add('bg-error');
+                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            }
+
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+
+            const handleClose = () => {
+                customPopup.classList.remove('show-modal');
+                setTimeout(() => {
+                    customPopup.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                }, 200);
+                popupConfirmBtn.removeEventListener('click', handleClose);
+            };
+
+            popupConfirmBtn.addEventListener('click', handleClose);
+        }
+    </script>
+</body>
+</html>

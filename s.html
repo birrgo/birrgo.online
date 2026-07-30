@@ -363,6 +363,17 @@
         const totalTicketsCount = 5000; 
         let currentAlertCallback = null;
 
+        /**
+         * Converts string PIN to SHA-256 Hex Hash using Web Crypto API
+         */
+        async function hashPin(pin) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pin);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function removeBlurOverlay() {
             const overlay = document.getElementById('pwaBlurOverlay');
             if(overlay) overlay.classList.add('loaded');
@@ -587,8 +598,13 @@
                 const accountSnap = await get(ref(db, `users/${completeRawCardSequence}`));
                 if(accountSnap.exists()) {
                     const userData = accountSnap.val();
-                    
-                    if(userData.securityPin === pinInput || userData.pin === pinInput) {
+                    const dbPin = userData.securityPin || userData.pin || "";
+
+                    // Compute SHA-256 hash of inputted PIN
+                    const hashedInput = await hashPin(pinInput);
+
+                    // Verify against both plaintext (legacy) and encrypted/hashed PIN formats
+                    if (dbPin === pinInput || dbPin === hashedInput) {
                         closeVerificationModal();
                         await executeTicketPurchasePipeline();
                     } else {

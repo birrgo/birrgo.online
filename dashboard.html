@@ -4,764 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Dashboard Hub</title>
-    
+    <link rel="stylesheet" href="dashboard.css">
     <style>
-        :root {
-            --primary-burgundy: #800020;
-            --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
-            --accent-glow: rgba(128, 0, 32, 0.15);
-            --text-dark: #0f172a;
-            --text-muted: #475569;
-            --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 3px 8px -2px rgba(0, 0, 0, 0.04);
-            --success-green: #10b981;
-            --warning-amber: #f59e0b;
-            --border-radius-lg: 18px;
-            --border-radius-md: 14px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            letter-spacing: -0.1px;
+        /* Eliminates 300ms mobile touch delay instantly */
+        .header-menu-btn, .profile-btn, .news-pill, .nav-item-bottom, .action-item, .premium-ai-trigger, .btn-drawer-close-x {
+            touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: var(--bg-light);
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-size: 14px;
-        }
-
-        .app-view {
-            width: 100%;
-            height: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-wave-top {
-            top: 0;
-            height: 14vh;
-            min-height: 95px;
-        }
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 10vh;
-            min-height: 70px;
-        }
-
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            background-color: transparent;
-            padding: calc(12px + env(safe-area-inset-top)) 16px calc(80px + env(safe-area-inset-bottom)) 16px;
-            scrollbar-width: none;
-            position: relative;
-            z-index: 1;
-        }
-
-        .app-content::-webkit-scrollbar { 
-            display: none; 
-        }
-
-        .brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding: 2px 2px;
-            background: transparent;
-            position: relative;
-            z-index: 5;
-        }
-
-        .logo-image {
-            height: 32px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .profile-btn {
-            width: 38px; 
-            height: 38px; 
-            border-radius: 50%; 
-            background-color: rgba(255, 255, 255, 0.9); 
-            border: 2px solid #ffffff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            backdrop-filter: blur(6px); 
-            -webkit-backdrop-filter: blur(6px);
-        }
-
-        .profile-btn svg {
-            width: 22px;
-            height: 22px;
-            fill: #334155;
-        }
-
-        .news-container {
-            margin-top: -46px; 
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            perspective: 800px;
-            position: relative;
-            z-index: 20;
-        }
-
-        .news-pill {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: 
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.7) 60%),
-                linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 0.35rem 0.85rem;
-            border-radius: 50px;
-            border: 1.5px solid rgba(255, 255, 255, 0.95);
-            box-shadow: 
-                0 8px 18px -4px rgba(0, 0, 0, 0.25),
-                0 3px 8px -2px rgba(0, 0, 0, 0.12),
-                inset 0 2px 3px 0 rgba(255, 255, 255, 1),
-                inset 0 -1.5px 3px 0 rgba(203, 213, 225, 0.4);
             cursor: pointer;
-            outline: none;
-            overflow: hidden;
-            transform: translateY(-2px) translateZ(0);
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .news-pill::after {
-            content: '';
-            position: absolute;
-            top: -60%;
-            left: -80%;
-            width: 60%;
-            height: 220%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.95) 50%,
-                transparent 100%
-            );
-            transform: rotate(25deg);
-            animation: glassShimmer3D 3.5s infinite ease-in-out;
-        }
-
-        @keyframes glassShimmer3D {
-            0% { left: -80%; }
-            40% { left: 150%; }
-            100% { left: 150%; }
-        }
-
-        .news-pill:active { 
-            transform: translateY(1px) scale(0.96); 
-            box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.2),
-                inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .news-dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            background-color: var(--primary-burgundy);
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(128, 0, 32, 0.8), 0 0 2px #fff;
-            animation: pulse-animation 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .news-text {
-            font-size: 0.75rem;
-            font-weight: 700 !important;
-            color: var(--primary-burgundy);
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
-        }
-
-        @keyframes pulse-animation {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: .4; transform: scale(0.85); }
-        }
-
-        /* ------------------------------------------------------------------
-           BLACK SHINE GLOSSY CARD 
-           ------------------------------------------------------------------ */
-        .digital-card {
-            background: linear-gradient(135deg, #181818 0%, #050505 45%, #000000 100%);
-            border-radius: var(--border-radius-lg);
-            padding: 18px 20px 20px 20px; 
-            color: #ffffff;
-            
-            box-shadow: 
-                0 22px 44px -12px rgba(0, 0, 0, 0.8), 
-                0 10px 20px -8px rgba(0, 0, 0, 0.6),
-                inset 0 1px 2px rgba(255, 255, 255, 0.25),
-                inset 0 -1px 2px rgba(200, 160, 100, 0.3);
-                
-            margin-top: 34px; 
-            margin-bottom: 16px;
-            position: relative;
-            overflow: hidden;
-            min-height: 165px; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 2;
-            
-            border: 1px solid rgba(168, 140, 102, 0.3); 
-        }
-
-        .digital-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                115deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.05) 31%,
-                rgba(255, 255, 255, 0.3) 34%,
-                transparent 35%,
-                transparent 39%,
-                rgba(255, 255, 255, 0.05) 40%,
-                rgba(255, 255, 255, 0.35) 43%,
-                transparent 44%
-            );
-            pointer-events: none;
-            z-index: 0;
-            animation: glossPanes 12s ease-in-out infinite alternate;
-        }
-
-        @keyframes glossPanes {
-            0% { transform: translateY(0%) translateX(0%); }
-            100% { transform: translateY(-5%) translateX(5%); }
-        }
-
-        .digital-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 55%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .card-af-watermark {
-            position: absolute;
-            right: 75px;
-            top: 15px;
-            height: 115px;
-            width: auto;
-            object-fit: contain;
-            opacity: 0.38;
-            filter: brightness(1.2) contrast(1.15) drop-shadow(0 2px 8px rgba(0,0,0,0.4));
-            pointer-events: none;
-            z-index: 2;
             user-select: none;
         }
 
-        .card-top, .card-center-stack, .card-bottom {
-            position: relative;
-            z-index: 10;
+        /* Guarantees no underlines appear under the news pill */
+        .news-pill, .news-pill * {
+            text-decoration: none !important;
         }
 
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-identity-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-left: auto;
-        }
-
-        .btn-card-action {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(4px);
-        }
-
-        .btn-card-action:active { 
-            background: rgba(255, 255, 255, 0.3); 
-            transform: scale(0.95);
-        }
-
-        .btn-card-action svg { 
-            width: 14px; 
-            height: 14px; 
-            fill: none; 
-            stroke: currentColor; 
-            stroke-width: 2.2; 
-        }
-
-        .card-center-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-top: 8px;
-        }
-
-        .card-number {
-            font-size: 14px;
-            font-weight: 600 !important;
-            letter-spacing: 2px;
-            color: #f1f5f9;
-            line-height: 1.1;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.2);
-        }
-
-        .asset-embedded-row {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin-top: 6px;
-        }
-
-        .asset-mini-label {
-            font-size: 8.5px;
-            font-weight: 500 !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .asset-mini-amount {
-            font-size: 24px;
-            font-weight: 700 !important;
-            color: #ffffff;
-            letter-spacing: -0.2px;
-            line-height: 1.1;
-            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.9), -1px -1px 1px rgba(255,255,255,0.3);
-        }
-
-        .card-bottom {
-            display: flex;
-            justify-content: flex-end; 
-            align-items: flex-end;
-            margin-top: 12px;
-        }
-
-        .card-col-right { 
-            flex: 1; 
-            min-width: 0; 
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end; 
-            text-align: right; 
-        }
-
-        .card-holder-label {
-            font-size: 9px;
-            font-weight: 600 !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 4px;
-        }
-
-        .status-pill {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 9.5px;
-            font-weight: 600 !important;
-            letter-spacing: 0.5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        .metrics-matrix {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .metric-tile {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--border-radius-md);
-            padding: 12px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .metric-header {
-            font-size: 11px;
-            font-weight: 600 !important;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .metric-value {
-            font-size: 15px;
-            font-weight: 700 !important;
-            color: var(--text-dark);
-        }
-
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .action-icon-box {
-            width: 100%;
-            max-width: 54px;
-            aspect-ratio: 1 / 1;
-            background-color: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-burgundy);
-            margin-bottom: 6px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .action-icon-box svg {
-            width: 45%;
-            height: 45%;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.4;
-        }
-
-        .action-item:active .action-icon-box {
-            transform: translateY(-2px);
-            background-color: var(--primary-burgundy);
-            color: #ffffff;
-            border-color: var(--primary-burgundy);
-        }
-
-        .action-label {
-            font-size: 12px;
-            font-weight: 600 !important;
-            color: var(--text-dark);
-            text-align: center;
-        }
-
-        .premium-ai-trigger {
-            position: fixed;
-            bottom: calc(72px + env(safe-area-inset-bottom));
-            right: 16px;
-            width: 54px;
-            height: 54px;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 4000;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .premium-ai-trigger:active {
-            transform: scale(0.9) rotate(-10deg);
-        }
-
-        .ai-button-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            pointer-events: none;
-            animation: floatingBounce 3s ease-in-out infinite;
-        }
-
-        @keyframes floatingBounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(4deg); }
-        }
-
-        .bottom-nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(58px + env(safe-area-inset-bottom));
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 999;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
-        }
-
-        .bottom-nav-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-item-bottom {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: 600 !important;
-            gap: 2px;
-            flex: 1 1 0;
-            width: 20%;
-            height: 100%;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .nav-item-bottom svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2.2;
-            transition: all 0.2s ease;
-        }
-
-        .tab-icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 3px 12px;
-            border-radius: 12px;
-            transition: background-color 0.2s ease;
-        }
-
-        .nav-item-bottom.active-tab {
-            color: var(--primary-burgundy);
-        }
-        
-        .nav-item-bottom.active-tab .tab-icon-wrapper {
-            background-color: #fdf2f4;
-        }
-
-        .nav-item-bottom.active-tab svg {
-            stroke: var(--primary-burgundy);
-            stroke-width: 2.6;
-        }
-
-        .custom-popup-backdrop, .security-modal-backdrop {
+        /* --- IFRAME MENU DRAWER STYLES --- */
+        .menu-drawer-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-            z-index: 6000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9998;
             opacity: 0;
-            transition: opacity 0.25s ease;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
-        .custom-popup-backdrop.show-modal, .security-modal-backdrop.show-modal {
-            display: flex;
+
+        .menu-drawer-backdrop.active {
             opacity: 1;
+            visibility: visible;
         }
 
-        .custom-popup-card, .security-modal-card {
-            background: #ffffff;
-            width: 86%;
-            max-width: 310px;
-            border-radius: 24px;
-            padding: 20px 16px;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-            text-align: center;
-            transform: scale(0.88);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .custom-popup-backdrop.show-modal .custom-popup-card, .security-modal-backdrop.show-modal .security-modal-card {
-            transform: scale(1);
+        .menu-drawer-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 65%;
+            max-width: 260px;
+            height: 100vh;
+            z-index: 9999;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            background: transparent;
+            /* Dark shadow on right edge removed */
+            box-shadow: none;
         }
 
-        .popup-status-badge, .security-modal-icon {
-            width: 44px;
-            height: 44px;
+        .menu-drawer-wrapper.open {
+            transform: translateX(0);
+        }
+
+        /* Close Button (X) at Top Right of Frame */
+        .btn-drawer-close-x {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px auto;
-            background: #fdf2f4;
-            color: var(--primary-burgundy);
+            z-index: 10000;
+            transition: background 0.2s ease, transform 0.15s ease;
         }
-        
-        .popup-status-badge svg, .security-modal-icon svg {
-            width: 22px;
-            height: 22px;
-            fill: none;
+
+        .btn-drawer-close-x:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-drawer-close-x svg {
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             stroke-width: 2.5;
-        }
-        
-        .custom-popup-title, .security-modal-title {
-            font-size: 16px;
-            font-weight: 700 !important;
-            color: #111827;
-            margin-bottom: 6px;
-        }
-        
-        .custom-popup-msg, .security-modal-desc {
-            font-size: 13px;
-            font-weight: 500 !important;
-            color: #6b7280;
-            line-height: 1.45;
-            margin-bottom: 16px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .btn-popup-confirm {
+        .menu-iframe-drawer {
             width: 100%;
-            height: 42px;
-            background: var(--primary-burgundy-gradient);
-            color: #ffffff;
+            height: 100%;
             border: none;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 700 !important;
-            cursor: pointer;
-            box-shadow: 0 8px 16px rgba(128, 0, 32, 0.15);
-        }
-
-        .modal-error-banner {
-            display: none;
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fee2e2;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600 !important;
-            margin-bottom: 14px;
-            text-align: center;
-        }
-        
-        .security-password-input {
-            width: 100%;
-            height: 42px;
-            border-radius: var(--border-radius-md);
-            border: 1.5px solid var(--border-light);
-            padding: 0 12px;
-            font-size: 16px;
-            font-weight: 700 !important;
-            text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 14px;
-            outline: none;
-        }
-        
-        .security-password-input:focus { 
-            border-color: var(--primary-burgundy); 
-        }
-        
-        .security-modal-actions { 
-            display: grid; 
-            grid-template-columns: 1fr 2fr; 
-            gap: 8px; 
-        }
-        
-        .btn-modal-cancel { 
-            height: 40px; 
-            background: #f1f5f9; 
-            color: var(--text-dark); 
-            border: none; 
-            border-radius: var(--border-radius-md); 
-            font-size: 13px; 
-            font-weight: 600 !important;
-            cursor: pointer; 
-        }
-        
-        .btn-modal-submit { 
-            height: 40px; 
-            background: var(--primary-burgundy-gradient); 
-            color: #ffffff; 
-            border: none; 
-            border-radius: var(--border-radius-md); 
-            font-size: 13px; 
-            font-weight: 700 !important;
-            cursor: pointer; 
-        }
-        
-        .security-modal-card.has-error .security-password-input { 
-            border-color: #dc2626; 
-            background-color: #fffafb; 
-        }
-        
-        .security-modal-card.has-error .security-modal-icon { 
-            background: #fef2f2; 
-            color: #dc2626; 
+            background: transparent;
         }
     </style>
 </head>
@@ -788,16 +122,23 @@
         <div class="app-content">
             
             <div class="brand-header">
-                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
-                <button class="profile-btn" id="profileBadgeNode" aria-label="Profile">
+                <!-- 3-line Menu Button Triggering Side Drawer Menu -->
+                <button class="header-menu-btn" id="menuBtnNode" aria-label="Open Navigation Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <!-- Profile Button Navigating to support.html -->
+                <button class="profile-btn" id="profileBadgeNode" aria-label="Support Profile">
                     <svg viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
                     </svg>
                 </button>
             </div>
 
+            <!-- CLICKABLE WHAT'S NEW PILL -->
             <div class="news-container">
-                <div class="news-pill" id="dashboardNewsPill">
+                <div class="news-pill" id="dashboardNewsPill" role="button" tabindex="0">
                     <span class="news-dot"></span>
                     <span class="news-text">What's New Today</span>
                 </div>
@@ -807,7 +148,7 @@
                 <img src="af.png" alt="Af Graphic" class="card-af-watermark">
 
                 <div class="card-top">
-                    <div class="card-holder-label" style="margin-bottom:0; color: #fff;">Secure Account Info</div>
+                    <div class="card-holder-label card-top-label">Secure Account Info</div>
                     <div class="card-identity-box">
                         <button class="btn-card-action" id="eyeToggleBtn" title="Toggle Visibility">
                             <svg viewBox="0 0 24 24">
@@ -932,6 +273,15 @@
             </div>
         </nav>
 
+        <!-- MENU IFRAME DRAWER WRAPPER & BACKDROP WITH CLOSE BUTTON -->
+        <div class="menu-drawer-backdrop" id="menuDrawerBackdrop"></div>
+        <div class="menu-drawer-wrapper" id="menuDrawerWrapper">
+            <button class="btn-drawer-close-x" id="closeDrawerXBtn" aria-label="Close Menu">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <iframe src="menu.html" class="menu-iframe-drawer" id="menuDrawerFrame" title="Navigation Menu"></iframe>
+        </div>
+
         <div class="custom-popup-backdrop" id="customPopup">
             <div class="custom-popup-card">
                 <div class="popup-status-badge bg-lock" id="popupBadge">
@@ -992,6 +342,14 @@
         const popupTitle = document.getElementById('popupTitle');
         const popupBadge = document.getElementById('popupBadge');
 
+        async function hashPin(pin) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pin);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function showGlobalLoader(msg = "Loading...") {
             if (window.AppLoader && typeof window.AppLoader.show === 'function') {
                 window.AppLoader.show(msg);
@@ -1004,13 +362,61 @@
             }
         }
 
-        window.goToPage = function(page) {
-            if (page === '#') return;
-            showGlobalLoader("Navigating...");
-            window.location.replace(page);
+        // Direct 1-click route handler
+        window.goToPage = function(page, msg = "Navigating...") {
+            if (!page || page === '#') return;
+            showGlobalLoader(msg);
+            window.location.href = page;
         };
 
+        // --- Drawer Control Helpers ---
+        window.openMenuDrawer = function() {
+            const wrapper = document.getElementById('menuDrawerWrapper');
+            const backdrop = document.getElementById('menuDrawerBackdrop');
+            if (wrapper) wrapper.classList.add('open');
+            if (backdrop) backdrop.classList.add('active');
+        };
+
+        window.closeMenuDrawer = function() {
+            const wrapper = document.getElementById('menuDrawerWrapper');
+            const backdrop = document.getElementById('menuDrawerBackdrop');
+            if (wrapper) wrapper.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+        };
+
+        // Listen for postMessages coming from menu.html iframe
+        window.addEventListener('message', (event) => {
+            if (event.data === 'closeMenuDrawer') {
+                window.closeMenuDrawer();
+            } else if (event.data && event.data.action === 'navigateTo') {
+                window.closeMenuDrawer();
+                window.goToPage(event.data.url);
+            }
+        });
+
+        // Guaranteed single-tap execution helper
+        function bindInstantRoute(elementId, targetPage, message) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            const handleNavigation = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                showGlobalLoader(message);
+                window.location.href = targetPage;
+            };
+
+            el.addEventListener('touchend', handleNavigation, { passive: false });
+            el.addEventListener('click', handleNavigation);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            setupFastHeaderNavigation();
+            setupNavigationHandlers();
+            setupInterfaceActions();
+
             showGlobalLoader("Syncing Dashboard...");
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
@@ -1018,15 +424,36 @@
                 return;
             }
 
-            await fetchRealAccountId();
-            streamLiveDashboardMetrics();
+            streamLiveUserData();
             updateLocalTaskMetrics();
-            setupInterfaceActions();
             setupSecurityToggles();
-            setupNavigationHandlers();
 
             hideGlobalLoader();
         });
+
+        function setupFastHeaderNavigation() {
+            const menuBtn = document.getElementById('menuBtnNode');
+            const backdrop = document.getElementById('menuDrawerBackdrop');
+            const closeXBtn = document.getElementById('closeDrawerXBtn');
+
+            menuBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.openMenuDrawer();
+            });
+
+            closeXBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.closeMenuDrawer();
+            });
+
+            backdrop?.addEventListener('click', () => {
+                window.closeMenuDrawer();
+            });
+
+            bindInstantRoute('profileBadgeNode', 'support.html', 'Loading Support...');
+        }
 
         function displayAppModal(message) {
             showGlobalLoader("Opening Notice...");
@@ -1037,30 +464,54 @@
                 popupMessage.innerText = message;
                 customPopup.style.display = 'flex';
                 setTimeout(() => customPopup.classList.add('show-modal'), 10);
-            }, 200);
+            }, 50);
         }
 
-        popupConfirmBtn.addEventListener('click', () => {
+        popupConfirmBtn?.addEventListener('click', () => {
             showGlobalLoader("Closing...");
             customPopup.classList.remove('show-modal');
             setTimeout(() => { 
                 customPopup.style.display = 'none'; 
                 hideGlobalLoader();
-            }, 300);
+            }, 150);
         });
 
-        async function fetchRealAccountId() {
-            try {
-                const accRef = ref(db, `users/${activeUserPhone}/accountId`);
-                const snap = await get(accRef);
-                if (snap.exists()) {
-                    decryptedCardNum = snap.val();
+        function streamLiveUserData() {
+            const userRef = ref(db, `users/${activeUserPhone}`);
+            
+            // Listen in real time to the full user object
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+
+                    // Account ID
+                    decryptedCardNum = userData.accountId || ("BG" + activeUserPhone.slice(-6));
+                    if (infoIsVisible) {
+                        document.getElementById('displayWalletId').innerText = decryptedCardNum;
+                    }
+
+                    // Wallet Balance
+                    let parsedBalance = parseFloat(userData.walletBalance);
+                    if (userData.walletBalance === undefined || userData.walletBalance === null || isNaN(parsedBalance)) {
+                        parsedBalance = 0.00;
+                    }
+                    liveBalanceStr = parsedBalance.toFixed(2) + " Birr";
+                    if (infoIsVisible) {
+                        document.getElementById('dashboard-balance').innerText = liveBalanceStr;
+                    }
+
+                    // Referred Users Count
+                    if (userData.referredUsers) {
+                        const totalInvited = Object.keys(userData.referredUsers).length;
+                        document.getElementById('invited-count-metric').innerText = `${totalInvited} ${totalInvited === 1 ? 'Member' : 'Members'}`;
+                    } else {
+                        document.getElementById('invited-count-metric').innerText = "0 Members";
+                    }
                 } else {
                     decryptedCardNum = "BG" + activeUserPhone.slice(-6);
+                    document.getElementById('invited-count-metric').innerText = "0 Members";
                 }
-            } catch(e) {
-                decryptedCardNum = "BG" + activeUserPhone.slice(-6);
-            }
+            });
         }
 
         function updateLocalTaskMetrics() {
@@ -1075,36 +526,13 @@
             document.getElementById('completed-count').innerText = `${currentlyClaimed} / ${totalVideos}`;
         }
 
-        function streamLiveDashboardMetrics() {
-            const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
-            onValue(balanceRef, (snapshot) => {
-                const currentVal = snapshot.val();
-                let parsedBalance = parseFloat(currentVal);
-                if (currentVal === null || isNaN(parsedBalance)) parsedBalance = 0.00;
-                liveBalanceStr = parsedBalance.toFixed(2) + " Birr";
-                if (infoIsVisible) {
-                    document.getElementById('dashboard-balance').innerText = liveBalanceStr;
-                }
-            });
-
-            const referredRef = ref(db, `users/${activeUserPhone}/referredUsers`);
-            onValue(referredRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const totalInvited = Object.keys(snapshot.val()).length;
-                    document.getElementById('invited-count-metric').innerText = `${totalInvited} ${totalInvited === 1 ? 'Member' : 'Members'}`;
-                } else {
-                    document.getElementById('invited-count-metric').innerText = "0 Members";
-                }
-            });
-        }
-
         function setupSecurityToggles() {
             const modal = document.getElementById('securityModal');
             const modalCard = document.getElementById('securityModalCard');
             const errorBanner = document.getElementById('modalErrorBanner');
             const passInput = document.getElementById('securePassInput');
 
-            document.getElementById('eyeToggleBtn').addEventListener('click', () => {
+            document.getElementById('eyeToggleBtn')?.addEventListener('click', () => {
                 showGlobalLoader("Updating Visibility...");
                 setTimeout(() => {
                     hideGlobalLoader();
@@ -1120,19 +548,19 @@
                         modal.style.display = "flex";
                         setTimeout(() => modal.classList.add('show-modal'), 10);
                     }
-                }, 200);
+                }, 50);
             });
 
-            document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('closeModalBtn')?.addEventListener('click', () => {
                 showGlobalLoader("Closing Modal...");
                 modal.classList.remove('show-modal');
                 setTimeout(() => {
                     modal.style.display = "none";
                     hideGlobalLoader();
-                }, 200);
+                }, 150);
             });
 
-            document.getElementById('submitPassBtn').addEventListener('click', async () => {
+            document.getElementById('submitPassBtn')?.addEventListener('click', async () => {
                 showGlobalLoader("Verifying PIN...");
                 const typedPin = passInput.value.trim();
                 if (!typedPin) {
@@ -1144,18 +572,28 @@
                 try {
                     const snap = await get(pinRef);
                     hideGlobalLoader();
-                    if (snap.exists() && String(snap.val()) === typedPin) {
-                        document.getElementById('displayWalletId').innerText = decryptedCardNum;
-                        document.getElementById('dashboard-balance').innerText = liveBalanceStr;
-                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-                        infoIsVisible = true;
-                        modal.classList.remove('show-modal');
-                        setTimeout(() => modal.style.display = "none", 200);
+
+                    if (snap.exists()) {
+                        const storedPin = String(snap.val());
+                        const hashedTypedPin = await hashPin(typedPin);
+
+                        if (storedPin === typedPin || storedPin.toLowerCase() === hashedTypedPin.toLowerCase()) {
+                            document.getElementById('displayWalletId').innerText = decryptedCardNum;
+                            document.getElementById('dashboard-balance').innerText = liveBalanceStr;
+                            document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+                            infoIsVisible = true;
+                            modal.classList.remove('show-modal');
+                            setTimeout(() => modal.style.display = "none", 150);
+                        } else {
+                            modalCard.classList.add('has-error');
+                            errorBanner.innerText = "Invalid security PIN sequence.";
+                            errorBanner.style.display = "block";
+                            passInput.value = "";
+                        }
                     } else {
                         modalCard.classList.add('has-error');
-                        errorBanner.innerText = "Invalid security PIN sequence.";
+                        errorBanner.innerText = "Security PIN not found.";
                         errorBanner.style.display = "block";
-                        passInput.value = "";
                     }
                 } catch (e) {
                     hideGlobalLoader();
@@ -1166,52 +604,20 @@
         }
 
         function setupNavigationHandlers() {
-            document.getElementById('navHome').addEventListener('click', (e) => {
-                e.preventDefault();
-            });
-            document.getElementById('navTasks').addEventListener('click', (e) => {
-                e.preventDefault();
-                showGlobalLoader("Loading Tasks...");
-                goToPage('task.html');
-            });
-            document.getElementById('navAppsCenter').addEventListener('click', (e) => {
-                e.preventDefault();
-                showGlobalLoader("Loading Apps...");
-                goToPage('Apps.html');
-            });
-            document.getElementById('navCampaign').addEventListener('click', (e) => {
-                e.preventDefault();
-                showGlobalLoader("Loading Campaign...");
-                goToPage('lottery.html');
-            });
-            document.getElementById('navWallet').addEventListener('click', (e) => {
-                e.preventDefault();
-                showGlobalLoader("Loading Wallet...");
-                goToPage('wallet.html');
-            });
+            bindInstantRoute('navTasks', 'task.html', 'Loading Tasks...');
+            bindInstantRoute('navAppsCenter', 'Apps.html', 'Loading Apps...');
+            bindInstantRoute('navCampaign', 'lottery.html', 'Loading Campaign...');
+            bindInstantRoute('navWallet', 'wallet.html', 'Loading Wallet...');
         }
 
         function setupInterfaceActions() {
-            document.getElementById('action-send').addEventListener('click', () => displayAppModal("Send feature is currently locked."));
-            document.getElementById('action-receive').addEventListener('click', () => displayAppModal("Receive feature is currently locked."));
-            document.getElementById('action-deposit').addEventListener('click', () => displayAppModal("Deposit feature is currently locked."));
-            document.getElementById('action-withdraw').addEventListener('click', () => displayAppModal("Withdraw feature is currently locked."));
+            document.getElementById('action-send')?.addEventListener('click', () => displayAppModal("Send feature is currently locked."));
+            document.getElementById('action-receive')?.addEventListener('click', () => displayAppModal("Receive feature is currently locked."));
+            document.getElementById('action-deposit')?.addEventListener('click', () => displayAppModal("Deposit feature is currently locked."));
+            document.getElementById('action-withdraw')?.addEventListener('click', () => displayAppModal("Withdraw feature is currently locked."));
             
-            document.getElementById('profileBadgeNode').addEventListener('click', () => {
-                showGlobalLoader("Loading Profile...");
-                goToPage("profile.html");
-            });
-            
-            document.getElementById('dashboardNewsPill').addEventListener('click', () => {
-                showGlobalLoader("Loading News...");
-                goToPage("news.html");
-            });
-
-            document.getElementById('aiChatBotNode').addEventListener('click', (e) => {
-                e.preventDefault();
-                showGlobalLoader("Loading AI Assistant...");
-                goToPage("ai.html");
-            });
+            bindInstantRoute('dashboardNewsPill', 'news.html', 'Loading News...');
+            bindInstantRoute('aiChatBotNode', 'ai.html', 'Loading AI Assistant...');
         }
     </script>
 </body>

@@ -5,11 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Wallet</title>
     <link rel="stylesheet" href="wallet.css">
+    <style>
+        /* Drawer IFrame Overlay Styling */
+        .menu-drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 999999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: flex;
+            pointer-events: none; /* Let backdrop pass clicks unless active */
+        }
+
+        .menu-drawer-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .menu-drawer-container {
+            position: relative;
+            width: 70%;
+            max-width: 280px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 6px 0 20px rgba(0, 0, 0, 0.4);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            pointer-events: auto; /* Ensure clicks reach iframe container */
+            z-index: 1000000;
+        }
+
+        .menu-drawer-backdrop.active .menu-drawer-container {
+            transform: translateX(0);
+        }
+
+        /* Iframe Styles with Pointer Events enabled */
+        .menu-drawer-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            pointer-events: auto; /* Force internal button clickability */
+        }
+
+        /* Close Button inside Iframe Top Header Overlay */
+        .menu-drawer-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000001;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .menu-drawer-close-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
 </head>
 <body>
 
     <!-- Integrated external loader.js file -->
     <script src="loader.js"></script>
+
+    <!-- Side Navigation Menu Drawer (Iframe Overlay) -->
+    <div class="menu-drawer-backdrop" id="menuDrawerBackdrop" onclick="closeMenuDrawer()">
+        <div class="menu-drawer-container" onclick="event.stopPropagation()">
+            <!-- X Close Button -->
+            <button class="menu-drawer-close-btn" id="closeMenuDrawerBtn" onclick="closeMenuDrawer()" aria-label="Close Menu">✕</button>
+            <iframe src="menu.html" class="menu-drawer-iframe" id="menuIframe" title="Navigation Menu"></iframe>
+        </div>
+    </div>
 
     <div class="network-blur-overlay" id="networkBlurGate"></div>
 
@@ -26,7 +115,7 @@
         </svg>
 
         <div class="top-wave-badge-wrapper">
-            <button class="badge-button" id="whatsNewBadgeBtn">
+            <button class="badge-button" id="whatsNewBadgeBtn" onclick="goToPage('bu.html')">
                 <span class="badge-dot"></span>
                 <span class="badge-text">Tech And Application </span>
             </button>
@@ -39,17 +128,17 @@
         <div class="app-content">
             
             <div class="brand-header">
-                <!-- Header 3-Lines Menu Button -->
-                <button class="menu-btn" id="headerAppsMenuBtn" aria-label="Apps Menu" title="Apps">
-                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; stroke: #800020; stroke-width: 2.5; stroke-linecap: round;">
+                <!-- Trigger Menu Drawer Iframe Open -->
+                <button class="menu-btn" id="headerAppsMenuBtn" aria-label="Apps Menu" title="Apps" onclick="openMenuDrawer()">
+                    <svg viewBox="0 0 24 24">
                         <line x1="4" y1="6" x2="20" y2="6"></line>
                         <line x1="4" y1="12" x2="20" y2="12"></line>
                         <line x1="4" y1="18" x2="20" y2="18"></line>
                     </svg>
                 </button>
                 
-                <button class="profile-btn" id="headerProfileBtn" aria-label="Profile">
-                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: #4b5563; stroke: none;">
+                <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" onclick="goToPage('support.html')">
+                    <svg viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
                     </svg>
                 </button>
@@ -110,7 +199,6 @@
 
         <!-- 5-Item Bottom Navigation Bar -->
         <nav class="bottom-nav-bar" id="bottomNavBar">
-            <!-- Item 1 -->
             <div id="navHome" class="nav-item">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24">
@@ -120,7 +208,6 @@
                 </div>
                 Home
             </div>
-            <!-- Item 2 -->
             <div id="navTasks" class="nav-item">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24">
@@ -130,7 +217,6 @@
                 </div>
                 Tasks
             </div>
-            <!-- Item 3: CENTER -->
             <div id="navAppsCenter" class="nav-item">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -142,7 +228,6 @@
                 </div>
                 Apps
             </div>
-            <!-- Item 4 -->
             <div id="navLottery" class="nav-item">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24">
@@ -151,7 +236,6 @@
                 </div>
                 Campaign
             </div>
-            <!-- Item 5 -->
             <div id="navWallet" class="nav-item active-tab">
                 <div class="tab-icon-wrapper">
                     <svg viewBox="0 0 24 24">
@@ -323,6 +407,60 @@
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
         const networkBlurGate = document.getElementById('networkBlurGate');
 
+        // Toggle functions for the drawer menu
+        window.openMenuDrawer = function() {
+            const drawer = document.getElementById('menuDrawerBackdrop');
+            if (drawer) drawer.classList.add('active');
+        };
+
+        window.closeMenuDrawer = function() {
+            const drawer = document.getElementById('menuDrawerBackdrop');
+            if (drawer) drawer.classList.remove('active');
+        };
+
+        // FIXED: Robust iframe button click & navigation interceptor
+        const iframe = document.getElementById('menuIframe');
+        iframe.addEventListener('load', () => {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Force active click styling & pointer event processing inside iframe
+                iframeDoc.body.style.pointerEvents = 'auto';
+
+                // Intercept clicks during capture phase to catch buttons immediately
+                iframeDoc.addEventListener('click', (e) => {
+                    const target = e.target.closest('a, button, [onclick], .menu-item, li');
+                    if (!target) return;
+
+                    let targetPage = target.getAttribute('href') || target.getAttribute('data-href');
+                    
+                    if (!targetPage) {
+                        const onclickAttr = target.getAttribute('onclick');
+                        if (onclickAttr) {
+                            const match = onclickAttr.match(/['"]([^'"]+)['"]/);
+                            if (match) targetPage = match[1];
+                        }
+                    }
+
+                    if (targetPage && targetPage !== '#' && !targetPage.startsWith('javascript:')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        closeMenuDrawer();
+                        window.goToPage(targetPage);
+                    }
+                }, true);
+            } catch (err) {
+                console.warn("Iframe cross-origin restriction or local file access blocking:", err);
+            }
+        });
+
+        async function hashSHA256(text) {
+            const msgBuffer = new TextEncoder().encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function showGlobalLoader(msg = "Loading...") {
             if (window.AppLoader && typeof window.AppLoader.show === 'function') {
                 window.AppLoader.show(msg);
@@ -349,6 +487,7 @@
         window.addEventListener('offline', () => { networkBlurGate.style.opacity = '1'; });
         window.addEventListener('online', () => { networkBlurGate.style.opacity = '0'; });
 
+        // Global page routing function
         window.goToPage = function(page) {
             if (page === '#') return;
             showGlobalLoader("Navigating...");
@@ -360,17 +499,17 @@
             setupLazyImages();
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.goToPage("new2.html");
+                window.goToPage("index.html");
                 return;
             }
 
+            setupNavigationHandlers();
+            setupPopupCloseHandler();
+            
             await calculateCardIdentityMatrix();
             startLiveWalletListeners();
             setupSecurityToggles();
             setupFeatureGateways();
-            setupNavigationHandlers();
-            setupNotificationBadgeHandler();
-            setupPopupCloseHandler();
 
             hideGlobalLoader();
         });
@@ -423,22 +562,6 @@
             document.getElementById('navLottery').addEventListener('click', () => {
                 showGlobalLoader("Loading Campaign...");
                 goToPage('lottery.html');
-            });
-            document.getElementById('headerProfileBtn').addEventListener('click', () => {
-                showGlobalLoader("Loading Profile...");
-                goToPage('profile.html');
-            });
-            document.getElementById('headerAppsMenuBtn').addEventListener('click', () => {
-                showGlobalLoader("Loading Apps...");
-                goToPage('Apps.html');
-            });
-        }
-
-        function setupNotificationBadgeHandler() {
-            const badgeBtn = document.getElementById('whatsNewBadgeBtn');
-            badgeBtn.addEventListener('click', () => {
-                showGlobalLoader("Opening News...");
-                goToPage('bu.html');
             });
         }
 
@@ -553,31 +676,51 @@
             async function handlePinVerification() {
                 showGlobalLoader("Verifying PIN...");
                 const typedPin = passInput.value.trim();
-                if(!typedPin) {
+                if (!typedPin) {
                     hideGlobalLoader();
                     return;
                 }
 
-                const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
                 try {
+                    const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
                     const snap = await get(pinRef);
                     hideGlobalLoader();
-                    if(snap.exists() && String(snap.val()) === typedPin) {
-                        document.getElementById('wallet-card-number').innerText = decryptedCardNum;
-                        document.getElementById('wallet-holder-name').innerText = decryptedFullName;
-                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
-                        infoIsVisible = true;
-                        closeModalTerminal();
+
+                    if (snap.exists()) {
+                        const storedPinVal = String(snap.val()).trim();
+                        const hashedTypedPin = await hashSHA256(typedPin);
+
+                        let isValid = false;
+
+                        if (storedPinVal === hashedTypedPin) {
+                            isValid = true;
+                        } 
+                        else if (storedPinVal === typedPin) {
+                            isValid = true;
+                            set(pinRef, hashedTypedPin).catch(e => console.warn("Pin hash auto-upgrade error:", e));
+                        }
+
+                        if (isValid) {
+                            document.getElementById('wallet-card-number').innerText = decryptedCardNum;
+                            document.getElementById('wallet-holder-name').innerText = decryptedFullName;
+                            document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+                            infoIsVisible = true;
+                            closeModalTerminal();
+                        } else {
+                            modalCard.classList.add('has-error');
+                            errorBanner.innerText = "Incorrect PIN. Please try again.";
+                            errorBanner.style.display = "block";
+                            passInput.value = "";
+                            errorBanner.style.animation = 'none';
+                            errorBanner.offsetHeight; 
+                            errorBanner.style.animation = null;
+                        }
                     } else {
                         modalCard.classList.add('has-error');
-                        errorBanner.innerText = "Incorrect PIN. Please try again.";
+                        errorBanner.innerText = "No security PIN set for this account.";
                         errorBanner.style.display = "block";
-                        passInput.value = "";
-                        errorBanner.style.animation = 'none';
-                        errorBanner.offsetHeight; 
-                        errorBanner.style.animation = null;
                     }
-                } catch(e) {
+                } catch (e) {
                     hideGlobalLoader();
                     modalCard.classList.add('has-error');
                     errorBanner.innerText = "Connection error. Please try again.";
@@ -643,31 +786,8 @@
 
         function resolveTransactionIcon(title) {
             let targetText = (title || '').toLowerCase();
-
-            // All app payment transactions & purchases -> paid.jpg
-            if (
-                targetText.includes('app payment') || 
-                targetText.includes('paid') || 
-                targetText.includes('app purchase') || 
-                targetText.includes('app pay') ||
-                targetText.includes('purchased') ||
-                targetText.includes('purchase')
-            ) {
-                return "paid.jpg";
-            }
-
-            // All task / referral / friend invitations -> s2.jpg
-            if (
-                targetText.includes('referral') ||
-                targetText.includes('invitation') || 
-                targetText.includes('invited') || 
-                targetText.includes('invite') || 
-                targetText.includes('friend') || 
-                targetText.includes('bingo')
-            ) {
-                return "s2.jpg";
-            }
-
+            if (targetText.includes('app payment') || targetText.includes('paid') || targetText.includes('app purchase') || targetText.includes('app pay') || targetText.includes('purchased') || targetText.includes('purchase')) return "paid.jpg";
+            if (targetText.includes('referral') || targetText.includes('invitation') || targetText.includes('invited') || targetText.includes('invite') || targetText.includes('friend') || targetText.includes('bingo')) return "s2.jpg";
             if (targetText.includes('time')) return "t3.jpg";
             if (targetText.includes('key')) return "30.png";
             if (targetText.includes('like') || targetText.includes('liked')) return "10.png";
@@ -690,7 +810,6 @@
             if (targetText.includes('facebook')) return "f.jpg";
             if (targetText.includes('youtube')) return "y.jpg";
             if (targetText.includes('tiktok')) return "t.jpg";
-
             return "";
         }
 
@@ -866,31 +985,23 @@
 
             function formatTitleWithGrammar(title) {
                 let text = (title || '').toLowerCase().trim();
-                
                 if (text.includes('time')) return "Time Stop";
                 if (text.includes('key')) return "Get Keys";
                 if (text.includes('like') || text.includes('liked')) return "Liked Video";
                 if (text.includes('monthly') || text.includes('lottery ticket')) return "Lottery Ticket";
-                
                 if (text.includes('challenge') || text.includes('arena')) {
                     let typeLabel = "";
-                    if (text.includes('easy hard') || text.includes('easy/hard')) {
-                        typeLabel = "Easy Hard";
-                    } else if (text.includes('hard easy') || text.includes('hard/easy')) {
-                        typeLabel = "Hard Easy";
-                    } else if (text.includes('easy easy') || text.includes('easy')) {
-                        typeLabel = "Easy";
-                    } else if (text.includes('hard hard') || text.includes('hard')) {
-                        typeLabel = "Hard";
-                    } else if (text.includes('medium')) {
-                        typeLabel = "Medium";
-                    } else {
+                    if (text.includes('easy hard') || text.includes('easy/hard')) typeLabel = "Easy Hard";
+                    else if (text.includes('hard easy') || text.includes('hard/easy')) typeLabel = "Hard Easy";
+                    else if (text.includes('easy easy') || text.includes('easy')) typeLabel = "Easy";
+                    else if (text.includes('hard hard') || text.includes('hard')) typeLabel = "Hard";
+                    else if (text.includes('medium')) typeLabel = "Medium";
+                    else {
                         let levelMatch = text.match(/level\s*\d+/i) || text.match(/\d+/);
                         typeLabel = levelMatch ? `Level ${levelMatch[0]}` : "";
                     }
                     return typeLabel ? `Challenge ${typeLabel}` : "Challenge Arena";
                 }
-
                 if (text.includes('commercial bank') || text.includes('cbe')) return "Commercial Bank of Ethiopia";
                 if (text.includes('cbe birr')) return "CBE Birr";
                 if (text.includes('telebirr') || text.includes('tele bir')) return "Telebirr";
@@ -909,7 +1020,6 @@
                 if (text.includes('bajaj')) return "Bajaj";
                 if (text.includes('bingo')) return text.includes('win') ? "Bingo Win Reward" : "Bingo Prize";
                 if (text.includes('invitation') || text.includes('invited') || text.includes('invite') || text.includes('friend') || text.includes('referral')) return title || "Referral Bonus";
-
                 return title.charAt(0).toUpperCase() + title.slice(1);
             }
 
@@ -927,12 +1037,8 @@
                             const status = (tx.status || '').toLowerCase();
                             let rawTitle = (tx.title || '').toLowerCase();
 
-                            if (
-                                status === 'pending' || status === 'rejected' || 
-                                status === 'canceled' || status === 'cancelled' ||
-                                rawTitle.includes('pending') || rawTitle.includes('rejected') ||
-                                rawTitle.includes('canceled') || rawTitle.includes('cancelled')
-                            ) {
+                            if (status === 'pending' || status === 'rejected' || status === 'canceled' || status === 'cancelled' ||
+                                rawTitle.includes('pending') || rawTitle.includes('rejected') || rawTitle.includes('canceled') || rawTitle.includes('cancelled')) {
                                 return;
                             }
 
@@ -999,10 +1105,7 @@
                 masterTransactionList.forEach(tx => {
                     const cardRow = document.createElement('div');
                     cardRow.className = 'history-card';
-
-                    cardRow.onclick = () => {
-                        launchReceiptPopup(tx.id, tx);
-                    };
+                    cardRow.onclick = () => launchReceiptPopup(tx.id, tx);
 
                     const isIncome = tx.type === 'income' || tx.amount > 0;
                     const stylingClass = isIncome ? 'income' : 'expense';

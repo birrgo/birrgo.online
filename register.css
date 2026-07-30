@@ -260,18 +260,40 @@ html, body {
     padding-left: 98px;
 }
 
+/* --- FIXED WRAPPER AND EYE BUTTON --- */
 .input-icon-right {
     position: absolute;
-    right: 14px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    color: #94a3b8;
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
+    z-index: 10; /* Elevates wrapper above the input box */
+}
+
+.pin-toggle-btn {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 6px; /* Increases clickable tap target for mobile */
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: color 0.2s ease;
+    pointer-events: auto !important; /* Force clickability */
+}
+
+.pin-toggle-btn:hover {
+    color: var(--primary-burgundy);
+}
+
+.pin-toggle-btn svg,
+.pin-toggle-btn svg * {
+    pointer-events: none; /* Prevents clicks targeting inner paths instead of the button */
 }
 
 /* OTP Architecture matching style guide dimensions */

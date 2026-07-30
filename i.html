@@ -390,6 +390,18 @@
         const totalTicketsCount = 5000; 
         let currentAlertCallback = null;
 
+        /**
+         * Helper Function: Hash input PIN using SHA-256 Web Crypto API
+         */
+        async function hashPinSHA256(pinText) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pinText);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
         function removeBlurOverlay() {
             const overlay = document.getElementById('pwaBlurOverlay');
             if(overlay) overlay.classList.add('loaded');
@@ -623,8 +635,13 @@
                 const accountSnap = await get(ref(db, `users/${completeRawCardSequence}`));
                 if(accountSnap.exists()) {
                     const userData = accountSnap.val();
+                    const dbStoredPin = userData.securityPin || userData.pin || "";
                     
-                    if(userData.securityPin === pinInput || userData.pin === pinInput) {
+                    // Hash the user's input PIN via SHA-256
+                    const hashedEnteredPin = await hashPinSHA256(pinInput);
+
+                    // Check for match: Raw text PIN OR SHA-256 Hashed PIN match
+                    if(dbStoredPin === pinInput || dbStoredPin === hashedEnteredPin) {
                         closeVerificationModal();
                         await executeTicketPurchasePipeline();
                     } else {
@@ -638,6 +655,7 @@
                     openCustomAlert("Configuration Error", `Profile ledger node [${completeRawCardSequence}] not matched. Check path configuration layout.`, "error");
                 }
             } catch (err) {
+                console.error("PIN Hash/Verification Error:", err);
                 submitVerifyBtn.disabled = false;
                 submitVerifyBtn.innerText = "Authorize";
                 openCustomAlert("Network Error", "SECURITY HANDSHAKE EXCEPTION.", "error");

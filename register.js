@@ -1,42 +1,48 @@
+// 1. Import ONLY the initialized db instance from your local config
+import { db } from "./db.js";
+
+// 2. Import ALL database utility functions from the exact same Firebase CDN link
 import { 
-    db, 
     ref, 
     get, 
     set, 
     runTransaction, 
-    push 
-} from "./db.js";
-
-import { 
+    push,
     query, 
     orderByChild, 
     equalTo 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+// Alphabetically ordered list of 23 countries with exact max digit lengths
 const countries = [
-    { name: "Ethiopia", code: "+251", flag: "🇪🇹" },
-    { name: "Kenya", code: "+254", flag: "🇰🇪" },
-    { name: "United States", code: "+1", flag: "🇺🇸" },
-    { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-    { name: "United Arab Emirates", code: "+971", flag: "🇦🇪" },
-    { name: "Sudan", code: "+249", flag: "🇸🇩" },
-    { name: "Somalia", code: "+252", flag: "🇸🇴" },
-    { name: "Djibouti", code: "+253", flag: "🇩🇯" },
-    { name: "Uganda", code: "+256", flag: "🇺🇬" },
-    { name: "Tanzania", code: "+255", flag: "🇹🇿" },
-    { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-    { name: "Ghana", code: "+233", flag: "🇬🇭" },
-    { name: "South Africa", code: "+27", flag: "🇿🇦" },
-    { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" },
-    { name: "Canada", code: "+1", flag: "🇨🇦" },
-    { name: "Germany", code: "+49", flag: "🇩🇪" },
-    { name: "France", code: "+33", flag: "🇫🇷" },
-    { name: "India", code: "+91", flag: "🇮🇳" },
-    { name: "China", code: "+86", flag: "🇨🇳" },
-    { name: "Australia", code: "+61", flag: "🇦🇺" }
+    { name: "Australia", code: "+61", flag: "🇦🇺", maxLen: 9 },
+    { name: "Bahrain", code: "+973", flag: "🇧🇭", maxLen: 8 },
+    { name: "Canada", code: "+1", flag: "🇨🇦", maxLen: 10 },
+    { name: "Djibouti", code: "+253", flag: "🇩🇯", maxLen: 8 },
+    { name: "Egypt", code: "+20", flag: "🇪🇬", maxLen: 10 },
+    { name: "Eritrea", code: "+291", flag: "🇪🇷", maxLen: 7 },
+    { name: "Ethiopia", code: "+251", flag: "🇪🇹", maxLen: 9 },
+    { name: "France", code: "+33", flag: "🇫🇷", maxLen: 9 },
+    { name: "Germany", code: "+49", flag: "🇩🇪", maxLen: 11 },
+    { name: "Israel", code: "+972", flag: "🇮🇱", maxLen: 9 },
+    { name: "Italy", code: "+39", flag: "🇮🇹", maxLen: 10 },
+    { name: "Jordan", code: "+962", flag: "🇯🇴", maxLen: 9 },
+    { name: "Kenya", code: "+254", flag: "🇰🇪", maxLen: 9 },
+    { name: "Kuwait", code: "+965", flag: "🇰🇼", maxLen: 8 },
+    { name: "Oman", code: "+968", flag: "🇴🇲", maxLen: 8 },
+    { name: "Saudi Arabia", code: "+966", flag: "🇸🇦", maxLen: 9 },
+    { name: "Somalia", code: "+252", flag: "🇸🇴", maxLen: 9 },
+    { name: "South Africa", code: "+27", flag: "🇿🇦", maxLen: 9 },
+    { name: "Sudan", code: "+249", flag: "🇸🇩", maxLen: 9 },
+    { name: "Turkey", code: "+90", flag: "🇹🇷", maxLen: 10 },
+    { name: "United Arab Emirates", code: "+971", flag: "🇦🇪", maxLen: 9 },
+    { name: "United Kingdom", code: "+44", flag: "🇬🇧", maxLen: 10 },
+    { name: "United States", code: "+1", flag: "🇺🇸", maxLen: 10 }
 ];
 
 let activeSelectedPrefix = "+251";
+let activeMaxPhoneLength = 9;
+
 const overlay = document.getElementById('countryModalOverlay');
 const listScrollContainer = document.getElementById('countryListScroll');
 const searchInput = document.getElementById('modalSearchInput');
@@ -46,6 +52,27 @@ let countdownTimer;
 
 function sanitizeEmail(email) {
     return email.toLowerCase().replace(/\./g, '_').replace(/@/g, '_at_');
+}
+
+async function hashPin(pin) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(pin);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function isStrongPin(pin) {
+    if (!/^\d{6}$/.test(pin)) return false;
+    if (/^(\d)\1{5}$/.test(pin)) return false;
+
+    const sequentialAscending = "0123456789";
+    const sequentialDescending = "9876543210";
+    if (sequentialAscending.includes(pin) || sequentialDescending.includes(pin)) return false;
+
+    if (pin.slice(0, 2).repeat(3) === pin || pin.slice(0, 3).repeat(2) === pin) return false;
+
+    return true;
 }
 
 function populateCountries(filterText = "") {
@@ -69,6 +96,14 @@ function populateCountries(filterText = "") {
             document.getElementById('currentFlag').innerText = country.flag;
             document.getElementById('currentCode').innerText = country.code;
             activeSelectedPrefix = country.code;
+            activeMaxPhoneLength = country.maxLen;
+
+            const phoneInput = document.getElementById('regPhone');
+            phoneInput.maxLength = activeMaxPhoneLength;
+            if (phoneInput.value.length > activeMaxPhoneLength) {
+                phoneInput.value = phoneInput.value.slice(0, activeMaxPhoneLength);
+            }
+
             closeCountryModal();
         });
         listScrollContainer.appendChild(row);
@@ -93,10 +128,77 @@ searchInput.addEventListener('input', (e) => {
     populateCountries(e.target.value);
 });
 
+/* ==========================================================================
+   PIN EYE VISIBILITY TOGGLE & STRENGTH CHECKER LOGIC
+   ========================================================================== */
+function setupPinToggle(btnId, inputId) {
+    const btn = document.getElementById(btnId);
+    const input = document.getElementById(inputId);
+
+    if (!btn || !input) return;
+
+    const eyeOpenSVG = `
+        <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </svg>`;
+    
+    const eyeClosedSVG = `
+        <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>`;
+
+    btn.addEventListener('click', (e) => {
+        e.preventDefault(); 
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.innerHTML = isPassword ? eyeClosedSVG : eyeOpenSVG;
+    });
+}
+
+function initPinFeedback() {
+    const regPinInput = document.getElementById('regPin');
+    const regConfirmPinInput = document.getElementById('regConfirmPin');
+    const pinFeedback = document.getElementById('pinFeedback');
+    const confirmPinFeedback = document.getElementById('confirmPinFeedback');
+
+    if (!regPinInput || !regConfirmPinInput) return;
+
+    regPinInput.addEventListener('input', (e) => {
+        const pin = e.target.value;
+        if (pin.length === 6) {
+            const valid = isStrongPin(pin);
+            pinFeedback.innerText = valid ? "✓ Strong PIN" : "⚠️ Avoid simple (123456) or repeating (111111) digits";
+            pinFeedback.style.color = valid ? "#065f46" : "#800020";
+        } else {
+            pinFeedback.innerText = "";
+        }
+    });
+
+    regConfirmPinInput.addEventListener('input', () => {
+        if (regConfirmPinInput.value.length === 6) {
+            if (regConfirmPinInput.value === regPinInput.value) {
+                confirmPinFeedback.innerText = "✓ PINs match";
+                confirmPinFeedback.style.color = "#065f46";
+            } else {
+                confirmPinFeedback.innerText = "⚠️ PINs do not match";
+                confirmPinFeedback.style.color = "#800020";
+            }
+        } else {
+            confirmPinFeedback.innerText = "";
+        }
+    });
+}
+
 let referrerAccountId = "";
 document.addEventListener('DOMContentLoaded', () => {
-    // FIX: Set explicit routing state to prevent external index redirection conflicts
     localStorage.setItem('birrgo_last_page', 'register.html');
+
+    // Attach eye button listeners safely
+    setupPinToggle('toggleRegPin', 'regPin');
+    setupPinToggle('toggleRegConfirmPin', 'regConfirmPin');
+    initPinFeedback();
 
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
@@ -106,10 +208,17 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('referrer-label').innerHTML = `Invited by User: <span style="color:var(--primary-burgundy);font-weight:700;">${referrerAccountId}</span>`;
         }
     }
+
+    const phoneInput = document.getElementById('regPhone');
+    phoneInput.maxLength = activeMaxPhoneLength;
 });
 
 document.getElementById('regPhone').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    let cleanVal = e.target.value.replace(/[^0-9]/g, '').replace(/^0+/, '');
+    if (cleanVal.length > activeMaxPhoneLength) {
+        cleanVal = cleanVal.slice(0, activeMaxPhoneLength);
+    }
+    e.target.value = cleanVal;
 });
 
 function showNotification(message, isSuccess = false) {
@@ -210,23 +319,28 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     
     const submitBtn = document.getElementById('submitBtn');
     const rawPhone = document.getElementById('regPhone').value.trim();
-    const fullName = document.getElementById('regName').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
+    
+    const firstName = document.getElementById('regFirstName').value.trim();
+    const middleName = document.getElementById('regMiddleName').value.trim();
+    const lastName = document.getElementById('regLastName').value.trim();
+
+    const email = document.getElementById('regEmail').value.trim().toLowerCase(); 
     const pin = document.getElementById('regPin').value;
     const confirmPin = document.getElementById('regConfirmPin').value;
 
     let cleanPhone = rawPhone.replace(/^0+/, '');
     
-    if (cleanPhone.length < 6 || cleanPhone.length > 14) {
-        showNotification("Please enter a valid phone number.");
+    if (cleanPhone.length !== activeMaxPhoneLength) {
+        showNotification(`Please enter a valid ${activeMaxPhoneLength}-digit phone number for the selected country.`);
         return;
     }
 
-    const nameParts = fullName.split(/\s+/).filter(part => part.length > 0);
-    if (nameParts.length !== 3) {
-        showNotification("Please enter exactly 3 names: First, Middle, and Last name.");
+    if (!firstName || !middleName || !lastName) {
+        showNotification("Please enter all 3 names: First, Middle, and Last name.");
         return;
     }
+
+    const fullName = `${firstName} ${middleName} ${lastName}`;
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
@@ -234,11 +348,11 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         return;
     }
 
-    /* CHANGED: PIN length validation changed from 4 to 6 */
-    if (pin.length !== 6 || !/^\d+$/.test(pin)) {
-        showNotification("PIN must be a secure 6-digit combination.");
+    if (!isStrongPin(pin)) {
+        showNotification("Weak PIN code. Avoid simple sequences (123456) or repeating numbers (000000, 121212).");
         return;
     }
+
     if (pin !== confirmPin) {
         showNotification("PIN configurations do not match.");
         return;
@@ -257,12 +371,35 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
             return;
         }
 
+        const usersRef = ref(db, 'users');
+        const emailQuery = query(usersRef, orderByChild('emailAddress'), equalTo(email));
+        const emailSnapshot = await get(emailQuery);
+
+        if (emailSnapshot.exists()) {
+            showNotification("This email address is already in use by another account.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Continue to Verification";
+            return;
+        }
+
+        const sanitizedEmailKey = sanitizeEmail(email);
+        const otpVerifySnapshot = await get(ref(db, `otps/${sanitizedEmailKey}`));
+        
+        if (otpVerifySnapshot.exists() && otpVerifySnapshot.val().verified === true) {
+            showNotification("This email has already been verified and used.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Continue to Verification";
+            return;
+        }
+
+        const encryptedPin = await hashPin(pin);
+
         signupPayload = {
             cleanPhone,
             fullName,
-            email,
-            pin,
-            firstNameOnly: nameParts[0],
+            email, 
+            pin: encryptedPin,
+            firstNameOnly: firstName,
             formatGlobalPhone: activeSelectedPrefix + cleanPhone
         };
 
@@ -277,8 +414,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         await sendVerificationOtp(email);
 
     } catch (error) {
-        console.error("Firebase read failure: ", error);
-        showNotification("Network error. Try checking your connection.");
+        console.error("Firebase lookup failure: ", error);
+        showNotification(`Database Error: ${error.message || 'Check network connection'}`);
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Continue to Verification";
@@ -311,9 +448,9 @@ document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
         }
 
         const dbOtpRecord = otpSnapshot.val();
-
-        if (Date.now() > dbOtpRecord.expiresAt) {
-            showNotification("This code has expired. Please request a new one.");
+        const currentTime = Date.now();
+        if (currentTime > dbOtpRecord.expiresAt) {
+            showNotification("This code has expired (15 min limit). Please request a new one.");
             verifyOtpBtn.disabled = false;
             verifyOtpBtn.innerText = "Verify OTP & Create Account";
             return;
@@ -327,8 +464,6 @@ document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
         }
 
         verifyOtpBtn.innerText = "Creating Account...";
-
-        await set(ref(db, `otps/${sanitizedEmailKey}/verified`), true);
 
         const cleanPhone = signupPayload.cleanPhone;
         const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
@@ -418,10 +553,10 @@ document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
             }
         }
 
+        await set(ref(db, `otps/${sanitizedEmailKey}/verified`), true);
+
         showNotification("Account verified & created successfully!", true);
         localStorage.setItem('auth_session_phone', cleanPhone);
-
-        // FIX: Prior to leaving the page, switch tracking explicitly to target destination
         localStorage.setItem('birrgo_last_page', 'dashboard.html');
 
         setTimeout(() => {
@@ -430,7 +565,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
 
     } catch (error) {
         console.error("Database Write Error: ", error);
-        showNotification("Connection lost. Please try again.");
+        showNotification(`Database error: ${error.message || 'Check network connection'}`);
         verifyOtpBtn.disabled = false;
         verifyOtpBtn.innerText = "Verify OTP & Create Account";
     }

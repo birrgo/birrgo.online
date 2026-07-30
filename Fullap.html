@@ -458,6 +458,15 @@
 
     let currentAppData = null;
 
+    // Helper function: Encrypts plain PIN using Web Crypto SHA-256
+    async function hashPinSHA256(plainPin) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(plainPin);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     function handleImageLoaded(imgElem) {
       if (imgElem.complete) {
         imgElem.classList.add('img-loaded');
@@ -655,8 +664,23 @@
         confirmBtn.disabled = true;
         confirmBtn.textContent = "Processing...";
 
+        // Fetch stored PIN from Firebase
         const pinSnap = await db.ref(`users/${activeUserPhone}/securityPin`).once('value');
-        if (!pinSnap.exists() || String(pinSnap.val()) !== pinInput) {
+        if (!pinSnap.exists()) {
+          errBanner.textContent = "Security PIN not found. Set up your PIN first.";
+          errBanner.style.display = 'block';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = `Pay ${price} Birr & Install`;
+          return;
+        }
+
+        const storedPin = String(pinSnap.val());
+        const hashedInputPin = await hashPinSHA256(pinInput);
+
+        // Verify SHA-256 hash or fallback to unhashed string
+        const isPinValid = (storedPin === hashedInputPin) || (storedPin === pinInput);
+
+        if (!isPinValid) {
           errBanner.textContent = "Incorrect PIN. Try again.";
           errBanner.style.display = 'block';
           confirmBtn.disabled = false;

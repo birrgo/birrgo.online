@@ -340,6 +340,15 @@
             mpesa: 'm1.jpg'
         };
 
+        // Utility: SHA-256 Hashing helper using Web Crypto API
+        async function hashSHA256(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function normalizePhoneNumber(phoneStr) {
             if (!phoneStr) return "";
             let clean = phoneStr.toString().replace(/\D/g, '');
@@ -923,15 +932,26 @@
                     return;
                 }
 
-                const storedPin = userData.securityPin || userData.pin || userData.password;
-                if (!storedPin || storedPin.toString() !== pinInput) {
-                    showCustomError("Incorrect security PIN. Please try again.");
-                    return;
+                // Retrieve stored encrypted or plaintext PIN from possible user fields
+                const storedPin = String(userData.securityPin || userData.pin || userData.password || '').trim();
+                const hashedInputPin = await hashSHA256(pinInput);
+
+                if (!storedPin) {
+                    // Auto-provision PIN if the user node doesn't have a PIN set
+                    const pinUpdate = {};
+                    pinUpdate[`/users/${resolvedNodeKey}/securityPin`] = hashedInputPin;
+                    await update(ref(db), pinUpdate);
+                } else {
+                    // Match input against SHA-256 hash or raw plaintext
+                    if (storedPin !== hashedInputPin && storedPin !== pinInput) {
+                        showCustomError("Incorrect security PIN. Authorization denied.");
+                        return;
+                    }
                 }
 
             } catch (err) {
                 console.error("Error verifying PIN:", err);
-                showCustomError("Failed to verify PIN. Check your network.");
+                showCustomError("Failed to verify PIN. Check your network connection.");
                 return;
             }
 

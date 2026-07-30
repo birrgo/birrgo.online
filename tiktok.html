@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - TikTok Rewards</title>
+    <link rel="stylesheet" href="wallet.css">
+    <style>
+        .reward-tier-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .tier-item {
+            background: rgba(128, 0, 32, 0.25);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tier-views {
+            font-size: 13px;
+            color: #d1d1d1;
+        }
+
+        .tier-reward {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-top: 2px;
+        }
+
+        .claim-form-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a0012;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: #800020;
+        }
+
+        .calculated-reward-banner {
+            background: #fff8e1;
+            border: 1px dashed #ffa000;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            color: #5d4037;
+            margin-bottom: 15px;
+        }
+
+        .calculated-reward-banner strong {
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 18px;
+        }
+
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            accent-color: #800020;
+            cursor: pointer;
+        }
+
+        .btn-submit-claim {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-submit-claim:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit-claim:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3e0; color: #ef6c00; }
+        .status-approved { background: #e8f5e9; color: #2e7d32; }
+        .status-rejected { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <!-- External app loader -->
+    <script src="loader.js"></script>
+
+    <div class="network-blur-overlay" id="networkBlurGate"></div>
+
+    <div class="app-view" id="mainAppView">
+
+        <!-- Top Header Wave -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="top-wave-badge-wrapper">
+            <button class="badge-button" onclick="goToPage('dashboard.html')">
+                <span class="badge-dot"></span>
+                <span class="badge-text">TikTok Creator Rewards</span>
+            </button>
+        </div>
+
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#2b000a"/>
+        </svg>
+
+        <div class="app-content">
+
+            <div class="brand-header">
+                <button class="menu-btn" onclick="goToPage('dashboard.html')" aria-label="Back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <h3 style="color: #ffffff; margin: 0; font-size: 18px;">TikTok Monetization</h3>
+                <button class="profile-btn" onclick="goToPage('support.html')" aria-label="Support">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Reward Tiers Breakdown -->
+            <div class="reward-tier-card">
+                <h4 style="margin: 0 0 6px 0; color: #ffd700;">🎵 Creator Reward Tiers</h4>
+                <p style="margin: 0; font-size: 12px; color: #e0e0e0; line-height: 1.4;">
+                    Post a TikTok video about <strong>BirrGo</strong>. Reach views and claim your cash payout directly into your account balance upon admin review!
+                </p>
+                
+                <div class="tier-grid">
+                    <div class="tier-item"><div class="tier-views">10K Views</div><div class="tier-reward">1,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">20K Views</div><div class="tier-reward">2,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">50K Views</div><div class="tier-reward">5,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">100K Views</div><div class="tier-reward">10,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">200K Views</div><div class="tier-reward">20,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">300K Views</div><div class="tier-reward">30,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">500K Views</div><div class="tier-reward">50,000 ETB</div></div>
+                    <div class="tier-item"><div class="tier-views">1M Views</div><div class="tier-reward">100,000 ETB</div></div>
+                </div>
+            </div>
+
+            <!-- Claim Submission Form -->
+            <div class="claim-form-card">
+                <h3 style="margin: 0 0 15px 0; color: #4a0012; font-size: 16px;">Submit Video Link</h3>
+                
+                <form id="tiktokClaimForm">
+                    <div class="form-group">
+                        <label for="videoUrl">TikTok Video Link</label>
+                        <input type="url" id="videoUrl" class="form-input" placeholder="https://www.tiktok.com/@user/video/..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="viewTier">Select Reached Views</label>
+                        <select id="viewTier" class="form-select" required>
+                            <option value="" disabled selected>Select View Tier</option>
+                            <option value="10000">10,000 Views (10K)</option>
+                            <option value="20000">20,000 Views (20K)</option>
+                            <option value="50000">50,000 Views (50K)</option>
+                            <option value="100000">100,000 Views (100K)</option>
+                            <option value="200000">200,000 Views (200K)</option>
+                            <option value="300000">300,000 Views (300K)</option>
+                            <option value="500000">50,0000 Views (500K)</option>
+                            <option value="1000000">1,000,000 Views (1M)</option>
+                        </select>
+                    </div>
+
+                    <div class="calculated-reward-banner" id="rewardPreview">
+                        Potential Payout: <strong id="rewardAmount">0.00 ETB</strong>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="confirmBirrGoTopic" required>
+                        <label for="confirmBirrGoTopic">I confirm that this video is exclusively about <strong>BirrGo</strong> platform.</label>
+                    </div>
+
+                    <button type="submit" class="btn-submit-claim" id="submitBtn">Submit for Admin Review</button>
+                </form>
+            </div>
+
+            <!-- User Submissions History -->
+            <h2 class="section-heading">Your Submitted Claims</h2>
+            <div class="history-stack" id="claimsHistoryContainer">
+                <div class="history-loading-msg">Loading claims history...</div>
+            </div>
+
+        </div>
+
+        <!-- 5-Item Bottom Navigation Bar -->
+        <nav class="bottom-nav-bar" id="bottomNavBar">
+            <div onclick="goToPage('dashboard.html')" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                Home
+            </div>
+            <div onclick="goToPage('task.html')" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                </div>
+                Tasks
+            </div>
+            <div onclick="goToPage('Apps.html')" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="2" />
+                        <rect x="14" y="3" width="7" height="7" rx="2" />
+                        <rect x="14" y="14" width="7" height="7" rx="2" />
+                        <rect x="3" y="14" width="7" height="7" rx="2" />
+                    </svg>
+                </div>
+                Apps
+            </div>
+            <div onclick="goToPage('lottery.html')" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                Campaign
+            </div>
+            <div onclick="goToPage('wallet.html')" class="nav-item">
+                <div class="tab-icon-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                </div>
+                Wallet
+            </div>
+        </nav>
+
+        <!-- Dynamic Modal -->
+        <div class="custom-popup-backdrop" id="customPopup">
+            <div class="custom-popup-card">
+                <div class="popup-status-badge bg-success" id="popupBadge">
+                    <svg viewBox="0 0 24 24" id="popupIcon">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
+                <p class="custom-popup-msg" id="popupMessage">Message information.</p>
+                <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase Script Engine -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+
+        const rewardTiers = {
+            "10000": 1000,
+            "20000": 2000,
+            "50000": 5000,
+            "100000": 10000,
+            "200000": 20000,
+            "300000": 30000,
+            "500000": 50000,
+            "1000000": 100000
+        };
+
+        function showGlobalLoader(msg = "Loading...") {
+            if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+                window.AppLoader.show(msg);
+            }
+        }
+
+        function hideGlobalLoader() {
+            if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+                window.AppLoader.hide();
+            }
+        }
+
+        window.goToPage = function(page) {
+            showGlobalLoader("Navigating...");
+            window.location.replace(page);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.goToPage("index.html");
+                return;
+            }
+
+            setupTierCalculation();
+            setupFormSubmission();
+            listenToUserClaims();
+        });
+
+        // Dynamic view to cash conversion
+        function setupTierCalculation() {
+            const selectEl = document.getElementById('viewTier');
+            const rewardAmountEl = document.getElementById('rewardAmount');
+
+            selectEl.addEventListener('change', () => {
+                const views = selectEl.value;
+                const payout = rewardTiers[views] || 0;
+                rewardAmountEl.innerText = `${payout.toLocaleString()} ETB`;
+            });
+        }
+
+        // Handle Claim Form Submit
+        function setupFormSubmission() {
+            const form = document.getElementById('tiktokClaimForm');
+            const videoUrlInput = document.getElementById('videoUrl');
+            const viewTierSelect = document.getElementById('viewTier');
+            const birrGoCheck = document.getElementById('confirmBirrGoTopic');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const videoUrl = videoUrlInput.value.trim();
+                const viewsCount = parseInt(viewTierSelect.value);
+                const isBirrGoTopic = birrGoCheck.checked;
+                const rewardAmount = rewardTiers[viewsCount];
+
+                // TikTok Link Syntax Validation
+                if (!videoUrl.includes('tiktok.com')) {
+                    displayModal('error', 'Invalid Link', 'Please enter a valid TikTok video URL.');
+                    return;
+                }
+
+                if (!isBirrGoTopic) {
+                    displayModal('error', 'Topic Verification', 'Your video must be about BirrGo to qualify.');
+                    return;
+                }
+
+                showGlobalLoader("Submitting Claim...");
+
+                try {
+                    const claimsRef = ref(db, `tiktokClaims`);
+                    const newClaimRef = push(claimsRef);
+
+                    const claimPayload = {
+                        claimId: newClaimRef.key,
+                        userPhone: activeUserPhone,
+                        videoUrl: videoUrl,
+                        claimedViews: viewsCount,
+                        rewardAmount: rewardAmount,
+                        status: 'pending', // Pending Admin approval
+                        isBirrGoTopic: true,
+                        timestamp: new Date().toLocaleString(),
+                        createdAt: Date.now()
+                    };
+
+                    await set(newClaimRef, claimPayload);
+                    hideGlobalLoader();
+
+                    displayModal('success', 'Submitted!', 'Your TikTok video claim has been submitted. The admin will review it shortly and credit your balance.', () => {
+                        form.reset();
+                        document.getElementById('rewardAmount').innerText = "0.00 ETB";
+                    });
+
+                } catch (err) {
+                    hideGlobalLoader();
+                    console.error(err);
+                    displayModal('error', 'Submission Failed', 'Network issue. Please try submitting again.');
+                }
+            });
+        }
+
+        // Render submitted history for current user
+        function listenToUserClaims() {
+            const container = document.getElementById('claimsHistoryContainer');
+            const claimsRef = ref(db, `tiktokClaims`);
+
+            onValue(claimsRef, (snapshot) => {
+                container.innerHTML = '';
+                if (!snapshot.exists()) {
+                    container.innerHTML = `<div class="history-empty-msg">No claims submitted yet.</div>`;
+                    return;
+                }
+
+                const allClaims = snapshot.val();
+                let userClaims = [];
+
+                Object.keys(allClaims).forEach(key => {
+                    const claim = allClaims[key];
+                    if (claim.userPhone === activeUserPhone) {
+                        userClaims.push(claim);
+                    }
+                });
+
+                if (userClaims.length === 0) {
+                    container.innerHTML = `<div class="history-empty-msg">No claims submitted yet.</div>`;
+                    return;
+                }
+
+                userClaims.sort((a, b) => b.createdAt - a.createdAt);
+
+                userClaims.forEach(claim => {
+                    const card = document.createElement('div');
+                    card.className = 'history-card';
+                    
+                    let statusClass = 'status-pending';
+                    if (claim.status === 'approved') statusClass = 'status-approved';
+                    if (claim.status === 'rejected') statusClass = 'status-rejected';
+
+                    card.innerHTML = `
+                        <div class="history-left">
+                            <div class="history-icon-box">
+                                <span style="font-size:16px;">🎵</span>
+                            </div>
+                            <div class="history-info">
+                                <h4>${claim.claimedViews.toLocaleString()} Views Claim</h4>
+                                <p><a href="${claim.videoUrl}" target="_blank" style="color:#800020; text-decoration:underline;">Watch Video</a></p>
+                                <p style="font-size:10px; color:#888;">${claim.timestamp}</p>
+                            </div>
+                        </div>
+                        <div class="history-right" style="text-align: right;">
+                            <div class="history-amount income">+${claim.rewardAmount.toLocaleString()} ETB</div>
+                            <span class="status-pill ${statusClass}">${claim.status}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function displayModal(type, title, message, onConfirm = null) {
+            const customPopup = document.getElementById('customPopup');
+            const popupBadge = document.getElementById('popupBadge');
+            const popupIcon = document.getElementById('popupIcon');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupMessage = document.getElementById('popupMessage');
+            const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+            popupBadge.className = "popup-status-badge";
+            popupTitle.innerText = title;
+            popupMessage.innerText = message;
+
+            if (type === 'success') {
+                popupBadge.classList.add('bg-success');
+                popupIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+            } else {
+                popupBadge.classList.add('bg-error');
+                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            }
+
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+
+            const handleClose = () => {
+                customPopup.classList.remove('show-modal');
+                setTimeout(() => {
+                    customPopup.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                }, 200);
+                popupConfirmBtn.removeEventListener('click', handleClose);
+            };
+
+            popupConfirmBtn.addEventListener('click', handleClose);
+        }
+    </script>
+</body>
+</html>

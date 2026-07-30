@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Navigation Menu</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        /* FULLSCREEN DRAWER CONTAINER */
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            box-shadow: none;
+        }
+
+        /* COMPACT RED HEADER (BURGUNDY GRADIENT) */
+        .drawer-header {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            padding: 16px 16px 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .drawer-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .drawer-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .drawer-avatar svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffffff;
+        }
+
+        .drawer-user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .drawer-user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .drawer-user-id {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 0.4px;
+        }
+
+        /* COMPACT NAV ITEMS BODY */
+        .drawer-body {
+            flex: 1;
+            padding: 14px 14px;
+            overflow-y: auto;
+        }
+
+        .drawer-nav-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .drawer-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: #2c2c2e;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .drawer-nav-item:active {
+            background-color: #f2f2f7;
+        }
+
+        .drawer-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: #f8f8fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .drawer-icon-box svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: #800020;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* FOOTER / LOGOUT */
+        .drawer-footer {
+            padding: 12px 14px 18px 14px;
+            border-top: 1px solid #f0f0f2;
+        }
+
+        .btn-drawer-logout {
+            width: 100%;
+            padding: 12px;
+            background-color: #fff0f2;
+            border: none;
+            border-radius: 12px;
+            color: #d32f2f;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-drawer-logout:active {
+            background-color: #ffe0e4;
+        }
+
+        .btn-drawer-logout svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: #d32f2f;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="side-drawer" id="sideDrawer" aria-label="Main Navigation Menu">
+        <div class="drawer-header">
+            <div class="drawer-user-info">
+                <div class="drawer-avatar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                    </svg>
+                </div>
+                <div class="drawer-user-details">
+                    <span class="drawer-user-name" id="drawerUserName">Loading...</span>
+                    <span class="drawer-user-id" id="drawerAccountId">BG ••••••</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-body">
+            <nav class="drawer-nav-list">
+                <!-- 1. Profile -->
+                <a href="javascript:void(0)" data-url="profile.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <span>Profile</span>
+                </a>
+
+                <!-- 2. Privacy -->
+                <a href="javascript:void(0)" data-url="privacy.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <span>Privacy</span>
+                </a>
+
+                <!-- 3. About Us -->
+                <a href="javascript:void(0)" data-url="about.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <span>About Us</span>
+                </a>
+
+                <!-- 4. Terms -->
+                <a href="javascript:void(0)" data-url="term.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <span>Terms</span>
+                </a>
+
+                <!-- 5. Support & Help -->
+                <a href="javascript:void(0)" data-url="support.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <span>Support & Help</span>
+                </a>
+
+                <!-- 6. Update -->
+                <a href="javascript:void(0)" data-url="update.html" class="drawer-nav-item">
+                    <div class="drawer-icon-box">
+                        <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                    </div>
+                    <span>Update</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="drawer-footer">
+            <button class="btn-drawer-logout" id="drawerLogoutBtn">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutBtn = document.getElementById('drawerLogoutBtn');
+            const accountIdDisplay = document.getElementById('drawerAccountId');
+            const userNameDisplay = document.getElementById('drawerUserName');
+
+            const activeUserPhone = localStorage.getItem('auth_session_phone');
+
+            if (!activeUserPhone) {
+                navigateParent('new2.html');
+                return;
+            }
+
+            // Real-time listener for user details from Realtime Database
+            const userRef = ref(db, `users/${activeUserPhone}`);
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const name = userData.fullName || userData.name || userData.username || "BirrGo User";
+                    userNameDisplay.innerText = name;
+
+                    const accId = userData.accountId || ("BG" + activeUserPhone.slice(-6));
+                    accountIdDisplay.innerText = accId;
+                } else {
+                    userNameDisplay.innerText = "BirrGo User";
+                    accountIdDisplay.innerText = "BG" + activeUserPhone.slice(-6);
+                }
+            }, (error) => {
+                userNameDisplay.innerText = "BirrGo User";
+                accountIdDisplay.innerText = "BG" + activeUserPhone.slice(-6);
+            });
+
+            // Handle navigation item clicks
+            const navItems = document.querySelectorAll('.drawer-nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetUrl = item.getAttribute('data-url');
+                    navigateParent(targetUrl);
+                });
+            });
+
+            // Sign Out action
+            logoutBtn?.addEventListener('click', () => {
+                localStorage.removeItem('auth_session_phone');
+                navigateParent('new2.html');
+            });
+        });
+
+        // Safe helper to signal navigation to the parent window
+        function navigateParent(url) {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ action: 'navigateTo', url: url }, '*');
+            } else {
+                window.location.href = url;
+            }
+        }
+    </script>
+</body>
+</html>

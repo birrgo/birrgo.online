@@ -12,7 +12,7 @@
   <div class="wavy-header">
     <a href="lottery.html" class="back-btn" id="nav-back-btn">← Back</a>
     <div class="header-content">
-      <h1>BirrGo Challenge </h1>
+      <h1>BirrGo Challenge</h1>
      </div>
   </div>
 
@@ -144,6 +144,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    /* SHA-256 HASHING UTILITY */
+    async function hashPIN(pin) {
+      const msgBuffer = new TextEncoder().encode(pin);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     /* SESSION & LEDGER USER RESOLUTION */
     let activeUserPhone = "";
     let completeRawCardSequence = "";
@@ -220,7 +228,6 @@
       const msgEl = document.getElementById('custom-alert-message');
       const overlayEl = document.getElementById('custom-alert-overlay');
 
-      // Fallback to native alert if custom modal elements aren't present in DOM yet
       if (!titleEl || !msgEl || !overlayEl) {
         alert(`${title}\n\n${message}`);
         if (alertCallback) {
@@ -361,12 +368,10 @@
       return { id: qId, q: text, options: options.map(String), correct: options.indexOf(ans) };
     }
 
-    /* GENERATE EXACTLY 10 UNIQUE QUESTIONS (5 GENERAL + 5 IQ) */
     function generate10UniqueQuestions(difficulty) {
       const uniqueSet = new Set();
       const questionList = [];
 
-      // 1. Fetch 5 General Questions
       const genPool = GeneralQuestionBank[difficulty] || GeneralQuestionBank.easy;
       const shuffledGen = [...genPool].sort(() => Math.random() - 0.5);
 
@@ -377,13 +382,11 @@
         }
       }
 
-      // If pool runs short, fill with math general
       while (questionList.length < 5) {
         let extraMath = generateMathQuestion(difficulty, uniqueSet);
         questionList.push(extraMath);
       }
 
-      // 2. Fetch 5 IQ Questions
       const iqPool = StaticIQBank[difficulty] || StaticIQBank.easy;
       const shuffledIQ = [...iqPool].sort(() => Math.random() - 0.5);
 
@@ -396,18 +399,15 @@
         }
       }
 
-      // Fill remaining IQ questions with generated IQ speed math
       while (iqCount < 5) {
         let iqMath = generateMathQuestion(difficulty, uniqueSet);
         questionList.push(iqMath);
         iqCount++;
       }
 
-      // Final shuffle so IQ and General questions are mixed evenly
       return questionList.sort(() => Math.random() - 0.5);
     }
 
-    /* 24-HOUR COOLDOWN CHECK HELPER */
     async function getTierLockStatus(tierId) {
       if (!completeRawCardSequence) {
         await initUserSessionLedger();
@@ -433,7 +433,6 @@
       return { isLocked: false, hours: 0, minutes: 0 };
     }
 
-    /* NAVIGATION & PIN MODAL LOGIC */
     let selectedTierForPin = null;
 
     window.openCategory = async function(catKey) {
@@ -505,7 +504,6 @@
     };
 
     async function promptPinForTier(tier) {
-      // 24-Hour Cooldown Verification Check
       const lockStatus = await getTierLockStatus(tier.id);
       if (lockStatus.isLocked) {
         showCustomAlert(
@@ -526,7 +524,7 @@
       selectedTierForPin = null;
     };
 
-    /* ATOMIC PAYMENT PIPELINE EXECUTION */
+    /* ATOMIC PAYMENT PIPELINE EXECUTION WITH SHA-256 PIN VERIFICATION */
     document.getElementById('confirmQuizPinBtn').addEventListener('click', async () => {
       const enteredPin = document.getElementById('quizVerifyPin').value.trim();
       const confirmBtn = document.getElementById('confirmQuizPinBtn');
@@ -544,7 +542,6 @@
           await initUserSessionLedger();
         }
 
-        // DOUBLE-CHECK LOCK AGAIN BEFORE DEDUCTING
         const lockCheck = await getTierLockStatus(selectedTierForPin.id);
         if (lockCheck.isLocked) {
           confirmBtn.disabled = false;
@@ -567,7 +564,13 @@
         const userData = userSnapshot.val();
         const storedPin = userData.securityPin || userData.pin;
 
-        if (storedPin !== enteredPin) {
+        // Hash entered input to compare against hashed DB value
+        const hashedInputPin = await hashPIN(enteredPin);
+
+        // Verify SHA-256 hash or fallback to legacy unhashed plain PIN
+        const isValidPin = (storedPin === hashedInputPin) || (storedPin === enteredPin);
+
+        if (!isValidPin) {
           confirmBtn.disabled = false;
           confirmBtn.innerText = "Authorize & Play";
           showCustomAlert("Incorrect Security PIN. Please try again.", "Verification Failed");
@@ -598,7 +601,6 @@
 
         const userUpdates = {};
         userUpdates[`walletBalance`] = calculatedUserRemainder;
-        // Lock card/tier for 24 hours from entry time
         userUpdates[`playedTiers/${selectedTierForPin.id}`] = currentTimeMs;
         userUpdates[`transactions/${newTxKey}`] = {
           title: `CHALLENGE ARENA ENTRY: ${selectedTierForPin.name.toUpperCase()}`,
@@ -609,7 +611,7 @@
 
         await update(ref(db, `users/${completeRawCardSequence}`), userUpdates);
 
-        // STEP 4: HOUSE WALLET CREDIT (SAFELY ISOLATED)
+        // STEP 4: HOUSE WALLET CREDIT
         try {
           if (houseWalletKey && houseWalletKey !== completeRawCardSequence) {
             const adminSnap = await get(ref(db, `users/${houseWalletKey}/walletBalance`));
@@ -631,10 +633,8 @@
           console.warn("House wallet credit skipped due to security permissions:", adminErr);
         }
 
-        // Preserve selected tier reference before closing modal
         const targetTier = selectedTierForPin;
 
-        // Launch Challenge
         confirmBtn.disabled = false;
         confirmBtn.innerText = "Authorize & Play";
         closePinModal();
@@ -688,7 +688,6 @@
       currentIndex = 0;
       timeLeft = tier.time;
 
-      // Generate 10 unique non-repeating questions (5 General + 5 IQ)
       currentQuestions = generate10UniqueQuestions(tier.difficulty);
 
       document.getElementById('dashboard-screen').classList.add('hidden');

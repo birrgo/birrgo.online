@@ -6,7 +6,7 @@
     <title>BIRRGO Scratch & Win</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -141,20 +141,20 @@
             border-radius: var(--border-radius-md);
             box-shadow: var(--card-shadow);
             border: 1px solid var(--border-light);
-            padding: 24px 16px;
+            padding: 20px 16px;
             text-align: center;
             position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            min-height: 280px;
+            min-height: auto;
         }
 
         .game-status-text {
             color: var(--text-dark);
-            font-size: 0.9rem;
-            margin-bottom: 16px;
+            font-size: 0.95rem;
+            margin-bottom: 14px;
             font-weight: 700;
             width: 100%;
         }
@@ -162,13 +162,59 @@
         #initPlaySection {
             width: 100%;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px 0;
+            gap: 14px;
+            padding: 4px 0 10px 0;
         }
 
         #initPlaySection .btn {
-            max-width: 280px;
+            max-width: 100%;
+            height: 48px;
+            font-size: 0.95rem;
+        }
+
+        /* Bingo Prize Description Card/Table Styling right under Get Started */
+        .bingo-prizes-preview {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 14px;
+            text-align: left;
+        }
+
+        .bingo-prizes-preview-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary-burgundy);
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+        }
+
+        .bingo-prizes-preview table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .bingo-prizes-preview th, .bingo-prizes-preview td {
+            padding: 4px 6px;
+            color: var(--text-dark);
+        }
+
+        .bingo-prizes-preview th {
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-light);
+            text-align: left;
+        }
+
+        .bingo-prizes-preview td:last-child, .bingo-prizes-preview th:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: var(--primary-burgundy);
         }
 
         .grid-container {
@@ -292,6 +338,8 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             transform: scale(0.92);
             transition: transform 0.25s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-overlay.active .modal-box {
             transform: scale(1);
@@ -309,7 +357,7 @@
         .modal-logo-count {
             font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             line-height: 1.4;
             font-weight: 500;
         }
@@ -330,7 +378,7 @@
 
         .input-field {
             width: 100%;
-            height: 42px;
+            height: 44px;
             background: var(--bg-light);
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
@@ -340,7 +388,7 @@
             outline: none;
             text-align: center;
             letter-spacing: 4px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         .input-field:focus {
             border-color: var(--primary-burgundy);
@@ -437,9 +485,33 @@
             <div class="card-container">
                 <div id="gameInstruction" class="game-status-text">Unlock card to start playing!</div>
                 
-                <!-- Centered Get Started Button Container -->
+                <!-- Get Started Section with Prize Table right below it -->
                 <div id="initPlaySection">
                     <button class="btn" onclick="startPlayWorkflow()">Get Started (20 Birr)</button>
+
+                    <!-- Bingo Prize Description Preview Table -->
+                    <div class="bingo-prizes-preview">
+                        <div class="bingo-prizes-preview-title">Prize Payout Tiers</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Matches</th>
+                                    <th>Prize</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1 Logo</td><td>0 Birr</td></tr>
+                                <tr><td>2 Logos</td><td>10 Birr</td></tr>
+                                <tr><td>3 Logos</td><td>50 Birr</td></tr>
+                                <tr><td>4 Logos</td><td>100 Birr</td></tr>
+                                <tr><td>5 Logos</td><td>1,000 Birr</td></tr>
+                                <tr><td>6 Logos</td><td>5,000 Birr</td></tr>
+                                <tr><td>7 Logos</td><td>10,000 Birr</td></tr>
+                                <tr><td>8 Logos</td><td>50,000 Birr</td></tr>
+                                <tr><td>9+ Logos</td><td>100,000 Birr</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div id="gridContainer" class="grid-container" style="display: none;"></div>
@@ -459,7 +531,7 @@
             </div>
         </div>
 
-        <!-- Centered Result & Payment Gateway Modal -->
+        <!-- Centered PIN & Result Modal -->
         <div id="gameModal" class="modal-overlay">
             <div class="modal-box">
                 <div id="modalTitle" class="modal-title">Confirm Ticket</div>
@@ -511,6 +583,14 @@
         let currentRoundWinValue = 0;
         let targetLogosCount = 0;
 
+        async function hashPin(pin) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pin);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toastNotification');
             toast.className = `toast ${type}`;
@@ -533,7 +613,7 @@
 
         window.onload = async () => {
             if(!activeUserPhone) {
-                window.location.href = "new2.html";
+                window.location.href = "index.html";
                 return;
             }
             const cleanPhone = normalizePhoneNumber(activeUserPhone);
@@ -559,7 +639,6 @@
 
         window.closeGameModal = function() {
             document.getElementById('gameModal').classList.remove('active');
-            // If user clicked close after completing the game round, redirect back to lottery.html
             if (revealedItems === totalItems) {
                 window.location.href = "lottery.html";
             }
@@ -603,25 +682,23 @@
             const chance = Math.random() * 100;
 
             if (chance < 24) {
-                return { logos: 1, payout: 0 };         // 24% -> 0 Birr
+                return { logos: 1, payout: 0 };         
             } else if (chance < 74) {
-                return { logos: 2, payout: 10 };        // 50% -> 10 Birr
+                return { logos: 2, payout: 10 };        
             } else if (chance < 84) {
-                return { logos: 3, payout: 20 };        // 10% -> 20 Birr
+                return { logos: 3, payout: 50 };        
             } else if (chance < 89) {
-                return { logos: 4, payout: 50 };        // 5%  -> 50 Birr
+                return { logos: 4, payout: 100 };       
             } else if (chance < 94) {
-                return { logos: 5, payout: 100 };       // 5%  -> 100 Birr
+                return { logos: 5, payout: 1000 };      
             } else if (chance < 95) {
-                return { logos: 6, payout: 1000 };      // 1%  -> 1,000 Birr
+                return { logos: 6, payout: 5000 };      
             } else if (chance < 96) {
-                return { logos: 7, payout: 5000 };      // 1%  -> 5,000 Birr
+                return { logos: 7, payout: 10000 };     
             } else if (chance < 97) {
-                return { logos: 8, payout: 10000 };     // 1%  -> 10,000 Birr
-            } else if (chance < 98) {
-                return { logos: 9, payout: 50000 };     // 1%  -> 50,000 Birr
+                return { logos: 8, payout: 50000 };     
             } else {
-                return { logos: 10, payout: 100000 };   // 2%  -> 100,000 Birr
+                return { logos: 9, payout: 100000 };    
             }
         }
 
@@ -634,7 +711,6 @@
                 }
                 executeTicketTransaction(enteredPin);
             } else {
-                // If clicked from the results modal (e.g. "Play Again" or "Try Again")
                 document.getElementById('gameModal').classList.remove('active');
                 startPlayWorkflow();
             }
@@ -657,7 +733,11 @@
                 const userData = allUsers[completeRawCardSequence];
 
                 if (!pinVerifiedThisSession) {
-                    if (userData.securityPin !== enteredPin && userData.pin !== enteredPin) {
+                    const hashedEnteredPin = await hashPin(enteredPin);
+                    const storedPin = userData.securityPin || userData.pin || "";
+                    const isPinValid = (storedPin === hashedEnteredPin) || (storedPin === enteredPin);
+
+                    if (!isPinValid) {
                         showToast("Invalid security PIN verification.", "error");
                         resetModalBtn();
                         return;

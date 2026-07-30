@@ -4,17 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Tasks</title>
+    <!-- CSS stylesheet -->
     <link rel="stylesheet" href="task.css">
 
     <!-- External Loader Integration -->
     <script src="loader.js"></script>
+
+    <style>
+        /* Fix mobile touch target interception on all button and link child elements */
+        .toggle-tab-btn *, 
+        .btn-task *, 
+        .whats-new-badge *, 
+        .hamburger-btn *, 
+        .profile-btn *, 
+        .fixed-invitation-level-bar *,
+        .btn-open-giveaway * {
+            pointer-events: none;
+        }
+
+        /* Ensure bottom nav items and their internal elements handle touch properly */
+        .bottom-nav-bar .nav-item {
+            cursor: pointer;
+            pointer-events: auto !important;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .bottom-nav-bar .nav-item * {
+            pointer-events: none;
+        }
+
+        .whats-new-badge, .toggle-tab-btn, .btn-task, .nav-item, .hamburger-btn, .profile-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-view">
         <div class="toast-container" id="toast">Invite Link Copied!</div>
         
-        <!-- 100% Curve Match with Reduced Height -->
+        <!-- Top Wave Background -->
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V52C300 78 150 88 0 70V0Z" fill="url(#paint0_linear)"/>
             <defs>
@@ -26,36 +60,57 @@
         </svg>
 
         <!-- White 3D Glass Sport Badge Overlay -->
-        <a href="sp.html" class="whats-new-badge">
+        <a href="sp.html" class="whats-new-badge" id="whatsNewBadge">
             <span class="whats-new-dot"></span>
-             Sport and Business   
+            Sport and Business   
         </a>
 
-        <!-- Header Row with Logo and Profile Icon -->
+        <!-- Header Row -->
         <div class="brand-header">
-            <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo" onload="this.classList.add('loaded')" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I0YTAwMTIiLz48L3N2Zz4=';">
-            <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" onclick="window.location.href='profile.html'">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <button class="profile-btn" id="headerProfileBtn" aria-label="Profile">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
                 </svg>
             </button>
         </div>
 
-        <!-- Menu Bar Placed Under Reduced Top Wave -->
+        <!-- Sliding Menu Drawer Container -->
+        <div class="menu-drawer-backdrop" id="menuDrawerBackdrop">
+            <div class="menu-drawer" id="menuDrawer">
+                <button class="menu-close-btn" id="menuCloseBtn">&times;</button>
+                <iframe src="menu.html" class="menu-iframe" id="menuDrawerFrame" title="Side Navigation Menu"></iframe>
+            </div>
+        </div>
+
+        <!-- 4-Item Toggle Bar -->
         <div class="task-view-toggle-bar">
-            <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
-            <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
-            <button class="toggle-tab-btn" id="tabBtnGiveaway" onclick="switchTaskPanel('giveaway')">Giveaway</button>
+            <button class="toggle-tab-btn active-view-tab" id="tabBtnGivi">Giveaway</button>
+            <button class="toggle-tab-btn" id="tabBtnWatch">Watch & Earn</button>
+            <button class="toggle-tab-btn" id="tabBtnInvite">Invitation</button>
+            <button class="toggle-tab-btn" id="tabBtnGiveaway">Mystery Box</button>
         </div>
 
         <!-- App Body Content -->
         <div class="app-content">
-            <!-- Panel 1: Watch & Earn -->
-            <div id="panelWatchEarn" class="sub-view-panel panel-active">
+            <!-- Panel 1: Givi Preview Panel -->
+            <div id="panelGivi" class="sub-view-panel panel-active">
+                <iframe src="give.html" class="givi-preview-frame" id="giviFrame" title="Givi Preview"></iframe>
+            </div>
+
+            <!-- Panel 2: Watch & Earn -->
+            <div id="panelWatchEarn" class="sub-view-panel">
                 <div class="active-list-stack" id="video-task-container"></div>
             </div>
 
-            <!-- Panel 2: Invitation -->
+            <!-- Panel 3: Invitation -->
             <div id="panelInvitation" class="sub-view-panel">
                 <div class="invite-card">
                     <h3 class="invite-title">Invite Friends</h3>
@@ -75,7 +130,7 @@
                 </div>
 
                 <!-- Fixed Level Bar -->
-                <div class="fixed-invitation-level-bar" onclick="window.location.href='level.html'">
+                <div class="fixed-invitation-level-bar" id="fixedLevelBar">
                     <div class="fixed-level-left">
                         <span class="fixed-level-icon">🏆</span>
                         <h5 class="fixed-level-title">View Your Level & Get Additional Bonus</h5>
@@ -88,14 +143,14 @@
                 </div>
             </div>
 
-            <!-- Panel 3: Giveaway Panel -->
+            <!-- Panel 4: Giveaway Panel -->
             <div id="panelGiveaway" class="sub-view-panel">
                 <div class="giveaway-header-block">
                     <h2 class="giveaway-main-title">Open Your Giveaway Box</h2>
                     
                     <div class="giveaway-description-box">
                         <p class="giveaway-description-text">
-                            <span class="burgundy-headline"> UNLOCK BIG DAILY REWARDS!</span><br>
+                            <span class="burgundy-headline">UNLOCK BIG DAILY REWARDS!</span><br>
                             Earn <span class="burgundy-bold-highlight">thousands of Birr every day</span> through free & instant tasks! Watch short videos, like & follow, discover hidden keys, and pause the timer perfectly to claim your daily rewards from <span class="burgundy-bold-highlight">BirrGo</span>.
                         </p>
                     </div>
@@ -103,11 +158,11 @@
 
                 <div class="glass-image-box">
                     <div class="giveaway-3d-box">
-                        <img src="g.png" alt="Giveaway Graphic" class="progressive-blur-img" onload="this.classList.add('loaded')" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I0YTAwMTIiLz48L3N2Zz4=';">
+                        <img src="g.png" alt="Giveaway Graphic" class="progressive-blur-img" onload="this.classList.add('loaded')" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect width=\'100%25\' fill=\'%23800020\'/%3E%3C/svg%3E'; this.classList.add('loaded');">
                     </div>
                 </div>
 
-                <button class="btn-open-giveaway" onclick="redirectToGiveaway()">Open</button>
+                <button class="btn-open-giveaway" id="openGiveawayBtn">Open</button>
             </div>
         </div>
 
@@ -191,6 +246,7 @@
         const cooldownDuration = 3600000; 
         let activeUserPhone = "";
         let activeAccountId = ""; 
+        let isNavigating = false;
 
         const customPopup = document.getElementById('customPopup');
         const popupBadge = document.getElementById('popupBadge');
@@ -199,47 +255,184 @@
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
 
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menuDrawerBackdrop = document.getElementById('menuDrawerBackdrop');
+        const menuDrawer = document.getElementById('menuDrawer');
+        const menuCloseBtn = document.getElementById('menuCloseBtn');
+
+        function showGlobalLoader(msg = "Loading...") {
+            if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+                window.AppLoader.show(msg);
+            }
+        }
+
+        function hideGlobalLoader() {
+            if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+                window.AppLoader.hide();
+            }
+        }
+
+        window.goToPage = function(page, msg = "Navigating...") {
+            if (!page || page === '#') return;
+            if (isNavigating) return;
+            isNavigating = true;
+            showGlobalLoader(msg);
+            window.location.href = page;
+        };
+
+        // Instant click binding with dual-event prevention
+        function attachInstantClick(elementId, callback) {
+            const el = typeof elementId === 'string' ? document.getElementById(elementId) : elementId;
+            if (!el) return;
+
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                callback(e);
+            });
+        }
+
+        function openDrawer() {
+            menuDrawerBackdrop.classList.add('active');
+            menuDrawer.classList.add('open');
+        }
+
+        function closeDrawer() {
+            menuDrawerBackdrop.classList.remove('active');
+            menuDrawer.classList.remove('open');
+        }
+
+        if (hamburgerBtn) attachInstantClick(hamburgerBtn, openDrawer);
+        if (menuCloseBtn) attachInstantClick(menuCloseBtn, closeDrawer);
+        if (menuDrawerBackdrop) {
+            menuDrawerBackdrop.addEventListener('click', (e) => {
+                if (e.target === menuDrawerBackdrop) closeDrawer();
+            });
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data === 'closeMenuDrawer') {
+                closeDrawer();
+            } else if (event.data && (event.data.action === 'navigateTo' || event.data.action === 'openPage')) {
+                closeDrawer();
+                window.goToPage(event.data.url);
+            } else if (typeof event.data === 'string' && (event.data.endsWith('.html') || event.data.includes('.html?'))) {
+                window.goToPage(event.data);
+            }
+        });
+
+        const giviFrame = document.getElementById('giviFrame');
+        if (giviFrame) {
+            giviFrame.addEventListener('load', () => {
+                try {
+                    const iframeWindow = giviFrame.contentWindow;
+                    const currentUrl = iframeWindow.location.href;
+
+                    if (currentUrl && !currentUrl.includes('give.html') && currentUrl !== 'about:blank') {
+                        giviFrame.src = 'give.html';
+                        window.goToPage(currentUrl);
+                        return;
+                    }
+
+                    const iframeDoc = giviFrame.contentDocument || iframeWindow.document;
+                    if (!iframeDoc) return;
+
+                    iframeDoc.querySelectorAll('a').forEach(a => {
+                        a.target = '_top';
+                    });
+
+                    iframeDoc.addEventListener('click', (e) => {
+                        const target = e.target.closest('a, button, [onclick], .btn, .card');
+                        if (!target) return;
+
+                        let dest = target.getAttribute('href');
+                        
+                        if (!dest && target.getAttribute('onclick')) {
+                            const match = target.getAttribute('onclick').match(/['"](.*?\.(?:html|php|asp)[^'"]*)['"]/i);
+                            if (match && match[1]) dest = match[1];
+                        }
+
+                        if (dest && dest !== '#' && !dest.startsWith('javascript:')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.goToPage(dest);
+                        }
+                    }, true);
+
+                } catch (err) {
+                    console.log("Cross-origin frame navigation sandbox active.");
+                }
+            });
+        }
+
         window.redirectToGiveaway = function() {
-            window.location.href = 'give.html';
+            window.goToPage('box.html', 'Opening Giveaway...');
         };
 
         window.switchTaskPanel = async function(targetPanel) {
+            const btnGivi = document.getElementById('tabBtnGivi');
             const btnWatch = document.getElementById('tabBtnWatch');
             const btnInvite = document.getElementById('tabBtnInvite');
             const btnGiveaway = document.getElementById('tabBtnGiveaway');
 
+            const panelGivi = document.getElementById('panelGivi');
             const panelWatch = document.getElementById('panelWatchEarn');
             const panelInvite = document.getElementById('panelInvitation');
             const panelGiveaway = document.getElementById('panelGiveaway');
 
+            btnGivi.classList.remove('active-view-tab');
             btnWatch.classList.remove('active-view-tab');
             btnInvite.classList.remove('active-view-tab');
             btnGiveaway.classList.remove('active-view-tab');
 
+            panelGivi.classList.remove('panel-active');
             panelWatch.classList.remove('panel-active');
             panelInvite.classList.remove('panel-active');
             panelGiveaway.classList.remove('panel-active');
 
-            if (targetPanel === 'watch') {
+            if (targetPanel === 'givi') {
+                btnGivi.classList.add('active-view-tab');
+                panelGivi.classList.add('panel-active');
+                hideGlobalLoader();
+            } else if (targetPanel === 'watch') {
                 btnWatch.classList.add('active-view-tab');
                 panelWatch.classList.add('panel-active');
-                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
+                hideGlobalLoader();
             } else if (targetPanel === 'invite') {
                 btnInvite.classList.add('active-view-tab');
                 panelInvite.classList.add('panel-active');
                 await loadReferredUsers();
-                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
+                hideGlobalLoader();
             } else if (targetPanel === 'giveaway') {
                 btnGiveaway.classList.add('active-view-tab');
                 panelGiveaway.classList.add('panel-active');
-                if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
+                hideGlobalLoader();
             }
         };
 
+        attachInstantClick('tabBtnGivi', () => window.switchTaskPanel('givi'));
+        attachInstantClick('tabBtnWatch', () => window.switchTaskPanel('watch'));
+        attachInstantClick('tabBtnInvite', () => window.switchTaskPanel('invite'));
+        attachInstantClick('tabBtnGiveaway', () => window.switchTaskPanel('giveaway'));
+        attachInstantClick('openGiveawayBtn', () => window.redirectToGiveaway());
+
+        function setupNavigationHandlers() {
+            attachInstantClick('navHome', () => window.goToPage('dashboard.html', 'Loading Home...'));
+            attachInstantClick('navTasks', () => window.goToPage('task.html', 'Loading Tasks...'));
+            attachInstantClick('navAppsCenter', () => window.goToPage('Apps.html', 'Loading Apps...'));
+            attachInstantClick('navCampaign', () => window.goToPage('lottery.html', 'Loading Campaign...'));
+            attachInstantClick('navWallet', () => window.goToPage('wallet.html', 'Loading Wallet...'));
+            attachInstantClick('headerProfileBtn', () => window.goToPage('profile.html', 'Loading Profile...'));
+            attachInstantClick('fixedLevelBar', () => window.goToPage('level.html', 'Loading Level Info...'));
+            attachInstantClick('whatsNewBadge', () => window.goToPage('sp.html', 'Loading Sport & Business...'));
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            setupNavigationHandlers();
+
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.location.href = "new2.html";
+                window.goToPage("new2.html");
                 return;
             }
             
@@ -259,17 +452,7 @@
             }
 
             initTasks();
-            setupNavigationHandlers();
         });
-
-        function setupNavigationHandlers() {
-            document.getElementById('navHome').addEventListener('click', () => window.location.href = 'dashboard.html');
-            document.getElementById('navTasks').addEventListener('click', () => {});
-            document.getElementById('navAppsCenter').addEventListener('click', () => window.location.href = 'Apps.html');
-            document.getElementById('navCampaign').addEventListener('click', () => window.location.href = 'lottery.html');
-            document.getElementById('navWallet').addEventListener('click', () => window.location.href = 'wallet.html');
-            document.getElementById('headerProfileBtn').addEventListener('click', () => window.location.href = 'profile.html');
-        }
 
         function displayAppModal(type, title, message, onConfirm = null) {
             popupBadge.className = "popup-status-badge";
@@ -290,14 +473,13 @@
             customPopup.style.display = 'flex';
             setTimeout(() => customPopup.classList.add('show-modal'), 10);
 
-            const handleClosure = () => {
+            popupConfirmBtn.onclick = () => {
                 customPopup.classList.remove('show-modal');
                 setTimeout(() => {
                     customPopup.style.display = 'none';
                     if (onConfirm) onConfirm();
                 }, 300);
             };
-            popupConfirmBtn.onclick = handleClosure;
         }
 
         function initTasks() {
@@ -326,7 +508,7 @@
                         <div class="list-icon-box">
                             <img src="33164.png" alt="20 Birr" class="progressive-blur-img" 
                                  onload="this.classList.add('loaded')" 
-                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I4MDAwMjAiLz48L3N2Zz4='; this.classList.add('loaded');">
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23800020\'/%3E%3C/svg%3E'; this.classList.add('loaded');">
                         </div>
                         <div class="list-item-info">
                             <h4>Task Video ${currentId}</h4>
@@ -339,17 +521,29 @@
 
                 const targetBtn = document.getElementById(`btn-action-${currentId}`);
                 if (targetBtn.classList.contains('cooldown')) {
-                    targetBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (window.AppLoader && window.AppLoader.hide) window.AppLoader.hide();
+                    attachInstantClick(targetBtn, () => {
+                        hideGlobalLoader();
                         displayAppModal('lock', 'Task Locked', `This video row is locked. Please come back after ${remainingMinutes} minutes!`);
                     });
                 } else {
-                    targetBtn.addEventListener('click', () => {
-                        window.location.href = `taskv.html?id=${currentId}`;
+                    attachInstantClick(targetBtn, () => {
+                        window.goToPage(`taskv.html?id=${currentId}`, "Loading Video Task...");
                     });
                 }
             }
+        }
+
+        function maskPhoneMiddle(phone) {
+            if (!phone) return "Hidden Phone";
+            const rawDigits = phone.replace(/\D/g, ''); 
+            
+            if (rawDigits.length >= 9) {
+                const last9 = rawDigits.slice(-9);
+                const prefix = last9.slice(0, 2); 
+                const suffix = last9.slice(6);    
+                return `+251 ${prefix} **** ${suffix}`;
+            }
+            return phone;
         }
 
         async function loadReferredUsers() {
@@ -368,7 +562,7 @@
                     
                     objectList.reverse().forEach(friend => {
                         const fullName = friend.fullName || "Anonymous Member";
-                        const phoneNumber = friend.phone ? `+251${friend.phone.slice(-9)}` : "Hidden Phone";
+                        const phoneNumber = maskPhoneMiddle(friend.phone);
                         const firstInitial = fullName.charAt(0).toUpperCase();
                         
                         const row = document.createElement('div');
@@ -377,7 +571,7 @@
                             <div class="list-item-left">
                                 <div class="friend-avatar-circle">${firstInitial}</div>
                                 <div class="friend-meta">
-                                    <h5>${fullName}</h5>
+                                    <h4 class="friend-name-text">${fullName}</h4>
                                     <p>${phoneNumber}</p>
                                 </div>
                             </div>
@@ -390,19 +584,23 @@
                     container.innerHTML = `<div class="empty-history-notice">You haven't invited anyone yet.</div>`;
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error loading referred users:", error);
             }
         }
 
         function secureCopy(text) {
             if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
             const temp = document.createElement('textarea');
-            temp.value = text; temp.style.position = 'fixed'; document.body.appendChild(temp); temp.select();
-            const res = document.execCommand('copy'); document.body.removeChild(temp);
+            temp.value = text; 
+            temp.style.position = 'fixed'; 
+            document.body.appendChild(temp); 
+            temp.select();
+            const res = document.execCommand('copy'); 
+            document.body.removeChild(temp);
             return res ? Promise.resolve() : Promise.reject();
         }
 
-        document.getElementById('shareBtn').onclick = () => {
+        attachInstantClick('shareBtn', () => {
             if (!activeAccountId) return;
             const productionUrl = "https://birrgo.online/register.html";
             const link = productionUrl + "?ref=" + activeAccountId;
@@ -412,7 +610,7 @@
                 toast.style.display = 'block';
                 setTimeout(() => { toast.style.display = 'none'; }, 2000);
             });
-        };
+        });
     </script>
 </body>
 </html>

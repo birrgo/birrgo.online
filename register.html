@@ -110,14 +110,14 @@
             </div>
 
             <form class="registration-form" id="signupForm">
+                
+                <!-- 3 NAMES IN ONE LINE -->
                 <div class="input-group">
-                    <label class="field-label" for="regName">Full Name <span class="label-highlight">*</span></label>
-                    <input type="text" id="regName" class="input-box" placeholder="First Middle Last" required autocomplete="off">
-                    <div class="input-icon-right">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                    <label class="field-label">Full Name <span class="label-highlight">*</span></label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="regFirstName" class="input-box" placeholder="First" required autocomplete="off" style="flex: 1; padding-right: 10px;">
+                        <input type="text" id="regMiddleName" class="input-box" placeholder="Middle" required autocomplete="off" style="flex: 1; padding-right: 10px;">
+                        <input type="text" id="regLastName" class="input-box" placeholder="Last" required autocomplete="off" style="flex: 1; padding-right: 10px;">
                     </div>
                 </div>
 
@@ -131,7 +131,7 @@
                     </div>
 
                     <input type="tel" id="regPhone" class="input-box phone-indent" placeholder="9xxxxxxxx" required autocomplete="off">
-                    <div class="input-icon-right">
+                    <div class="input-icon-right" style="pointer-events: none;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                         </svg>
@@ -141,7 +141,7 @@
                 <div class="input-group">
                     <label class="field-label" for="regEmail">Email Address <span class="label-highlight">*</span></label>
                     <input type="email" id="regEmail" class="input-box" placeholder="example@mail.com" required autocomplete="off">
-                    <div class="input-icon-right">
+                    <div class="input-icon-right" style="pointer-events: none;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
@@ -149,26 +149,39 @@
                     </div>
                 </div>
 
+                <!-- ENHANCED PIN SECTION WITH EYE TOGGLE BUTTON -->
                 <div class="input-group">
                     <label class="field-label" for="regPin">Create Pin (6-digits) <span class="label-highlight">*</span></label>
                     <input type="password" id="regPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
                     <div class="input-icon-right">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
+                        <button type="button" class="pin-toggle-btn" id="toggleRegPin" aria-label="Toggle PIN Visibility">
+                            <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
                     </div>
+                    
+                    <small id="pinHint" style="display: block; margin-top: 4px; font-size: 0.68rem; color: #800020; font-weight: 500;">
+                        Use non-repeating digits (no 123456 or 111111).
+                    </small>
+                    
+                    <div id="pinFeedback" style="font-size: 0.70rem; font-weight: 600; margin-top: 2px;"></div>
                 </div>
 
+                <!-- CONFIRM PIN SECTION WITH EYE TOGGLE BUTTON -->
                 <div class="input-group">
                     <label class="field-label" for="regConfirmPin">Confirm Pin <span class="label-highlight">*</span></label>
                     <input type="password" id="regConfirmPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
                     <div class="input-icon-right">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
+                        <button type="button" class="pin-toggle-btn" id="toggleRegConfirmPin" aria-label="Toggle PIN Visibility">
+                            <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
                     </div>
+                    <div id="confirmPinFeedback" style="font-size: 0.70rem; font-weight: 600; margin-top: 2px;"></div>
                 </div>
 
                 <div class="form-action-area">

@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -56,43 +56,14 @@
             height: 160px;
         }
 
-        /* Main Viewport Wrapper - Adjusted top padding to pull elements upward */
+        /* Main Viewport Wrapper */
         .app-view {
             width: 100%;
             max-width: 900px;
             margin: 0 auto;
-            padding: calc(12px + env(safe-area-inset-top)) 24px 60px 24px;
+            padding: calc(24px + env(safe-area-inset-top)) 24px 60px 24px;
             position: relative;
             z-index: 1;
-        }
-
-        /* Top Header Navigation Area - Reduced margin to shift title up */
-        .header-navigation {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .header-back-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            text-decoration: none;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: transform 0.1s ease, background 0.2s ease;
-        }
-
-        .header-back-btn:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Top Header Area */
@@ -180,38 +151,6 @@
             margin-bottom: 8px;
             line-height: 1.6;
         }
-
-        /* Back Action Button Placement Framework */
-        .action-container {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .back-btn {
-            width: 100%;
-            max-width: 320px;
-            height: 54px; 
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            text-decoration: none;
-            letter-spacing: -0.01em;
-            background: #ffffff;
-            color: var(--text-dark);
-            border: 1px solid #e5e7eb; 
-            box-shadow: var(--card-shadow);
-        }
-
-        .back-btn:active {
-            transform: scale(0.98);
-        }
     </style>
 </head>
 <body>
@@ -228,16 +167,6 @@
     </svg>
 
     <div class="app-view">
-        
-        <!-- Header Navigation -->
-        <div class="header-navigation">
-            <a href="index.html" class="header-back-btn" aria-label="Go back">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-            </a>
-        </div>
 
         <!-- Header Section -->
         <div class="header-top-area">
@@ -270,17 +199,6 @@
 
             <h2>5. <span>Modifications to Layout and Rules</span></h2>
             <p>We reserve full administrative rights to adjust interface design configurations, text rules, or verification pathways organically to fit ongoing continental compliance updates. Continued interaction post-update implies explicit acceptance.</p>
-        </div>
-
-        <!-- Back Button Alignment -->
-        <div class="action-container">
-            <a href="index.html" class="back-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>Return to Homepage</span>
-            </a>
         </div>
 
     </div>
