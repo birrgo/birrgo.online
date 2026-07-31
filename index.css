@@ -377,14 +377,17 @@ body {
     margin-bottom: 0px;
 }
 
+/* UPDATED FOOTER STYLES */
 .footer-area { 
     position: absolute;
-    bottom: calc(14px + env(safe-area-inset-bottom));
+    bottom: calc(8px + env(safe-area-inset-bottom));
     left: 0;
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px; /* Tight gap to pull footer links close to copyright */
     z-index: 5;
     padding: 0 16px;
 }
@@ -424,7 +427,15 @@ body {
 }
 
 .divider {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.copyright-text {
+    font-size: 9px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    opacity: 0.9;
 }
 
 /* Modal Styling */
@@ -508,5 +519,3 @@ body {
         user-select: none;
     }
 }
-
-
