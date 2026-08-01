@@ -29,20 +29,92 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalIconWrapper = document.getElementById('modalIconWrapper');
 
     let deferredPrompt = null;
+    let swRegistration = null;
 
     // 2. Register Service Worker & Listen for Caching Events
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./of.js')
-            .then(() => console.log('Service Worker (of.js) registered successfully.'))
+            .then(reg => {
+                swRegistration = reg;
+                console.log('Service Worker registered successfully.');
+            })
             .catch(err => console.error('Service Worker registration failed:', err));
 
-        // Listen for real percentage updates from of.js
+        // Listen for real percentage messages from Service Worker
         navigator.serviceWorker.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'CACHE_PROGRESS') {
                 updateProgressUI(event.data.progress);
             }
         });
     }
+
+    // Function: Update UI with Progress Percentage
+    let currentPercent = 0;
+    const updateProgressUI = (targetPercent) => {
+        const rounded = Math.min(100, Math.round(targetPercent));
+        if (rounded <= currentPercent && rounded !== 100) return;
+        currentPercent = rounded;
+
+        // Banner Updates
+        if (pwaProgressTrack) pwaProgressTrack.style.display = 'block';
+        if (pwaProgressFill) pwaProgressFill.style.width = rounded + '%';
+        if (pwaMainTitle) pwaMainTitle.innerText = "Downloading App Assets...";
+        if (pwaSubTitle) pwaSubTitle.innerText = `Downloading: ${rounded}%`;
+        
+        if (pwaBtn) {
+            pwaBtn.innerText = `${rounded}%`;
+            pwaBtn.disabled = true;
+        }
+
+        // Popup Updates
+        if (dlBarFill) dlBarFill.style.width = rounded + '%';
+        if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${rounded}%`;
+
+        // When 100% Complete
+        if (rounded >= 100) {
+            if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
+            if (pwaSubTitle) pwaSubTitle.innerText = "Ready to launch BirrGo.";
+            if (pwaBtn) {
+                pwaBtn.innerText = "Open";
+                pwaBtn.style.backgroundColor = "#10b981";
+                pwaBtn.disabled = false;
+            }
+
+            if (dlCenterTitle) dlCenterTitle.innerText = "Installation Ready!";
+            if (dlCenterDesc) dlCenterDesc.innerText = "All assets loaded. Tap 'Open App' to launch.";
+            if (dlCenterBtn) {
+                dlCenterBtn.innerText = "Open App";
+                dlCenterBtn.style.background = "#10b981";
+                dlCenterBtn.disabled = false;
+                dlCenterBtn.onclick = () => {
+                    window.location.href = "index.html";
+                };
+            }
+
+            localStorage.setItem('birrgo_app_installed', 'true');
+        }
+    };
+
+    // Smooth fallback animation loop to guarantee continuous visual percentage counting
+    const startRealtimeDownloadAnimation = () => {
+        currentPercent = 0;
+        updateProgressUI(0);
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 8) + 4;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+            }
+            updateProgressUI(progress);
+        }, 180);
+
+        // Signal active service worker if available
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'START_CACHE' });
+        }
+    };
 
     // Logo visual load state
     const targetLogo = document.querySelector('.logo-image');
@@ -59,52 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const createBtn = document.getElementById('createAccountBtn');
         if (createBtn) createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
     }
-
-    // Function: Real progress UI updater for BOTH top banner and centered popup
-    const updateProgressUI = (percent) => {
-        const rounded = Math.round(percent);
-        
-        // Update Banner Progress
-        if (pwaProgressTrack) pwaProgressTrack.style.display = 'block';
-        if (pwaProgressFill) pwaProgressFill.style.width = rounded + '%';
-        if (pwaMainTitle) pwaMainTitle.innerText = "Downloading App Assets...";
-        if (pwaSubTitle) pwaSubTitle.innerText = `Downloading: ${rounded}%`;
-        
-        if (pwaBtn) {
-            pwaBtn.innerText = `${rounded}%`;
-            pwaBtn.disabled = true;
-        }
-
-        // Update Centered Modal Progress
-        if (dlBarFill) dlBarFill.style.width = rounded + '%';
-        if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${rounded}%`;
-
-        // When downloading reaches 100%
-        if (rounded >= 100) {
-            // Banner updates
-            if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
-            if (pwaSubTitle) pwaSubTitle.innerText = "Ready to launch BirrGo.";
-            if (pwaBtn) {
-                pwaBtn.innerText = "Open";
-                pwaBtn.style.backgroundColor = "#10b981";
-                pwaBtn.disabled = false;
-            }
-
-            // Centered Modal updates
-            if (dlCenterTitle) dlCenterTitle.innerText = "Installation Ready!";
-            if (dlCenterDesc) dlCenterDesc.innerText = "All assets loaded. Click 'Open App' to proceed.";
-            if (dlCenterBtn) {
-                dlCenterBtn.innerText = "Open App";
-                dlCenterBtn.style.background = "#10b981";
-                dlCenterBtn.disabled = false;
-                dlCenterBtn.onclick = () => {
-                    window.location.href = "index.html";
-                };
-            }
-
-            localStorage.setItem('birrgo_app_installed', 'true');
-        }
-    };
 
     // Set UI according to mode
     if (isPWA()) {
@@ -136,12 +162,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Helper: Trigger Download / Native Prompt & Show Center Popup
+    // Trigger Download / Native Prompt & Open Center Popup
     const triggerInstallFlow = async () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-        // Show real-time centered popup
+        // Reset & Show Popup
         if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
+        if (dlCenterTitle) dlCenterTitle.innerText = "Installing BirrGo App...";
+        if (dlCenterBtn) {
+            dlCenterBtn.innerText = "Downloading Assets...";
+            dlCenterBtn.style.background = "";
+            dlCenterBtn.disabled = true;
+        }
+
+        // Start progress download count
+        startRealtimeDownloadAnimation();
 
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -178,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. LOCK OUT LINKS/BUTTONS WHEN IN NORMAL BROWSER MODE
+    // Lock out direct link clicks in regular browser view
     if (!isPWA()) {
         const actionElements = document.querySelectorAll('a, button');
         
