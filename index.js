@@ -1,11 +1,41 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Register Service Worker
+    // 1. Helper: Check if opened inside standalone PWA window
+    const isPWA = () => {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true || 
+               document.referrer.includes('android-app://');
+    };
+
+    const pwaBtn = document.getElementById('pwaInstallBtn');
+    const pwaMainTitle = document.getElementById('pwaMainTitle');
+    const pwaSubTitle = document.getElementById('pwaSubTitle');
+    const pwaProgressTrack = document.getElementById('pwaProgressTrack');
+    const pwaProgressFill = document.getElementById('pwaProgressFill');
+
+    const installedModal = document.getElementById('alreadyInstalledModal');
+    const closeModalBtn = document.getElementById('closeInstalledModalBtn');
+    const modalTitleText = document.getElementById('modalTitleText');
+    const modalDescText = document.getElementById('modalDescText');
+    const modalIconSvg = document.getElementById('modalIconSvg');
+    const modalIconWrapper = document.getElementById('modalIconWrapper');
+
+    let deferredPrompt = null;
+
+    // 2. Register Service Worker & Listen for Caching Events
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./of.js')
             .then(() => console.log('Service Worker (of.js) registered successfully.'))
             .catch(err => console.error('Service Worker registration failed:', err));
+
+        // Listen for real percentage updates from of.js
+        navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'CACHE_PROGRESS') {
+                updateProgressUI(event.data.progress);
+            }
+        });
     }
 
+    // Logo visual load state
     const targetLogo = document.querySelector('.logo-image');
     if (targetLogo && targetLogo.complete && targetLogo.naturalWidth > 0) {
         targetLogo.classList.add('loaded');
@@ -13,59 +43,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
     localStorage.setItem('birrgo_last_page', 'index.html');
 
+    // Handle referral links
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
-
     if (refParam) {
         const createBtn = document.getElementById('createAccountBtn');
         if (createBtn) createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
     }
 
-    let deferredPrompt;
-    const pwaBtn = document.getElementById('pwaInstallBtn');
-    const installedModal = document.getElementById('alreadyInstalledModal');
-    const closeModalBtn = document.getElementById('closeInstalledModalBtn');
-    
-    const modalTitleText = document.getElementById('modalTitleText');
-    const modalDescText = document.getElementById('modalDescText');
-    const modalIconSvg = document.getElementById('modalIconSvg');
-    const modalIconWrapper = document.getElementById('modalIconWrapper');
+    // Function: Real progress UI updater
+    const updateProgressUI = (percent) => {
+        const rounded = Math.round(percent);
+        
+        if (pwaProgressTrack) pwaProgressTrack.style.display = 'block';
+        if (pwaProgressFill) pwaProgressFill.style.width = rounded + '%';
 
-    // Helper: Check if running inside installed PWA
-    const isPWA = () => {
-        return window.matchMedia('(display-mode: standalone)').matches || 
-               window.navigator.standalone === true || 
-               document.referrer.includes('android-app://');
-    };
-
-    const setBtnAsInstalled = () => {
+        if (pwaMainTitle) pwaMainTitle.innerText = "Downloading App Assets...";
+        if (pwaSubTitle) pwaSubTitle.innerText = `Downloading: ${rounded}%`;
+        
         if (pwaBtn) {
-            pwaBtn.innerText = "Installed";
+            pwaBtn.innerText = `${rounded}%`;
             pwaBtn.disabled = true;
+        }
+
+        if (rounded >= 100) {
+            if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
+            if (pwaSubTitle) pwaSubTitle.innerText = "Ready to launch BirrGo.";
+            if (pwaBtn) {
+                pwaBtn.innerText = "Open";
+                pwaBtn.style.backgroundColor = "#10b981";
+                pwaBtn.disabled = false;
+            }
+            localStorage.setItem('birrgo_app_installed', 'true');
         }
     };
 
+    // Set UI according to mode
     if (isPWA()) {
         localStorage.setItem('birrgo_app_installed', 'true');
-        setBtnAsInstalled();
+        if (pwaMainTitle) pwaMainTitle.innerText = "BirrGo App Ready";
+        if (pwaSubTitle) pwaSubTitle.innerText = "Running in Standalone PWA";
+        if (pwaBtn) {
+            pwaBtn.innerText = "Open";
+            pwaBtn.style.backgroundColor = "#10b981";
+            pwaBtn.disabled = false;
+        }
+    } else if (localStorage.getItem('birrgo_app_installed') === 'true') {
+        if (pwaBtn) {
+            pwaBtn.innerText = "Open";
+            pwaBtn.style.backgroundColor = "#10b981";
+        }
     }
 
-    if (localStorage.getItem('birrgo_app_installed') === 'true') {
-        setBtnAsInstalled();
-    }
-
-    // Capture install prompt
+    // Intercept native browser installation prompt
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        localStorage.removeItem('birrgo_app_installed'); 
-        if (pwaBtn) {
-            pwaBtn.innerText = "Download";
-            pwaBtn.disabled = false;
+        if (!isPWA() && localStorage.getItem('birrgo_app_installed') !== 'true') {
+            if (pwaBtn) {
+                pwaBtn.innerText = "Download";
+                pwaBtn.style.backgroundColor = "";
+                pwaBtn.disabled = false;
+            }
         }
     });
 
-    // Helper to trigger installation modal / prompt
+    // Helper: Modal or Install trigger
     const triggerInstallFlow = async () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -74,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
                 localStorage.setItem('birrgo_app_installed', 'true');
-                setBtnAsInstalled();
             }
             deferredPrompt = null;
         } else if (isIOS) {
@@ -94,19 +136,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Download/Install Button click
+    // Download/Open Button Click behavior
     if (pwaBtn) {
         pwaBtn.addEventListener('click', () => {
-            if (!pwaBtn.disabled) triggerInstallFlow();
+            if (pwaBtn.innerText === "Open" || isPWA()) {
+                // If running in browser but installed, prompt modal or launch PWA
+                if (!isPWA()) {
+                    modalTitleText.innerText = "Open BirrGo App";
+                    modalDescText.innerText = "Launch the BirrGo application icon from your device's home screen to access your wallet.";
+                    installedModal.style.display = 'flex';
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                triggerInstallFlow();
+            }
         });
     }
 
-    // BLOCK ALL ACTION BUTTONS & LINKS IF NOT IN PWA MODE
+    // 3. LOCK OUT LINKS/BUTTONS WHEN IN NORMAL BROWSER MODE
     if (!isPWA()) {
         const actionElements = document.querySelectorAll('a, button');
         
         actionElements.forEach(element => {
-            // Ignore the install button itself and modal close button
             if (element.id === 'pwaInstallBtn' || element.id === 'closeInstalledModalBtn') return;
 
             element.addEventListener('click', (e) => {
@@ -126,7 +178,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener('appinstalled', () => {
         localStorage.setItem('birrgo_app_installed', 'true');
-        setBtnAsInstalled();
         deferredPrompt = null;
+        if (pwaBtn) {
+            pwaBtn.innerText = "Open";
+            pwaBtn.style.backgroundColor = "#10b981";
+        }
     });
 });
