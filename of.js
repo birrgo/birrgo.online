@@ -1,7 +1,47 @@
 const CACHE_NAME = 'birrgo-offline-v3';
 
-// Activate new service worker version immediately
+// List of static assets to cache for offline availability & installation progress
+const ASSETS_TO_CACHE = [
+    './',
+    './index.html',
+    './index.css',
+    './index.js',
+    './birrgo-logo.png',
+    './manifest.json'
+];
+
+// Install Event: Download assets & broadcast progress back to index.js
 self.addEventListener('install', (event) => {
+    event.waitUntil(
+        (async () => {
+            const cache = await caches.open(CACHE_NAME);
+            let loaded = 0;
+            const total = ASSETS_TO_CACHE.length;
+
+            for (const asset of ASSETS_TO_CACHE) {
+                try {
+                    const response = await fetch(asset);
+                    if (response.ok) {
+                        await cache.put(asset, response);
+                    }
+                    loaded++;
+
+                    // Send progress percentage to index.js
+                    const progress = (loaded / total) * 100;
+                    const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
+                    
+                    for (const client of clientsList) {
+                        client.postMessage({
+                            type: 'CACHE_PROGRESS',
+                            progress: progress
+                        });
+                    }
+                } catch (err) {
+                    console.error('Failed caching asset:', asset, err);
+                }
+            }
+        })()
+    );
     self.skipWaiting();
 });
 
