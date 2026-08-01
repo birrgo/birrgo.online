@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalIconWrapper = document.getElementById('modalIconWrapper');
 
     let deferredPrompt = null;
+    let installTimer = null;
+    let isCountingDown = false;
 
     // Service Worker Registration
     if ('serviceWorker' in navigator) {
@@ -37,25 +39,26 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error('Service Worker registration failed:', err));
     }
 
-    // Helper: Style top button as Installed (White background, burgundy text)
-    const setBtnInstalledState = (text = "Installed") => {
+    // Helper: Style top button for Installed / Open State
+    const setBtnOpenState = () => {
         if (!pwaBtn) return;
-        pwaBtn.innerText = text;
+        pwaBtn.innerText = "Open";
         pwaBtn.style.backgroundColor = "#ffffff";
         pwaBtn.style.color = "#800020";
         pwaBtn.style.fontWeight = "800";
         pwaBtn.style.border = "1px solid #ffffff";
         pwaBtn.disabled = false;
+        pwaBtn.onclick = () => {
+            window.location.href = "index.html";
+        };
     };
 
-    // Initial state check
+    // Check Initial App State
     if (isPWA() || localStorage.getItem('birrgo_app_installed') === 'true') {
-        setBtnInstalledState("Open");
+        setBtnOpenState();
     } else {
         if (pwaBtn) {
             pwaBtn.innerText = "Install";
-            pwaBtn.style.backgroundColor = "";
-            pwaBtn.style.color = "";
             pwaBtn.disabled = false;
         }
     }
@@ -64,140 +67,106 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        if (!isPWA() && localStorage.getItem('birrgo_app_installed') !== 'true') {
-            if (pwaBtn) {
-                pwaBtn.innerText = "Install";
-                pwaBtn.style.backgroundColor = "";
-                pwaBtn.style.color = "";
-                pwaBtn.disabled = false;
-            }
-        }
     });
 
-    // Logo Visual state
-    const targetLogo = document.querySelector('.logo-image');
-    if (targetLogo && targetLogo.complete && targetLogo.naturalWidth > 0) {
-        targetLogo.classList.add('loaded');
-    }
+    // 40-Second Progress Loading Function (Percentage only, no seconds display)
+    const start40SecCountdown = () => {
+        if (isCountingDown) {
+            if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
+            return;
+        }
 
-    localStorage.setItem('birrgo_last_page', 'index.html');
+        isCountingDown = true;
+        let elapsedSeconds = 0;
+        const totalDuration = 40;
 
-    // Update Progress UI Function based on Real Bytes
-    const updateProgressUI = (percent) => {
-        const rounded = Math.min(100, Math.round(percent));
-
-        // Banner Progress
+        if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
         if (pwaProgressTrack) pwaProgressTrack.style.display = 'block';
-        if (pwaProgressFill) pwaProgressFill.style.width = rounded + '%';
+
+        if (dlCenterTitle) dlCenterTitle.innerText = "Installing BirrGo App...";
         if (pwaMainTitle) pwaMainTitle.innerText = "Downloading Assets...";
-        if (pwaSubTitle) pwaSubTitle.innerText = `Downloaded: ${rounded}%`;
-        
-        if (pwaBtn) {
-            pwaBtn.innerText = `${rounded}%`;
-            pwaBtn.style.backgroundColor = "";
-            pwaBtn.style.color = "";
-            pwaBtn.disabled = true;
-        }
 
-        // Popup Progress
-        if (dlBarFill) dlBarFill.style.width = rounded + '%';
-        if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${rounded}%`;
+        const updateTimerUI = () => {
+            const percent = Math.min(100, Math.round((elapsedSeconds / totalDuration) * 100));
 
-        // When 100% real network download finishes
-        if (rounded >= 100) {
-            if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
-            if (pwaSubTitle) pwaSubTitle.innerText = "Installing BirrGo App...";
-            
-            if (dlCenterTitle) dlCenterTitle.innerText = "Ready to Install";
-            if (dlCenterDesc) dlCenterDesc.innerText = "Tap 'Install App' to add BirrGo to your home screen.";
-            
-            if (dlCenterBtn) {
-                dlCenterBtn.innerText = "Install App";
-                dlCenterBtn.style.background = "linear-gradient(135deg, #800020 0%, #4a0012 100%)";
-                dlCenterBtn.disabled = false;
-                
-                // Clicking triggers Chrome's native OS Installation Prompt
-                dlCenterBtn.onclick = async () => {
-                    if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
-                    
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if (outcome === 'accepted') {
-                            localStorage.setItem('birrgo_app_installed', 'true');
-                            setBtnInstalledState("Installed");
-                        }
-                        deferredPrompt = null;
-                    } else {
-                        modalTitleText.innerText = "App Ready";
-                        modalDescText.innerText = "Look for the BirrGo icon on your home screen or check browser menu to finish installation.";
-                        installedModal.style.display = 'flex';
-                    }
-                };
-            }
-
-            // Top Banner Button Turns White with "Installed"
+            // Banner Progress Update
+            if (pwaProgressFill) pwaProgressFill.style.width = percent + '%';
+            if (pwaSubTitle) pwaSubTitle.innerText = `Downloading: ${percent}%`;
             if (pwaBtn) {
-                setBtnInstalledState("Installed");
-                pwaBtn.onclick = dlCenterBtn.onclick;
+                pwaBtn.innerText = `${percent}%`;
+                pwaBtn.disabled = true;
             }
-        }
-    };
 
-    // Real Byte Download Progress Calculator using XMLHttpRequest
-    const downloadAssetsWithRealProgress = async () => {
-        const assets = [
-            './index.html',
-            './index.css',
-            './index.js',
-            './birrgo-logo.png',
-            './manifest.json'
-        ];
-
-        let loadedBytes = new Array(assets.length).fill(0);
-        let totalBytes = new Array(assets.length).fill(0);
-
-        const fetchWithProgress = (url, index) => {
-            return new Promise((resolve) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', url + '?cache_bust=' + Date.now(), true);
-                xhr.responseType = 'blob';
-
-                xhr.onprogress = (e) => {
-                    if (e.lengthComputable) {
-                        loadedBytes[index] = e.loaded;
-                        totalBytes[index] = e.total;
-
-                        const sumLoaded = loadedBytes.reduce((a, b) => a + b, 0);
-                        const sumTotal = totalBytes.reduce((a, b) => a + b, 0);
-
-                        if (sumTotal > 0) {
-                            const percent = (sumLoaded / sumTotal) * 100;
-                            updateProgressUI(percent);
-                        }
-                    }
-                };
-
-                xhr.onload = () => {
-                    if (!totalBytes[index]) {
-                        loadedBytes[index] = 100;
-                        totalBytes[index] = 100;
-                    }
-                    resolve();
-                };
-
-                xhr.onerror = () => resolve();
-                xhr.send();
-            });
+            // Popup Progress Update
+            if (dlBarFill) dlBarFill.style.width = percent + '%';
+            if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${percent}%`;
+            if (dlCenterBtn) {
+                dlCenterBtn.innerText = `Downloading... ${percent}%`;
+                dlCenterBtn.disabled = true;
+            }
         };
 
-        // Download files and track network speed
-        await Promise.all(assets.map((asset, idx) => fetchWithProgress(asset, idx)));
-        updateProgressUI(100);
+        updateTimerUI();
+
+        installTimer = setInterval(async () => {
+            elapsedSeconds++;
+            updateTimerUI();
+
+            // When 40 Seconds Finish (100%)
+            if (elapsedSeconds >= totalDuration) {
+                clearInterval(installTimer);
+                isCountingDown = false;
+
+                if (dlCenterTitle) dlCenterTitle.innerText = "Ready to Install";
+                if (dlCenterDesc) dlCenterDesc.innerText = "Tap 'Install App' to add BirrGo to your home screen.";
+
+                if (dlCenterBtn) {
+                    dlCenterBtn.innerText = "Install App";
+                    dlCenterBtn.style.background = "linear-gradient(135deg, #800020 0%, #4a0012 100%)";
+                    dlCenterBtn.disabled = false;
+
+                    // Trigger OS Native Browser PWA Install Window
+                    dlCenterBtn.onclick = async () => {
+                        if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
+
+                        if (deferredPrompt) {
+                            deferredPrompt.prompt();
+                            const { outcome } = await deferredPrompt.userChoice;
+                            if (outcome === 'accepted') {
+                                localStorage.setItem('birrgo_app_installed', 'true');
+                                setBtnOpenState();
+                            }
+                            deferredPrompt = null;
+                        } else {
+                            modalTitleText.innerText = "App Ready";
+                            modalDescText.innerText = "Look for the BirrGo icon on your home screen or check browser menu to finish installation.";
+                            installedModal.style.display = 'flex';
+                        }
+                    };
+                }
+
+                if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
+                if (pwaSubTitle) pwaSubTitle.innerText = "Ready for Installation";
+
+                if (pwaBtn) {
+                    pwaBtn.innerText = "Install";
+                    pwaBtn.style.backgroundColor = "#ffffff";
+                    pwaBtn.style.color = "#800020";
+                    pwaBtn.style.fontWeight = "800";
+                    pwaBtn.disabled = false;
+                    pwaBtn.onclick = dlCenterBtn.onclick;
+                }
+
+                // Auto Trigger native prompt popup immediately if available
+                if (deferredPrompt) {
+                    dlCenterBtn.click();
+                }
+            }
+        }, 1000);
     };
 
-    // Flow Trigger on Install action
-    const triggerInstallFlow = async () => {
+    // Flow Trigger
+    const triggerInstallFlow = () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
         if (isIOS) {
@@ -210,31 +179,22 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
-        if (dlCenterTitle) dlCenterTitle.innerText = "Downloading BirrGo...";
-        if (dlCenterBtn) {
-            dlCenterBtn.innerText = "Downloading Assets...";
-            dlCenterBtn.style.background = "";
-            dlCenterBtn.disabled = true;
-        }
-
-        // Start actual network progress calculation
-        downloadAssetsWithRealProgress();
+        start40SecCountdown();
     };
 
-    // Install Button Listener
+    // Main Install Button Click Listener
     if (pwaBtn) {
         pwaBtn.addEventListener('click', () => {
-            if (isPWA()) {
-                window.location.reload();
+            if (isPWA() || localStorage.getItem('birrgo_app_installed') === 'true') {
+                window.location.href = "index.html";
             } else {
                 triggerInstallFlow();
             }
         });
     }
 
-    // Intercept clicks for uninstalled web app visitors
-    if (!isPWA()) {
+    // Intercept clicks on all links/buttons for uninstalled visitors
+    if (!isPWA() && localStorage.getItem('birrgo_app_installed') !== 'true') {
         const actionElements = document.querySelectorAll('a, button');
         actionElements.forEach(element => {
             if (element.id === 'pwaInstallBtn' || 
@@ -257,13 +217,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Listen for OS App Installed event
+    // OS App Installed Event Handler
     window.addEventListener('appinstalled', () => {
         localStorage.setItem('birrgo_app_installed', 'true');
         deferredPrompt = null;
         if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
         if (pwaMainTitle) pwaMainTitle.innerText = "BirrGo App Installed";
         if (pwaSubTitle) pwaSubTitle.innerText = "Open app from your Home Screen";
-        setBtnInstalledState("Installed");
+        setBtnOpenState();
     });
 });
