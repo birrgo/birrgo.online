@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Helper: Check if running inside real PWA standalone mode
+    // 1. Helper: Check if running strictly inside the standalone PWA app
     const isPWA = () => {
         return window.matchMedia('(display-mode: standalone)').matches || 
                window.navigator.standalone === true || 
@@ -39,24 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error('Service Worker registration failed:', err));
     }
 
-    // Helper: Style top button for Installed / Open State
-    const setBtnOpenState = () => {
-        if (!pwaBtn) return;
-        pwaBtn.innerText = "Open";
-        pwaBtn.style.backgroundColor = "#ffffff";
-        pwaBtn.style.color = "#800020";
-        pwaBtn.style.fontWeight = "800";
-        pwaBtn.style.border = "1px solid #ffffff";
-        pwaBtn.disabled = false;
-        pwaBtn.onclick = () => {
-            window.location.href = "index.html";
-        };
-    };
+    // STRICT CHECK: Returns true ONLY inside actual PWA window mode
+    const runningInsidePWA = isPWA();
 
-    // Check Initial App State
-    if (isPWA() || localStorage.getItem('birrgo_app_installed') === 'true') {
-        setBtnOpenState();
+    // Setup initial UI states
+    if (runningInsidePWA) {
+        // User opened app from home screen -> Normal app functionality
+        if (pwaBtn) {
+            pwaBtn.innerText = "Open App";
+            pwaBtn.style.backgroundColor = "#ffffff";
+            pwaBtn.style.color = "#800020";
+            pwaBtn.style.fontWeight = "800";
+            pwaBtn.style.border = "1px solid #ffffff";
+            pwaBtn.onclick = () => window.location.href = "index.html";
+        }
     } else {
+        // User is browsing inside Chrome -> Strict Install Mode
         if (pwaBtn) {
             pwaBtn.innerText = "Install";
             pwaBtn.disabled = false;
@@ -69,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         deferredPrompt = e;
     });
 
-    // 40-Second Progress Loading Function (Percentage only, no seconds display)
+    // 40-Second Progress Loading Function
     const start40SecCountdown = () => {
         if (isCountingDown) {
             if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
@@ -101,14 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (dlBarFill) dlBarFill.style.width = percent + '%';
             if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${percent}%`;
             if (dlCenterBtn) {
-                dlCenterBtn.innerText = `Downloading... ${percent}%`;
+                dlCenterBtn.innerText = `Installing... ${percent}%`;
                 dlCenterBtn.disabled = true;
             }
         };
 
         updateTimerUI();
 
-        installTimer = setInterval(async () => {
+        installTimer = setInterval(() => {
             elapsedSeconds++;
             updateTimerUI();
 
@@ -117,75 +115,74 @@ document.addEventListener("DOMContentLoaded", () => {
                 clearInterval(installTimer);
                 isCountingDown = false;
 
-                if (dlCenterTitle) dlCenterTitle.innerText = "Ready to Install";
-                if (dlCenterDesc) dlCenterDesc.innerText = "Tap 'Install App' to add BirrGo to your home screen.";
+                if (dlCenterTitle) dlCenterTitle.innerText = "Installation Complete";
+                if (dlCenterDesc) dlCenterDesc.innerText = "BirrGo PWA is installed. Check your home screen to open the app!";
+                if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
+                if (pwaSubTitle) pwaSubTitle.innerText = "Open from Home Screen";
 
                 if (dlCenterBtn) {
-                    dlCenterBtn.innerText = "Install App";
-                    dlCenterBtn.style.background = "linear-gradient(135deg, #800020 0%, #4a0012 100%)";
+                    dlCenterBtn.innerText = "Open App";
+                    dlCenterBtn.style.background = "linear-gradient(135deg, #0f9d58 0%, #0b7140 100%)";
                     dlCenterBtn.disabled = false;
-
-                    // Trigger OS Native Browser PWA Install Window
-                    dlCenterBtn.onclick = async () => {
-                        if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
-
-                        if (deferredPrompt) {
-                            deferredPrompt.prompt();
-                            const { outcome } = await deferredPrompt.userChoice;
-                            if (outcome === 'accepted') {
-                                localStorage.setItem('birrgo_app_installed', 'true');
-                                setBtnOpenState();
-                            }
-                            deferredPrompt = null;
-                        } else {
-                            modalTitleText.innerText = "App Ready";
-                            modalDescText.innerText = "Look for the BirrGo icon on your home screen or check browser menu to finish installation.";
-                            installedModal.style.display = 'flex';
-                        }
-                    };
+                    dlCenterBtn.onclick = () => window.location.href = "index.html";
                 }
 
-                if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
-                if (pwaSubTitle) pwaSubTitle.innerText = "Ready for Installation";
-
                 if (pwaBtn) {
-                    pwaBtn.innerText = "Install";
+                    pwaBtn.innerText = "Open App";
                     pwaBtn.style.backgroundColor = "#ffffff";
                     pwaBtn.style.color = "#800020";
                     pwaBtn.style.fontWeight = "800";
+                    pwaBtn.style.border = "1px solid #ffffff";
                     pwaBtn.disabled = false;
-                    pwaBtn.onclick = dlCenterBtn.onclick;
-                }
-
-                // Auto Trigger native prompt popup immediately if available
-                if (deferredPrompt) {
-                    dlCenterBtn.click();
+                    pwaBtn.onclick = () => window.location.href = "index.html";
                 }
             }
         }, 1000);
     };
 
-    // Flow Trigger
-    const triggerInstallFlow = () => {
+    // Flow Trigger: Forces Chrome Prompt First
+    const triggerInstallFlow = async () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
         if (isIOS) {
-            modalIconWrapper.style.background = "#fdf2f4";
-            modalIconSvg.setAttribute('stroke', '#800020');
-            modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
-            modalTitleText.innerText = "Install BirrGo PWA";
-            modalDescText.innerText = "To install BirrGo: Tap the 'Share' icon in Safari, then tap 'Add to Home Screen'.";
-            installedModal.style.display = 'flex';
+            if (modalIconWrapper) modalIconWrapper.style.background = "#fdf2f4";
+            if (modalIconSvg) {
+                modalIconSvg.setAttribute('stroke', '#800020');
+                modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
+            }
+            if (modalTitleText) modalTitleText.innerText = "Install BirrGo PWA";
+            if (modalDescText) modalDescText.innerText = "To install BirrGo: Tap the 'Share' icon in Safari, then tap 'Add to Home Screen'.";
+            if (installedModal) installedModal.style.display = 'flex';
             return;
         }
 
-        start40SecCountdown();
+        if (deferredPrompt) {
+            try {
+                // Show native Chrome prompt
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+
+                if (outcome === 'accepted') {
+                    // User tapped "Install" on Chrome prompt -> Run 40s timer
+                    start40SecCountdown();
+                }
+            } catch (err) {
+                console.warn('Install prompt error:', err);
+                start40SecCountdown();
+            }
+        } else {
+            // Chrome prompt not available -> Show helper modal
+            if (modalTitleText) modalTitleText.innerText = "Install BirrGo App";
+            if (modalDescText) modalDescText.innerText = "Tap the browser menu (3 dots) at top right and select 'Add to Home screen' or 'Install app'.";
+            if (installedModal) installedModal.style.display = 'flex';
+        }
     };
 
     // Main Install Button Click Listener
     if (pwaBtn) {
         pwaBtn.addEventListener('click', () => {
-            if (isPWA() || localStorage.getItem('birrgo_app_installed') === 'true') {
+            if (runningInsidePWA) {
                 window.location.href = "index.html";
             } else {
                 triggerInstallFlow();
@@ -193,8 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Intercept clicks on all links/buttons for uninstalled visitors
-    if (!isPWA() && localStorage.getItem('birrgo_app_installed') !== 'true') {
+    // STRICT BLOCK: Intercept ALL buttons/links while in Chrome browser mode
+    if (!runningInsidePWA) {
         const actionElements = document.querySelectorAll('a, button');
         actionElements.forEach(element => {
             if (element.id === 'pwaInstallBtn' || 
@@ -202,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.id === 'dlCenterBtn') return;
 
             element.addEventListener('click', (e) => {
+                // BLOCK every click completely inside Chrome browser
                 e.preventDefault();
                 e.stopPropagation();
                 triggerInstallFlow();
@@ -219,11 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // OS App Installed Event Handler
     window.addEventListener('appinstalled', () => {
-        localStorage.setItem('birrgo_app_installed', 'true');
         deferredPrompt = null;
-        if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
-        if (pwaMainTitle) pwaMainTitle.innerText = "BirrGo App Installed";
-        if (pwaSubTitle) pwaSubTitle.innerText = "Open app from your Home Screen";
-        setBtnOpenState();
     });
 });
