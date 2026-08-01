@@ -6,12 +6,21 @@ document.addEventListener("DOMContentLoaded", () => {
                document.referrer.includes('android-app://');
     };
 
+    // UI Elements
     const pwaBtn = document.getElementById('pwaInstallBtn');
     const pwaMainTitle = document.getElementById('pwaMainTitle');
     const pwaSubTitle = document.getElementById('pwaSubTitle');
     const pwaProgressTrack = document.getElementById('pwaProgressTrack');
     const pwaProgressFill = document.getElementById('pwaProgressFill');
 
+    // Centered Download Popup Elements
+    const dlCenterOverlay = document.getElementById('dlCenterOverlay');
+    const dlCenterTitle = document.getElementById('dlCenterTitle');
+    const dlCenterDesc = document.getElementById('dlCenterDesc');
+    const dlBarFill = document.getElementById('dlBarFill');
+    const dlCenterBtn = document.getElementById('dlCenterBtn');
+
+    // Standard Info Modal Elements
     const installedModal = document.getElementById('alreadyInstalledModal');
     const closeModalBtn = document.getElementById('closeInstalledModalBtn');
     const modalTitleText = document.getElementById('modalTitleText');
@@ -51,13 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (createBtn) createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
     }
 
-    // Function: Real progress UI updater
+    // Function: Real progress UI updater for BOTH top banner and centered popup
     const updateProgressUI = (percent) => {
         const rounded = Math.round(percent);
         
+        // Update Banner Progress
         if (pwaProgressTrack) pwaProgressTrack.style.display = 'block';
         if (pwaProgressFill) pwaProgressFill.style.width = rounded + '%';
-
         if (pwaMainTitle) pwaMainTitle.innerText = "Downloading App Assets...";
         if (pwaSubTitle) pwaSubTitle.innerText = `Downloading: ${rounded}%`;
         
@@ -66,7 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
             pwaBtn.disabled = true;
         }
 
+        // Update Centered Modal Progress
+        if (dlBarFill) dlBarFill.style.width = rounded + '%';
+        if (dlCenterDesc) dlCenterDesc.innerText = `Downloading assets: ${rounded}%`;
+
+        // When downloading reaches 100%
         if (rounded >= 100) {
+            // Banner updates
             if (pwaMainTitle) pwaMainTitle.innerText = "Download Complete!";
             if (pwaSubTitle) pwaSubTitle.innerText = "Ready to launch BirrGo.";
             if (pwaBtn) {
@@ -74,6 +89,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 pwaBtn.style.backgroundColor = "#10b981";
                 pwaBtn.disabled = false;
             }
+
+            // Centered Modal updates
+            if (dlCenterTitle) dlCenterTitle.innerText = "Installation Ready!";
+            if (dlCenterDesc) dlCenterDesc.innerText = "All assets loaded. Click 'Open App' to proceed.";
+            if (dlCenterBtn) {
+                dlCenterBtn.innerText = "Open App";
+                dlCenterBtn.style.background = "#10b981";
+                dlCenterBtn.disabled = false;
+                dlCenterBtn.onclick = () => {
+                    window.location.href = "index.html";
+                };
+            }
+
             localStorage.setItem('birrgo_app_installed', 'true');
         }
     };
@@ -108,9 +136,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Helper: Modal or Install trigger
+    // Helper: Trigger Download / Native Prompt & Show Center Popup
     const triggerInstallFlow = async () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        // Show real-time centered popup
+        if (dlCenterOverlay) dlCenterOverlay.style.display = 'flex';
 
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -120,18 +151,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             deferredPrompt = null;
         } else if (isIOS) {
+            if (dlCenterOverlay) dlCenterOverlay.style.display = 'none';
             modalIconWrapper.style.background = "#fdf2f4";
             modalIconSvg.setAttribute('stroke', '#800020');
             modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
             modalTitleText.innerText = "Install BirrGo First";
             modalDescText.innerText = "To access BirrGo features, install the app on your home screen. Tap the 'Share' icon at the bottom of Safari, then select 'Add to Home Screen'.";
-            installedModal.style.display = 'flex';
-        } else {
-            modalIconWrapper.style.background = "#fdf2f4";
-            modalIconSvg.setAttribute('stroke', '#800020');
-            modalIconSvg.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
-            modalTitleText.innerText = "Install BirrGo App";
-            modalDescText.innerText = "Please install the BirrGo app to access this feature. Tap your browser's menu icon (⋮) and select 'Add to Home screen' or 'Install App'.";
             installedModal.style.display = 'flex';
         }
     };
@@ -140,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pwaBtn) {
         pwaBtn.addEventListener('click', () => {
             if (pwaBtn.innerText === "Open" || isPWA()) {
-                // If running in browser but installed, prompt modal or launch PWA
                 if (!isPWA()) {
                     modalTitleText.innerText = "Open BirrGo App";
                     modalDescText.innerText = "Launch the BirrGo application icon from your device's home screen to access your wallet.";
@@ -159,7 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const actionElements = document.querySelectorAll('a, button');
         
         actionElements.forEach(element => {
-            if (element.id === 'pwaInstallBtn' || element.id === 'closeInstalledModalBtn') return;
+            if (element.id === 'pwaInstallBtn' || 
+                element.id === 'closeInstalledModalBtn' || 
+                element.id === 'dlCenterBtn') return;
 
             element.addEventListener('click', (e) => {
                 e.preventDefault();

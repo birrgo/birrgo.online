@@ -92,7 +92,7 @@
     <!-- EXTERNAL STYLES -->
     <link rel="stylesheet" href="index.css">
 
-    <!-- INLINE PROGRESS BAR STYLES -->
+    <!-- CENTER REALTIME DOWNLOAD MODAL & PROGRESS STYLES -->
     <style>
         .pwa-progress-track {
             width: 100%;
@@ -109,6 +109,112 @@
             background: #10b981;
             transition: width 0.2s linear;
         }
+
+        /* Center Download Popup Overlay */
+        .dl-center-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dl-center-card {
+            width: 88%;
+            max-width: 320px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: dlPopupBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes dlPopupBounce {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .dl-center-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: #fdf2f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .dl-center-logo img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .dl-center-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .dl-center-desc {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        .dl-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .dl-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #800020 0%, #10b981 100%);
+            border-radius: 10px;
+            transition: width 0.2s ease-out;
+        }
+
+        .dl-center-btn {
+            width: 100%;
+            height: 44px;
+            background: linear-gradient(135deg, #7a0014 0%, #3a000a 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(107, 5, 25, 0.25);
+            transition: transform 0.15s ease, background 0.3s ease;
+        }
+
+        .dl-center-btn:active {
+            transform: scale(0.96);
+        }
+
+        .dl-center-btn:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
     </style>
 
     <!-- ONESIGNAL SDK -->
@@ -124,6 +230,23 @@
     </script>
 </head>
 <body>
+
+    <!-- REAL-TIME CENTERED INSTALL POPUP -->
+    <div id="dlCenterOverlay" class="dl-center-overlay">
+        <div class="dl-center-card">
+            <div class="dl-center-logo">
+                <img src="birrgo-logo.png" alt="BirrGo Logo">
+            </div>
+            <h3 id="dlCenterTitle" class="dl-center-title">Installing BirrGo App...</h3>
+            <p id="dlCenterDesc" class="dl-center-desc">Downloading assets: 0%</p>
+
+            <div class="dl-bar-container">
+                <div id="dlBarFill" class="dl-bar-fill"></div>
+            </div>
+
+            <button id="dlCenterBtn" class="dl-center-btn" disabled>Downloading Assets...</button>
+        </div>
+    </div>
 
     <div class="app-view">
         
