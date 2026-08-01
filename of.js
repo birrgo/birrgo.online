@@ -10,36 +10,52 @@ const ASSETS_TO_CACHE = [
     './manifest.json'
 ];
 
-// Install Event: Download assets & broadcast progress back to index.js
+// Helper: Function to run asset caching & broadcast progress to active clients
+async function cacheAssetsAndBroadcastProgress() {
+    try {
+        const cache = await caches.open(CACHE_NAME);
+        let loaded = 0;
+        const total = ASSETS_TO_CACHE.length;
+
+        for (const asset of ASSETS_TO_CACHE) {
+            try {
+                const response = await fetch(asset, { cache: 'reload' });
+                if (response.ok) {
+                    await cache.put(asset, response);
+                }
+            } catch (e) {
+                console.error('Failed caching asset:', asset, e);
+            }
+            loaded++;
+
+            // Calculate progress and send to all clients (index.js)
+            const progress = (loaded / total) * 100;
+            const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
+            
+            for (const client of clientsList) {
+                client.postMessage({
+                    type: 'CACHE_PROGRESS',
+                    progress: progress
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Cache progress error:', err);
+    }
+}
+
+// Message Event: Respond to manual install/cache trigger requests from index.js
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'START_CACHE') {
+        event.waitUntil(cacheAssetsAndBroadcastProgress());
+    }
+});
+
+// Install Event: Download assets & broadcast progress on first service worker install
 self.addEventListener('install', (event) => {
     event.waitUntil(
         (async () => {
-            const cache = await caches.open(CACHE_NAME);
-            let loaded = 0;
-            const total = ASSETS_TO_CACHE.length;
-
-            for (const asset of ASSETS_TO_CACHE) {
-                try {
-                    const response = await fetch(asset);
-                    if (response.ok) {
-                        await cache.put(asset, response);
-                    }
-                    loaded++;
-
-                    // Send progress percentage to index.js
-                    const progress = (loaded / total) * 100;
-                    const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
-                    
-                    for (const client of clientsList) {
-                        client.postMessage({
-                            type: 'CACHE_PROGRESS',
-                            progress: progress
-                        });
-                    }
-                } catch (err) {
-                    console.error('Failed caching asset:', asset, err);
-                }
-            }
+            await cacheAssetsAndBroadcastProgress();
         })()
     );
     self.skipWaiting();
