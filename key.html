@@ -6,7 +6,7 @@
     <title>BirrGo - Video Key Challenge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -117,68 +117,6 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Growth / Progress Card */
-        .growth-card {
-            width: 100%;
-            background: linear-gradient(135deg, #500614 0%, #2a0005 100%);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius-lg);
-            padding: 12px 14px;
-            color: #ffffff;
-            box-shadow: 0 6px 16px rgba(80, 6, 20, 0.25);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .growth-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .growth-title {
-            font-size: 0.78rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .growth-badge {
-            font-size: 0.65rem;
-            font-weight: 800;
-            background: rgba(255, 255, 255, 0.18);
-            padding: 2px 8px;
-            border-radius: 12px;
-            color: #fca5a5;
-        }
-
-        .growth-progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .growth-progress-fill {
-            height: 100%;
-            width: 25%;
-            background: linear-gradient(90deg, #38bdf8, #4ade80);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .growth-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: #cbd5e1;
-        }
-
         .task-container { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 
         /* Task Card Styling */
@@ -205,23 +143,25 @@
         /* Compact Action Row */
         .compact-action-row { display: flex; align-items: center; gap: 6px; width: 100%; margin-top: 2px; }
 
+        /* Watch Button - Increased size for easier tap target */
         .btn-watch {
-            display: flex; align-items: center; justify-content: center; gap: 4px; 
-            padding: 6px 12px; min-width: 82px; font-size: 0.68rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; gap: 5px; 
+            padding: 8px 16px; min-width: 96px; font-size: 0.76rem; font-weight: 800;
             color: #ffffff; text-decoration: none; border-radius: var(--border-radius-md); border: none; background: var(--primary-burgundy);
-            cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background-color 0.15s ease;
+            cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background-color 0.15s ease, transform 0.1s ease;
+            box-shadow: 0 2px 6px rgba(80, 6, 20, 0.2);
         }
-        .btn-watch:active { background: #2a0005; }
+        .btn-watch:active { background: #2a0005; transform: scale(0.96); }
 
         .key-input {
-            flex: 1; min-width: 0; padding: 6px 8px; border: 1.2px solid #cbd5e1; border-radius: var(--border-radius-md);
-            font-size: 0.7rem; font-weight: 700; outline: none; text-align: center; color: var(--text-dark);
+            flex: 1; min-width: 0; padding: 7px 8px; border: 1.2px solid #cbd5e1; border-radius: var(--border-radius-md);
+            font-size: 0.72rem; font-weight: 700; outline: none; text-align: center; color: var(--text-dark);
             background: #ffffff; transition: border-color 0.2s ease;
         }
         .key-input:focus { border-color: var(--primary-burgundy); }
 
         .btn-claim {
-            border: none; border-radius: var(--border-radius-md); padding: 6px 10px; font-size: 0.7rem; font-weight: 800; cursor: pointer;
+            border: none; border-radius: var(--border-radius-md); padding: 7px 12px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
             color: #ffffff; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2); transition: transform 0.15s ease; white-space: nowrap; flex-shrink: 0;
         }
@@ -232,7 +172,7 @@
             padding: 4px 10px; border-radius: 100px; display: inline-block;
         }
 
-        /* Fixed Bottom Ad Wrapper */
+        /* Fixed Bottom Ad Wrapper - Burgundy Theme */
         .bottom-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -240,10 +180,10 @@
             width: 100%; 
             flex-shrink: 0; 
             z-index: 30; 
-            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
-            background: rgba(248, 250, 252, 0.95); 
-            backdrop-filter: blur(10px); 
-            border-top: 1px solid var(--border-light); 
+            padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: linear-gradient(180deg, #4a0012 0%, #2b000a 100%); 
+            border-top: 2px solid #800020; 
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.6); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -314,21 +254,6 @@
         <!-- Scrollable Content Container -->
         <div class="app-content">
 
-            <!-- GROWTH PROGRESS CARD INSIDE PAGE BOX -->
-            <div class="growth-card">
-                <div class="growth-header">
-                    <span class="growth-title">📈 Daily Growth Challenge</span>
-                    <span class="growth-badge">Level 1 Growth</span>
-                </div>
-                <div class="growth-progress-bar">
-                    <div class="growth-progress-fill" id="growthProgressFill"></div>
-                </div>
-                <div class="growth-stats">
-                    <span>Goal: 1000 Birr/Day</span>
-                    <span id="growthProgressText">Progress: 25%</span>
-                </div>
-            </div>
-
             <div class="task-container" id="videoTasksContainer">
                 <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.75rem;">
                     Loading video tasks...
@@ -336,7 +261,7 @@
             </div>
         </div>
 
-        <!-- BOTTOM BANNER AD PLACEMENT -->
+        <!-- BOTTOM BANNER AD PLACEMENT (Burgundy Background) -->
         <div class="bottom-wrapper">
             <script>
               atOptions = {
@@ -350,7 +275,7 @@
             <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
         </div>
 
-        <!-- Daily Instruction Popup (Find Key & Win Up to 1000 Birr) -->
+        <!-- Daily Instruction Popup -->
         <div class="popup-backdrop active" id="dailyKeyRulesPopup">
             <div class="popup-card">
                 <div class="popup-icon-circle warning">🔑</div>
@@ -498,8 +423,6 @@
 
                 const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_tasks`));
                 const claimedData = claimedSnapshot.exists() ? claimedSnapshot.val() : {};
-                
-                let claimedCount = 0;
 
                 for (const item of taskList) {
                     const storageKey = `claimed_vid_${activeUserPhone}_${item.id}`;
@@ -515,8 +438,6 @@
                     }
                     
                     localStorage.setItem(savedUrlKey, item.url);
-
-                    if (isAlreadyClaimed) claimedCount++;
 
                     const card = document.createElement('div');
                     card.className = 'task-card';
@@ -574,11 +495,6 @@
                         });
                     }
                 }
-
-                // Update Growth Card Stats
-                const percent = Math.min(Math.round((claimedCount / Math.max(taskList.length, 1)) * 100), 100);
-                document.getElementById('growthProgressFill').style.width = `${percent}%`;
-                document.getElementById('growthProgressText').innerText = `Progress: ${percent}%`;
             }
 
             async function verifyAndClaim(item) {

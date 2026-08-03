@@ -315,7 +315,7 @@
             display: inline-block;
         }
 
-        /* Fixed Bottom Ad Wrapper */
+        /* Fixed Bottom Ad Wrapper - Burgundy Theme */
         .bottom-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -323,16 +323,23 @@
             width: 100%; 
             flex-shrink: 0; 
             z-index: 30; 
-            padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px)) 12px; 
-            background: rgba(248, 250, 252, 0.94); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border-top: 1px solid var(--border-light); 
+            padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: linear-gradient(180deg, #4a0012 0%, #2b000a 100%); 
+            border-top: 2px solid #800020; 
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.6); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         .bottom-wrapper .ad-box {
-            min-height: 58px;
-            box-shadow: var(--card-shadow);
+            min-height: 50px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            width: 100%;
         }
 
         /* Modal Popups */
@@ -512,7 +519,7 @@
             <div class="task-container" id="socialTasksContainer"></div>
         </div>
 
-        <!-- Bottom Fixed Ad Slot -->
+        <!-- Bottom Fixed Ad Slot (Burgundy Background) -->
         <div class="bottom-wrapper">
             <div class="ad-box">
                 <span class="ad-badge"></span>

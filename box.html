@@ -34,134 +34,108 @@
             touch-action: manipulation;
         }
 
-        body {
-            font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            color: #1a1a1a;
-            padding-bottom: 90px;
+            font-family: 'Poppins', 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
 
-        /* Top Curved Burgundy Header */
-        .store-curved-header {
-            position: relative;
+        .app-view {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             width: 100%;
-            height: 60px;
-            margin-bottom: 12px;
+            box-sizing: border-box;
+            padding-bottom: 65px; /* Space for the fixed bottom ad banner */
+            align-items: center;
         }
 
-        .store-curved-header .bg-wave {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Straight Top Header Bar with Back Button */
+        .straight-header-bar {
             width: 100%;
-            height: 60px;
-            z-index: 1;
-        }
-
-        .header-top-row {
-            position: absolute;
-            top: 8px;
-            left: 0;
-            right: 0;
-            z-index: 2;
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            padding: 14px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            border-bottom: 2px solid #ffd700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+            flex-shrink: 0;
         }
 
         .header-back-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: none;
-            color: #5d0017;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-            transition: transform 0.15s ease;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            padding: 0;
         }
 
         .header-back-btn:active {
-            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.95);
         }
 
-        .header-title {
-            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: 0.8px;
+        .header-back-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: #ffffff;
+        }
+
+        .straight-header-title {
             color: #ffffff;
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            flex-grow: 1;
+            text-align: center;
+            padding-right: 38px;
             text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
 
-        /* Content Container */
+        /* Centered Content Container */
         .content-container {
             width: 100%;
             max-width: 420px;
             padding: 0 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-        }
-
-        /* Burgundy Top Win Card */
-        .burgundy-card {
-            background: linear-gradient(135deg, #70001c 0%, #400010 100%);
-            border-radius: 18px;
-            padding: 16px;
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            color: #ffffff;
-            box-shadow: 0 6px 16px rgba(64, 0, 16, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            justify-content: center; /* Keeps the inner gift box centered vertically */
+            flex: 1;
         }
 
-        .card-info {
+        /* Top In-Flow Ad Container Box */
+        .ad-container-box {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto 14px auto;
+            width: 100%;
+            max-width: 320px;
+            min-height: 50px;
+            overflow: hidden;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.03);
+            flex-shrink: 0;
         }
 
-        .card-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
-        .card-desc {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .card-badge-pill {
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-left: 8px;
-            font-weight: 600;
-        }
-
-        .card-action-tag {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            padding: 7px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
+        .ad-container-box iframe {
+            display: block;
+            margin: 0 auto;
         }
 
         /* Full Burgundy Gift Box Container */
@@ -169,13 +143,14 @@
             width: 100%;
             background: linear-gradient(145deg, var(--bg-burgundy-light) 0%, var(--bg-burgundy-dark) 100%);
             border-radius: 28px;
-            padding: 30px 20px;
+            padding: 26px 20px;
             text-align: center;
             box-shadow: 0 16px 40px rgba(80, 0, 20, 0.3);
             position: relative;
             z-index: 10;
             color: var(--white);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: auto 0; /* Ensures box always balances vertically in center */
         }
 
         .title-header {
@@ -198,7 +173,7 @@
             position: relative;
             width: 150px;
             height: 150px;
-            margin: 0 auto 24px auto;
+            margin: 0 auto 20px auto;
             cursor: pointer;
             perspective: 1000px;
         }
@@ -216,8 +191,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 170px;
-            height: 170px;
+            width: 160px;
+            height: 160px;
             background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0) 70%);
             border-radius: 50%;
             animation: pulseGlow 2s infinite ease-in-out;
@@ -238,6 +213,16 @@
             20%, 80% { transform: translate3d(4px, 0, 0) rotate(3deg); }
             30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-5deg); }
             40%, 60% { transform: translate3d(6px, 0, 0) rotate(5deg); }
+        }
+
+        /* Lid Animation - Kept close to the top of the box */
+        #giftLid {
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: bottom left;
+        }
+
+        .gift-box.box-open #giftLid {
+            transform: translate(-15px, -18px) rotate(-10deg);
         }
 
         /* Gold Action Button */
@@ -277,43 +262,27 @@
             display: none;
         }
 
-        /* Bottom Advertisement Box Overlay Container */
-        .ad-space-container {
+        /* Fixed Sticky Bottom Burgundy Ad Banner Bar (CENTERED) */
+        .sticky-bottom-ad-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            max-width: 420px;
-            margin-top: 10px;
-            padding: 0 16px;
-        }
-
-        .ad-box {
-            width: 100%;
-            height: 54px;
-            border: 1.5px dashed #c0c4cc;
-            background-color: #fdfdfd;
-            border-radius: 12px;
+            z-index: 9999;
+            background: linear-gradient(180deg, #4a0012 0%, #2b000a 100%);
+            border-top: 2px solid #800020;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.6);
             display: flex;
-            align-items: center;
             justify-content: center;
-            position: relative;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
-        }
-
-        .ad-text {
-            font-size: 11px;
-            color: #8c939d;
-            display: flex;
             align-items: center;
-            gap: 6px;
-            font-weight: 500;
+            padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        .ad-tag {
-            position: absolute;
-            top: 2px;
-            right: 6px;
-            font-size: 9px;
-            color: #a8abb2;
-            font-weight: 600;
+        .sticky-bottom-ad-bar iframe {
+            display: block;
+            margin: 0 auto;
         }
 
         /* Reward Modal Overlay */
@@ -395,99 +364,98 @@
 </head>
 <body>
 
-    <!-- Top Curved Burgundy Header -->
-    <div class="store-curved-header">
-        <svg class="bg-wave" viewBox="0 0 1000 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0 H1000 V30 Q500 60 0 30 Z" fill="url(#header_burgundy_gradient)"/>
-            <defs>
-                <linearGradient id="header_burgundy_gradient" x1="500" y1="0" x2="500" y2="60" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#2b000a"/>
-                    <stop offset="0.6" stop-color="#500014"/>
-                    <stop offset="1" stop-color="#70001c"/>
-                </linearGradient>
-            </defs>
-        </svg>
+    <div class="app-view">
 
-        <div class="header-top-row">
-            <button class="header-back-btn" onclick="goToTasks()" title="Back">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
+        <!-- Straight Line Header with Back Icon -->
+        <div class="straight-header-bar">
+            <button class="header-back-btn" onclick="goToTasks()" aria-label="Back to Task">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-
-            <h1 class="header-title">DAILY GIFT BOX</h1>
-
-            <div style="width: 32px; display: flex; justify-content: flex-end;">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffd700">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                </svg>
-            </div>
+            <h3 class="straight-header-title">DAILY GIFT BOX</h3>
         </div>
-    </div>
 
-    <!-- Main Content Area -->
-    <div class="content-container">
-        <!-- Burgundy Card: Top Win Headline -->
-        <div class="burgundy-card">
-            <div class="card-info">
-                <div class="card-title">
-                    Top Jackpot Reward
-                    <span class="card-badge-pill">Hot</span>
+        <!-- Main Content Area -->
+        <div class="content-container">
+
+            <!-- TOP AD CONTAINER (320x50) -->
+            <div class="ad-container-box" id="topAdBox">
+                <script>
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+            </div>
+
+            <!-- Full Burgundy Mystery Box Container -->
+            <div class="box-container">
+                <h2 class="title-header">Daily Gift Reward</h2>
+                <p class="subtitle-text">Claim your mystery cash reward once every 24 hours!</p>
+
+                <div class="box-wrapper" id="boxWrapper" onclick="handleBoxClick()">
+                    <div class="box-glow"></div>
+                    <svg class="gift-box" id="giftBoxSvg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="100" cy="180" rx="65" ry="12" fill="rgba(0,0,0,0.3)"/>
+                        
+                        <!-- Box Lower Body -->
+                        <g id="giftBody">
+                            <path d="M40 90 L160 90 L150 170 L50 170 Z" fill="url(#boxGradient)"/>
+                            <path d="M90 90 L110 90 L107 170 L93 170 Z" fill="url(#ribbonGradient)"/>
+                        </g>
+
+                        <!-- Separated Top Lid Group -->
+                        <g id="giftLid">
+                            <rect x="30" y="70" width="140" height="25" rx="5" fill="url(#lidGradient)"/>
+                            <rect x="90" y="70" width="20" height="25" fill="url(#ribbonGradient)"/>
+                            <circle cx="82" cy="60" r="14" fill="url(#ribbonGradient)"/>
+                            <circle cx="118" cy="60" r="14" fill="url(#ribbonGradient)"/>
+                            <circle cx="100" cy="62" r="8" fill="#ffd700"/>
+                        </g>
+                        
+                        <defs>
+                            <linearGradient id="boxGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#a0002c"/>
+                                <stop offset="100%" stop-color="#4a0012"/>
+                            </linearGradient>
+                            <linearGradient id="lidGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#c40037"/>
+                                <stop offset="100%" stop-color="#70001e"/>
+                            </linearGradient>
+                            <linearGradient id="ribbonGradient" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#ffe066"/>
+                                <stop offset="50%" stop-color="#d4af37"/>
+                                <stop offset="100%" stop-color="#aa7c11"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
                 </div>
-                <div class="card-desc">Unbox daily rewards & instant cash prizes</div>
-            </div>
-            <div class="card-action-tag">Up to 1,000,000 Birr</div>
-        </div>
 
-        <!-- Full Burgundy Mystery Box Container -->
-        <div class="box-container">
-            <h2 class="title-header">Daily Gift Reward</h2>
-            <p class="subtitle-text">Claim your mystery cash reward once every 24 hours!</p>
-
-            <div class="box-wrapper" id="boxWrapper" onclick="handleBoxClick()">
-                <div class="box-glow"></div>
-                <svg class="gift-box" id="giftBoxSvg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="100" cy="180" rx="65" ry="12" fill="rgba(0,0,0,0.3)"/>
-                    <path d="M40 90 L160 90 L150 170 L50 170 Z" fill="url(#boxGradient)"/>
-                    <path d="M90 90 L110 90 L107 170 L93 170 Z" fill="url(#ribbonGradient)"/>
-                    <rect x="30" y="70" width="140" height="25" rx="5" fill="url(#lidGradient)"/>
-                    <rect x="90" y="70" width="20" height="25" fill="url(#ribbonGradient)"/>
-                    <circle cx="82" cy="60" r="14" fill="url(#ribbonGradient)"/>
-                    <circle cx="118" cy="60" r="14" fill="url(#ribbonGradient)"/>
-                    <circle cx="100" cy="62" r="8" fill="#ffd700"/>
-                    
-                    <defs>
-                        <linearGradient id="boxGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#a0002c"/>
-                            <stop offset="100%" stop-color="#4a0012"/>
-                        </linearGradient>
-                        <linearGradient id="lidGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#c40037"/>
-                            <stop offset="100%" stop-color="#70001e"/>
-                        </linearGradient>
-                        <linearGradient id="ribbonGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#ffe066"/>
-                            <stop offset="50%" stop-color="#d4af37"/>
-                            <stop offset="100%" stop-color="#aa7c11"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+                <button class="btn-open-box" id="openBoxBtn" onclick="claimDailyGift()">Open Gift Box</button>
+                <div class="timer-display" id="timerDisplay">Next box available in: <span id="timeRemaining">--:--:--</span></div>
             </div>
 
-            <button class="btn-open-box" id="openBoxBtn" onclick="claimDailyGift()">Open Gift Box</button>
-            <div class="timer-display" id="timerDisplay">Next box available in: <span id="timeRemaining">--:--:--</span></div>
         </div>
-    </div>
 
-    <!-- Dashed Advertisement Space Container -->
-    <div class="ad-space-container">
-        <div class="ad-box">
-            <span class="ad-tag">AD</span>
-            <div class="ad-text">
-                📢 <span>Advertisement Space</span>
-            </div>
+        <!-- FIXED STICKY BURGUNDY BOTTOM AD BANNER (320x50 - Pinned & Centered) -->
+        <div class="sticky-bottom-ad-bar" id="bottomAdBox">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
         </div>
+
     </div>
 
     <!-- Reward Overlay Modal -->
@@ -557,9 +525,14 @@
         function disableBox(msRemaining) {
             const openBtn = document.getElementById('openBoxBtn');
             const timerDisplay = document.getElementById('timerDisplay');
+            const boxSvg = document.getElementById('giftBoxSvg');
+
             openBtn.disabled = true;
             openBtn.innerText = "Box Opened Today";
             timerDisplay.style.display = 'block';
+
+            // Keep top lid lifted off to left right near the box
+            boxSvg.classList.add('box-open');
 
             clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
@@ -579,9 +552,14 @@
         function enableBox() {
             const openBtn = document.getElementById('openBoxBtn');
             const timerDisplay = document.getElementById('timerDisplay');
+            const boxSvg = document.getElementById('giftBoxSvg');
+
             openBtn.disabled = false;
             openBtn.innerText = "OPEN GIFT BOX";
             timerDisplay.style.display = 'none';
+
+            // Close the box lid when available again
+            boxSvg.classList.remove('box-open');
         }
 
         function handleBoxClick() {

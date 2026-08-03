@@ -139,9 +139,10 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Level 1 Expandable Dropdown Container */
+        /* Level Selector Dropdown Container */
         .level-dropdown-container {
             width: 100%;
+            flex-shrink: 0;
         }
 
         .main-level-trigger-btn {
@@ -276,7 +277,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Interactive Circle Clock Card */
+        /* Interactive Circle Clock Card (Centered vertically) */
         .timer-card {
             background: var(--card-tech-bg);
             border: 1px solid var(--border-light);
@@ -287,13 +288,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             position: relative;
+            margin: auto 0; /* Keeps timer centered vertically */
+            width: 100%;
         }
 
         .timer-3d-button {
             position: relative;
-            width: 210px;
-            height: 210px;
+            width: 220px;
+            height: 220px;
             margin: 8px 0;
             border-radius: 50%;
             background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(240, 244, 248, 0.8) 40%, rgba(203, 213, 225, 0.7) 75%, rgba(148, 163, 184, 0.85) 100%);
@@ -331,24 +335,26 @@
         }
 
         .inner-timer-logo {
-            height: 65px;
+            height: 55px;
             width: auto;
             object-fit: contain;
             margin-bottom: 4px;
         }
 
         .digital-clock {
-            font-size: 1.55rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: #500614;
+            font-family: 'JetBrains Mono', monospace;
             text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+            letter-spacing: -0.5px;
         }
 
         .click-action-hint {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 800;
             color: #ffffff;
-            margin-top: 6px;
+            margin-top: 8px;
             text-transform: uppercase;
             background: linear-gradient(135deg, #7f1d1d 0%, #500614 100%);
             padding: 4px 12px;
@@ -357,7 +363,7 @@
         }
 
         .target-subtext {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 700;
             margin-top: 8px;
@@ -366,9 +372,10 @@
         .target-subtext span {
             color: var(--text-dark);
             font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Bottom Fixed Ad Bar */
+        /* Burgundy Bottom Fixed Ad Bar */
         .bottom-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -377,9 +384,8 @@
             flex-shrink: 0; 
             z-index: 30; 
             padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
-            background: rgba(248, 250, 252, 0.95); 
-            backdrop-filter: blur(10px); 
-            border-top: 1px solid var(--border-light); 
+            background: var(--primary-burgundy); 
+            border-top: 1px solid rgba(255, 255, 255, 0.2); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -486,74 +492,74 @@
             <!-- 1. LEVEL SELECTOR DROPDOWN SECTION -->
             <div class="level-dropdown-container">
                 <button class="main-level-trigger-btn" id="levelTriggerBtn">
-                    <span id="selectedLevelTitle">🎯 Level 1 (5s Counting)</span>
+                    <span id="selectedLevelTitle">🎯 Level 1 (24s Challenge)</span>
                     <span id="dropdownArrow">▼</span>
                 </button>
 
                 <div class="levels-grid" id="levelsGrid">
                     
-                    <!-- 5 Seconds Level -->
-                    <div class="level-item active" id="card-5s" data-level="5s" data-target="5.00" data-reward="15" data-display="00:00:05">
+                    <!-- Level 1 (24s) -->
+                    <div class="level-item active" id="card-l1" data-level="l1" data-target="24.00" data-reward="15" data-display="00:00:24:00:00">
                         <div class="level-info">
-                            <h4>Level 1 (5s Counting) <span class="trial-pill" id="badge-5s">2/2 Trials</span></h4>
-                            <p>Target exact stop time: 00:00:05</p>
+                            <h4>Level 1 (24s Challenge) <span class="trial-pill" id="badge-l1">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:24:00:00</p>
                         </div>
                         <div class="level-reward">+15 Birr</div>
                         
-                        <div class="level-lock-overlay" id="overlay-5s">
+                        <div class="level-lock-overlay" id="overlay-l1">
                             <div class="lock-msg">🔒 Level Locked</div>
-                            <div class="lock-timer" id="timer-5s">60:00</div>
+                            <div class="lock-timer" id="timer-l1">60:00</div>
                         </div>
                     </div>
 
-                    <!-- Medium Level (25.5s) -->
-                    <div class="level-item" id="card-medium" data-level="medium" data-target="25.50" data-reward="20" data-display="00:00:25:50">
+                    <!-- Level 2 (25.25s) -->
+                    <div class="level-item" id="card-l2" data-level="l2" data-target="25.25" data-reward="20" data-display="00:00:25:25:00">
                         <div class="level-info">
-                            <h4>Level 2 (25.5s Medium) <span class="trial-pill" id="badge-medium">2/2 Trials</span></h4>
-                            <p>Target exact stop time: 00:00:25:50</p>
+                            <h4>Level 2 (25.25s Challenge) <span class="trial-pill" id="badge-l2">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:25:25:00</p>
                         </div>
                         <div class="level-reward">+20 Birr</div>
                         
-                        <div class="level-lock-overlay" id="overlay-medium">
+                        <div class="level-lock-overlay" id="overlay-l2">
                             <div class="lock-msg">🔒 Level Locked</div>
-                            <div class="lock-timer" id="timer-medium">60:00</div>
+                            <div class="lock-timer" id="timer-l2">60:00</div>
                         </div>
                     </div>
 
-                    <!-- Easy Level (26s) -->
-                    <div class="level-item" id="card-easy" data-level="easy" data-target="26.00" data-reward="30" data-display="00:00:26">
+                    <!-- Level 3 (22.23.25s) -->
+                    <div class="level-item" id="card-l3" data-level="l3" data-target="22.2325" data-reward="30" data-display="00:00:22:23:25">
                         <div class="level-info">
-                            <h4>Level 3 (26s Challenge) <span class="trial-pill" id="badge-easy">2/2 Trials</span></h4>
-                            <p>Target exact stop time: 00:00:26</p>
+                            <h4>Level 3 (22.23.25s Master) <span class="trial-pill" id="badge-l3">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:22:23:25</p>
                         </div>
                         <div class="level-reward">+30 Birr</div>
                         
-                        <div class="level-lock-overlay" id="overlay-easy">
+                        <div class="level-lock-overlay" id="overlay-l3">
                             <div class="lock-msg">🔒 Level Locked</div>
-                            <div class="lock-timer" id="timer-easy">60:00</div>
+                            <div class="lock-timer" id="timer-l3">60:00</div>
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- 2. INTERACTIVE CIRCLE CLOCK -->
+            <!-- 2. INTERACTIVE CIRCLE CLOCK (ALWAYS CENTERED) -->
             <div class="timer-card">
                 
                 <div class="timer-3d-button" id="timerCircleBtn">
                     <div class="digital-clock-overlay">
                         <img class="inner-timer-logo" src="birrgo-logo.png" alt="BirrGo Logo">
-                        <div class="digital-clock" id="clockDisplay">00:00:00:00</div>
+                        <div class="digital-clock" id="clockDisplay">00:00:00:00:00</div>
                         <div class="click-action-hint" id="actionHint">TAP TO START</div>
                     </div>
                 </div>
 
-                <div class="target-subtext">TARGET: <span id="targetLabel">00:00:05</span></div>
+                <div class="target-subtext">TARGET: <span id="targetLabel">00:00:24:00:00</span></div>
             </div>
 
         </div>
 
-        <!-- BOTTOM BANNER AD PLACEMENT -->
+        <!-- BURGUNDY BOTTOM BANNER AD PLACEMENT -->
         <div class="bottom-wrapper">
             <script>
               atOptions = {
@@ -567,7 +573,7 @@
             <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
         </div>
 
-        <!-- Daily Win 300 Birr Instruction Popup -->
+        <!-- Daily Instruction Popup -->
         <div class="popup-backdrop active" id="dailyRulesPopup">
             <div class="popup-card">
                 <h3 class="popup-title">🏆 Win Up To 300 Birr Daily!</h3>
@@ -623,10 +629,10 @@
             let timerInterval = null;
             let isRunning = false;
             
-            let selectedLevel = '5s';
-            let targetSeconds = 5.00;
+            let selectedLevel = 'l1';
+            let targetSeconds = 24.00;
             let currentReward = 15;
-            let currentDisplayTarget = '00:00:05';
+            let currentDisplayTarget = '00:00:24:00:00';
 
             const COOLDOWN_TIME_MS = 60 * 60 * 1000; 
 
@@ -668,7 +674,7 @@
             const cooldownIntervals = {};
 
             function updateAllLevelsLockStates() {
-                const levels = ['5s', 'medium', 'easy'];
+                const levels = ['l1', 'l2', 'l3'];
                 let firstUnlockedLevel = null;
 
                 levels.forEach(lvl => {
@@ -751,19 +757,21 @@
             });
 
             function resetClockDisplay() {
-                clockDisplay.innerText = "00:00:00:00";
+                clockDisplay.innerText = "00:00:00:00:00";
                 actionHint.innerText = "TAP TO START";
                 actionHint.style.background = "linear-gradient(135deg, #7f1d1d 0%, #500614 100%)";
             }
 
-            function formatTime(ms) {
+            // High Precision 5-Timer Format (HH:MM:SS:MS:US)
+            function formatTime5(ms) {
                 const totalSeconds = ms / 1000;
                 const hrs = Math.floor(totalSeconds / 3600);
                 const mins = Math.floor((totalSeconds % 3600) / 60);
                 const secs = Math.floor(totalSeconds % 60);
                 const millis = Math.floor((ms % 1000) / 10);
+                const micros = Math.floor((performance.now() * 10) % 100);
 
-                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${millis.toString().padStart(2, '0')}`;
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${millis.toString().padStart(2, '0')}:${micros.toString().padStart(2, '0')}`;
             }
 
             // --- CLICKABLE 3D CIRCLE TIMER TRIGGER ---
@@ -783,7 +791,7 @@
 
                     timerInterval = setInterval(() => {
                         const elapsedTime = Date.now() - startTime;
-                        clockDisplay.innerText = formatTime(elapsedTime);
+                        clockDisplay.innerText = formatTime5(elapsedTime);
                     }, 10);
 
                 } else {
@@ -801,12 +809,12 @@
                     // Precision Check
                     let isWinner = false;
                     
-                    if (selectedLevel === '5s') {
-                        isWinner = Math.abs(stoppedSeconds - 5.00) < 0.05;
-                    } else if (selectedLevel === 'medium') {
-                        isWinner = Math.abs(stoppedSeconds - 25.50) < 0.03;
-                    } else if (selectedLevel === 'easy') {
-                        isWinner = Math.abs(stoppedSeconds - 26.00) < 0.03;
+                    if (selectedLevel === 'l1') {
+                        isWinner = Math.abs(stoppedSeconds - 24.00) < 0.05;
+                    } else if (selectedLevel === 'l2') {
+                        isWinner = Math.abs(stoppedSeconds - 25.25) < 0.03;
+                    } else if (selectedLevel === 'l3') {
+                        isWinner = Math.abs(stoppedSeconds - 22.2325) < 0.02;
                     }
 
                     if (isWinner) {
@@ -818,10 +826,10 @@
                         if (levelSession.trials <= 0) {
                             levelSession.cooldownEnd = Date.now() + COOLDOWN_TIME_MS;
                             saveLevelSession(selectedLevel, 0, levelSession.cooldownEnd);
-                            showPopup("You Failed!", `Stopped at ${formatTime(stopTimeMs)}. Exact target was ${currentDisplayTarget}. 2 trials exhausted for this level!`, "#dc2626");
+                            showPopup("You Failed!", `Stopped at ${formatTime5(stopTimeMs)}. Exact target was ${currentDisplayTarget}. 2 trials exhausted for this level!`, "#dc2626");
                         } else {
                             saveLevelSession(selectedLevel, levelSession.trials, 0);
-                            showPopup("You Failed!", `Stopped at ${formatTime(stopTimeMs)} (target was ${currentDisplayTarget}). You have ${levelSession.trials} trial left. Try again!`, "#dc2626");
+                            showPopup("You Failed!", `Stopped at ${formatTime5(stopTimeMs)} (target was ${currentDisplayTarget}). You have ${levelSession.trials} trial left. Try again!`, "#dc2626");
                         }
                     }
 
