@@ -6,7 +6,7 @@
     <title>BirrGo - Video Key Challenge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -50,7 +50,7 @@
         .bg-wave-top { top: 0; height: 90px; }
         .bg-wave-bottom { bottom: 0; height: 35px; }
 
-        /* Header Layout - Centered Title & Matching Clear Icon-Only Back Button */
+        /* Header Layout */
         .brand-header { 
             display: grid; 
             grid-template-columns: 32px 1fr 32px; 
@@ -95,13 +95,89 @@
         .img-blur-loading { filter: blur(8px); opacity: 0.4; }
         .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        /* Content Container with Navigation Safe Areas */
+        /* Top Banner Ad Container */
+        .top-ad-banner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            z-index: 4;
+            min-height: 52px;
+        }
+
+        /* Content Container */
         .app-content {
             flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
             padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px;
             position: relative; z-index: 2; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .app-content::-webkit-scrollbar { display: none; }
+
+        /* Growth / Progress Card */
+        .growth-card {
+            width: 100%;
+            background: linear-gradient(135deg, #500614 0%, #2a0005 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-lg);
+            padding: 12px 14px;
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(80, 6, 20, 0.25);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .growth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .growth-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .growth-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 2px 8px;
+            border-radius: 12px;
+            color: #fca5a5;
+        }
+
+        .growth-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .growth-progress-fill {
+            height: 100%;
+            width: 25%;
+            background: linear-gradient(90deg, #38bdf8, #4ade80);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .growth-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #cbd5e1;
+        }
 
         .task-container { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 
@@ -157,29 +233,40 @@
         }
 
         /* Fixed Bottom Ad Wrapper */
-        .bottom-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; flex-shrink: 0; z-index: 30; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; background: rgba(248, 250, 252, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-light); }
-        .ad-container { position: relative; z-index: 2; background: var(--card-tech-bg); border: 1px dashed #cbd5e1; border-radius: 10px; padding: 5px 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 38px; box-shadow: var(--card-shadow); user-select: none; }
-        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
-        .ad-icon { font-size: 12px; }
-        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
+        .bottom-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            flex-shrink: 0; 
+            z-index: 30; 
+            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: rgba(248, 250, 252, 0.95); 
+            backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-light); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60px;
+        }
 
         /* Modal Dialog */
-        .popup-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
+        .popup-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
         .popup-backdrop.active { display: flex; opacity: 1; }
-        .popup-card { background-color: #ffffff; border-radius: var(--border-radius-lg); padding: 16px 14px; width: 84%; max-width: 290px; text-align: center; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); }
+        .popup-card { background-color: #ffffff; border-radius: var(--border-radius-lg); padding: 18px 16px; width: 86%; max-width: 300px; text-align: center; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2); border: 2px solid #500614; }
         .popup-icon-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 18px; }
         .popup-icon-circle.success { background: #dcfce7; color: #059669; }
         .popup-icon-circle.error { background: #fee2e2; color: #dc2626; }
         .popup-icon-circle.warning { background: #fef3c7; color: #d97706; }
-        .popup-title { font-size: 0.88rem; font-weight: 800; margin-bottom: 4px; }
+        .popup-title { font-size: 0.9rem; font-weight: 800; margin-bottom: 4px; }
         .popup-title.success { color: #059669; }
         .popup-title.error { color: #dc2626; }
-        .popup-title.warning { color: #d97706; }
-        .popup-message { font-size: 0.72rem; color: #334155; font-weight: 500; line-height: 1.4; margin-bottom: 12px; }
-        .popup-btn { width: 100%; border: none; border-radius: var(--border-radius-md); padding: 9px; font-size: 0.72rem; font-weight: 700; color: white; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+        .popup-title.warning { color: #500614; }
+        .popup-message { font-size: 0.74rem; color: #334155; font-weight: 500; line-height: 1.45; margin-bottom: 12px; }
+        .popup-btn { width: 100%; border: none; border-radius: var(--border-radius-md); padding: 10px; font-size: 0.75rem; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
         .popup-btn.btn-success { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
         .popup-btn.btn-error { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
-        .popup-btn.btn-warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
+        .popup-btn.btn-warning { background: linear-gradient(135deg, #500614 0%, #2a0005 100%); }
     </style>
 </head>
 <body>
@@ -198,7 +285,7 @@
             <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
         </svg>
 
-        <!-- Header with Centered Title & Icon-Only Back Button -->
+        <!-- Header -->
         <div class="brand-header">
             <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -210,8 +297,38 @@
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
 
+        <!-- TOP BANNER AD PLACEMENT -->
+        <div class="top-ad-banner">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
+
         <!-- Scrollable Content Container -->
         <div class="app-content">
+
+            <!-- GROWTH PROGRESS CARD INSIDE PAGE BOX -->
+            <div class="growth-card">
+                <div class="growth-header">
+                    <span class="growth-title">📈 Daily Growth Challenge</span>
+                    <span class="growth-badge">Level 1 Growth</span>
+                </div>
+                <div class="growth-progress-bar">
+                    <div class="growth-progress-fill" id="growthProgressFill"></div>
+                </div>
+                <div class="growth-stats">
+                    <span>Goal: 1000 Birr/Day</span>
+                    <span id="growthProgressText">Progress: 25%</span>
+                </div>
+            </div>
+
             <div class="task-container" id="videoTasksContainer">
                 <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.75rem;">
                     Loading video tasks...
@@ -219,16 +336,35 @@
             </div>
         </div>
 
-        <!-- Bottom Fixed Ad Banner -->
+        <!-- BOTTOM BANNER AD PLACEMENT -->
         <div class="bottom-wrapper">
-            <div class="ad-container">
-                <span class="ad-badge">AD</span>
-                <span class="ad-icon">📢</span>
-                <span class="ad-label">Advertisement Space</span>
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
+
+        <!-- Daily Instruction Popup (Find Key & Win Up to 1000 Birr) -->
+        <div class="popup-backdrop active" id="dailyKeyRulesPopup">
+            <div class="popup-card">
+                <div class="popup-icon-circle warning">🔑</div>
+                <h3 class="popup-title warning">Win Up To 1000 Birr Daily!</h3>
+                <p class="popup-message">
+                    • Click <b>Watch</b> to view the video.<br>
+                    • Find the <b>Secret Key</b> shown inside the video.<br>
+                    • Enter the answer key and claim instant Birr to your wallet!
+                </p>
+                <button class="popup-btn btn-warning" id="dailyKeyPopupStartBtn">Start Challenge</button>
             </div>
         </div>
 
-        <!-- Modal Dialog -->
+        <!-- Result / Notification Modal Dialog -->
         <div class="popup-backdrop" id="customPopup">
             <div class="popup-card">
                 <div class="popup-icon-circle" id="popupIconCircle"></div>
@@ -253,6 +389,11 @@
 
             const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
 
+            // Daily Instructions Popup Close
+            document.getElementById('dailyKeyPopupStartBtn').addEventListener('click', () => {
+                document.getElementById('dailyKeyRulesPopup').classList.remove('active');
+            });
+
             /* Progressive Image Blur Loader */
             const setupBlurImage = (imgEl) => {
                 if (!imgEl) return;
@@ -272,7 +413,7 @@
 
             setupBlurImage(document.getElementById('mainLogo'));
 
-            /* Page-wide network detection */
+            /* Network detection */
             const appView = document.getElementById('appView');
             const handleNetworkChange = () => {
                 if (!navigator.onLine) appView.classList.add('network-offline-blur');
@@ -358,6 +499,8 @@
                 const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_tasks`));
                 const claimedData = claimedSnapshot.exists() ? claimedSnapshot.val() : {};
                 
+                let claimedCount = 0;
+
                 for (const item of taskList) {
                     const storageKey = `claimed_vid_${activeUserPhone}_${item.id}`;
                     const savedUrlKey = `task_url_${activeUserPhone}_${item.id}`;
@@ -372,6 +515,8 @@
                     }
                     
                     localStorage.setItem(savedUrlKey, item.url);
+
+                    if (isAlreadyClaimed) claimedCount++;
 
                     const card = document.createElement('div');
                     card.className = 'task-card';
@@ -429,6 +574,11 @@
                         });
                     }
                 }
+
+                // Update Growth Card Stats
+                const percent = Math.min(Math.round((claimedCount / Math.max(taskList.length, 1)) * 100), 100);
+                document.getElementById('growthProgressFill').style.width = `${percent}%`;
+                document.getElementById('growthProgressText').innerText = `Progress: ${percent}%`;
             }
 
             async function verifyAndClaim(item) {

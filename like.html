@@ -18,8 +18,8 @@
             --bg-light: #f8fafc;
             --border-light: #e2e8f0;
             --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
-            --border-radius-lg: 12px;
-            --border-radius-md: 8px;
+            --border-radius-lg: 14px;
+            --border-radius-md: 10px;
             --nav-bar-height: 70px;
         }
 
@@ -38,7 +38,7 @@
             min-height: 100vh; 
             background-color: var(--bg-light); 
             overflow: hidden; 
-            font-size: 12px; 
+            font-size: 13px; 
         }
 
         /* PWA Shell Structure */
@@ -52,7 +52,7 @@
             position: relative; 
             overflow: hidden; 
             transition: filter 0.3s ease; 
-        }
+        } 
         
         .app-view.network-offline-blur { 
             filter: blur(10px) grayscale(20%); 
@@ -83,20 +83,20 @@
         .bg-wave-top { top: 0; height: 90px; }
         .bg-wave-bottom { bottom: 0; height: 35px; }
 
-        /* Header Layout - Centered Title & Clear Icon-Only Back Button */
+        /* Header Layout */
         .brand-header { 
             display: grid; 
-            grid-template-columns: 32px 1fr 32px; 
+            grid-template-columns: 36px 1fr 36px; 
             align-items: center; 
-            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 8px 12px; 
             position: relative; 
             z-index: 5; 
             flex-shrink: 0; 
         }
 
         .back-btn-icon {
-            width: 30px; 
-            height: 30px; 
+            width: 34px; 
+            height: 34px; 
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.95);
             border: none; 
@@ -106,14 +106,14 @@
             cursor: pointer; 
             outline: none;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
-            transition: transform 0.15s ease, background-color 0.15s ease;
+            transition: transform 0.15s ease;
         }
         .back-btn-icon:active { transform: scale(0.90); }
-        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
+        .back-btn-icon svg { width: 18px; height: 18px; stroke: var(--primary-burgundy); }
 
         .header-center-title {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.92rem;
             font-weight: 800;
             color: #ffffff;
             text-transform: uppercase;
@@ -125,7 +125,7 @@
         }
 
         .logo-image { 
-            height: 22px; 
+            height: 24px; 
             width: auto; 
             object-fit: contain; 
             justify-self: end; 
@@ -136,16 +136,56 @@
         .img-blur-loading { filter: blur(8px); opacity: 0.5; }
         .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        /* Content Container with Navigation Safe Areas */
+        /* Ad Script Container Styling */
+        .ad-container { 
+            position: relative; 
+            z-index: 2; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            min-height: 50px; 
+            overflow: hidden; 
+            text-align: center;
+        }
+
+        /* Top Ad Wrapper */
+        .top-ad-wrapper {
+            padding: 6px 12px;
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Fixed Bottom Ad Wrapper */
+        .bottom-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            flex-shrink: 0; 
+            z-index: 30; 
+            padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px; 
+            background: rgba(248, 250, 252, 0.94); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-light); 
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Content Area */
         .app-content { 
             flex: 1 1 auto; 
             min-height: 0; 
             display: flex; 
             flex-direction: column; 
-            padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px; 
+            padding: 10px 12px calc(75px + env(safe-area-inset-bottom, 12px)) 12px; 
             position: relative; 
             z-index: 2; 
-            gap: 10px; 
+            gap: 12px; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
             scrollbar-width: none; 
@@ -155,20 +195,20 @@
         .task-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* Tech Light Cards with Burgundy Accents */
+        /* Task Cards */
         .task-card {
             background: var(--card-tech-bg);
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-lg);
-            padding: 10px 12px;
+            padding: 14px 14px;
             box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
             position: relative;
             overflow: hidden;
             transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
@@ -186,14 +226,14 @@
         .task-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .task-icon-badge {
             background: #ffffff;
             border: 1px solid var(--border-light);
-            width: 38px;
-            height: 38px;
+            width: 46px;
+            height: 46px;
             border-radius: var(--border-radius-md);
             display: flex;
             align-items: center;
@@ -207,37 +247,37 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 8px;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
         .task-details h4 {
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             line-height: 1.2;
         }
 
         .task-details p {
-            font-size: 0.68rem;
+            font-size: 0.75rem;
             color: var(--primary-burgundy);
             font-weight: 800;
         }
 
-        /* Standard Action Buttons */
+        /* Action Buttons */
         .task-btn {
             border: none;
-            border-radius: 16px;
-            padding: 5px 14px;
-            font-size: 0.65rem;
+            border-radius: 18px;
+            padding: 7px 16px;
+            font-size: 0.72rem;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
             white-space: nowrap;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
         }
 
         .btn-follow {
@@ -254,62 +294,26 @@
 
         .status-checking {
             color: #d97706;
-            font-size: 0.65rem;
+            font-size: 0.72rem;
             font-weight: 700;
         }
 
         .status-verified {
             color: #64748b;
-            font-size: 0.65rem;
+            font-size: 0.72rem;
             font-weight: 800;
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            border-radius: 16px;
+            padding: 6px 12px;
+            border-radius: 18px;
             display: inline-block;
         }
 
-        /* Fixed Bottom Ad Wrapper */
-        .bottom-wrapper { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            flex-shrink: 0; 
-            z-index: 30; 
-            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
-            background: rgba(248, 250, 252, 0.94); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border-top: 1px solid var(--border-light); 
-        }
-
-        .ad-container { 
-            position: relative; 
-            z-index: 2; 
-            background: var(--card-tech-bg); 
-            border: 1px dashed #cbd5e1; 
-            border-radius: 10px; 
-            padding: 5px 10px; 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-            min-height: 38px; 
-            box-shadow: var(--card-shadow); 
-            user-select: none; 
-        }
-
-        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
-        .ad-icon { font-size: 12px; }
-        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
-
-        /* Modal Popup */
+        /* Modal Popups */
         .popup-backdrop { 
             position: fixed; 
             inset: 0; 
-            background-color: rgba(15, 23, 42, 0.55); 
+            background-color: rgba(15, 23, 42, 0.65); 
             backdrop-filter: blur(6px); 
             -webkit-backdrop-filter: blur(6px); 
             display: none; 
@@ -325,11 +329,11 @@
         .popup-card { 
             background-color: #ffffff; 
             border-radius: var(--border-radius-lg); 
-            padding: 16px 14px; 
-            width: 84%; 
-            max-width: 290px; 
+            padding: 20px 18px; 
+            width: 86%; 
+            max-width: 310px; 
             text-align: center; 
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); 
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2); 
         }
 
         .popup-btn { 
@@ -337,13 +341,13 @@
             background: var(--primary-gradient); 
             border: none; 
             border-radius: var(--border-radius-md); 
-            padding: 9px; 
-            font-size: 0.72rem; 
-            font-weight: 700; 
+            padding: 11px; 
+            font-size: 0.78rem; 
+            font-weight: 800; 
             color: white; 
             cursor: pointer; 
-            margin-top: 10px; 
-            box-shadow: 0 3px 8px rgba(80, 6, 20, 0.22); 
+            margin-top: 14px; 
+            box-shadow: 0 4px 12px rgba(80, 6, 20, 0.25); 
         }
     </style>
 </head>
@@ -362,7 +366,7 @@
             <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
         </svg>
 
-        <!-- Header with Centered Title & Icon-Only Back Button -->
+        <!-- Header -->
         <div class="brand-header">
             <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -376,29 +380,66 @@
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
 
+        <!-- Top Ad Box (With Script Integrated) -->
+        <div class="top-ad-wrapper">
+            <div class="ad-container">
+                <script>
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+            </div>
+        </div>
+
         <!-- Scrollable Content Area -->
         <div class="app-content">
             <div class="task-container" id="socialTasksContainer">
-                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.72rem;">
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.78rem;">
                     Loading video tasks...
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Fixed Ad Banner -->
+        <!-- Bottom Fixed Ad Banner (With Script Integrated) -->
         <div class="bottom-wrapper">
             <div class="ad-container">
-                <span class="ad-badge">AD</span>
-                <span class="ad-icon">📢</span>
-                <span class="ad-label">Advertisement Space</span>
+                <script>
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+            </div>
+        </div>
+
+        <!-- Start Instructions Popup -->
+        <div class="popup-backdrop active" id="welcomePopup">
+            <div class="popup-card">
+                <div style="font-size: 2rem; margin-bottom: 6px;">🎬</div>
+                <h3 style="font-size:0.95rem; font-weight:800; color:var(--text-dark); margin-bottom:8px;">How to Complete Tasks</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted); font-weight:500; line-height:1.4;">
+                    1. Tap <b>"Like Video"</b> to open the video link.<br>
+                    2. Like the video on the respective platform.<br>
+                    3. Return here and tap <b>"Verify"</b> to confirm and claim your reward balance.
+                </p>
+                <button class="popup-btn" id="welcomeStartBtn">I Understand & Start</button>
             </div>
         </div>
 
         <!-- Completion Modal -->
         <div class="popup-backdrop" id="completionPopup">
             <div class="popup-card">
-                <h3 style="font-size:0.88rem; font-weight:800; color:#059669; margin-bottom:5px;">Congratulations!</h3>
-                <p style="font-size:0.72rem; color:var(--text-muted); font-weight:500; line-height:1.4;"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">10</span> Birr has been credited to your wallet balance.</p>
+                <h3 style="font-size:0.95rem; font-weight:800; color:#059669; margin-bottom:6px;">Congratulations!</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted); font-weight:500; line-height:1.4;"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">10</span> Birr has been credited to your wallet balance.</p>
                 <button class="popup-btn" id="popupCloseBtn">Great!</button>
             </div>
         </div>
@@ -417,6 +458,15 @@
             }
 
             const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
+
+            // Instructions Popup dismiss logic
+            const welcomePopup = document.getElementById('welcomePopup');
+            const welcomeStartBtn = document.getElementById('welcomeStartBtn');
+            if (welcomeStartBtn && welcomePopup) {
+                welcomeStartBtn.addEventListener('click', () => {
+                    welcomePopup.classList.remove('active');
+                });
+            }
 
             const mainLogo = document.getElementById('mainLogo');
             if (mainLogo) {
@@ -515,7 +565,7 @@
             function renderTasks() {
                 container.innerHTML = '';
                 if (activeTasks.length === 0) {
-                    container.innerHTML = '<p style="font-size:0.72rem; color:var(--text-muted); text-align:center;">No active video tasks right now. Please check back later!</p>';
+                    container.innerHTML = '<p style="font-size:0.75rem; color:var(--text-muted); text-align:center;">No active video tasks right now. Please check back later!</p>';
                     return;
                 }
 

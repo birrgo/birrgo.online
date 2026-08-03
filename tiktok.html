@@ -6,6 +6,13 @@
     <title>BirrGo - TikTok Rewards</title>
     <link rel="stylesheet" href="wallet.css">
     <style>
+        body {
+            background-color: #2b000a;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
         /* Top Burgundy Header */
         .minimal-header {
             display: flex;
@@ -54,6 +61,34 @@
         .btn-back-only:active {
             transform: translateY(2px);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Ad Box Containers */
+        .ad-container-350x50 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto 5px auto;
+            width: 350px;
+            min-height: 50px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        /* Fixed Bottom Ad Bar (Replacing Bottom Navigation Menu) */
+        .bottom-ad-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #1a0006;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
         }
 
         /* Transparent Prize Grid Container */
@@ -285,6 +320,81 @@
             background: #800020;
             border-radius: 50%;
         }
+
+        /* Instructions Info Pop-up Before Open Page */
+        .info-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 18px;
+            box-sizing: border-box;
+        }
+
+        .info-modal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 2px solid #800020;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .info-popup-image {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 8px;
+            border: 2px solid #800020;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .info-title {
+            color: #800020;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .info-body {
+            text-align: left;
+            background: #fff0f3;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .info-body ul {
+            margin: 6px 0 0 0;
+            padding-left: 16px;
+        }
+
+        .btn-start-page {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -293,6 +403,35 @@
     <script src="loader.js"></script>
 
     <div class="network-blur-overlay" id="networkBlurGate"></div>
+
+    <!-- Pre-Open Pop-up Modal Instructions -->
+    <div class="info-modal-backdrop" id="instructionsModal">
+        <div class="info-modal-card">
+            <!-- Replaced Emoji Icon with t.jpg Image -->
+            <img src="t.jpg" alt="TikTok Promo" class="info-popup-image">
+            <div class="info-title">TikTok Pay Per View Rules</div>
+            
+            <div class="info-body">
+                • Make a video <b>specifically about BirrGo</b> and post it on TikTok.<br>
+                • You will get paid <b>per view</b> once your video crosses <b>10,000 (10K) views</b>.<br>
+                • Make sure your submitted view count matches your <b>exact view tier</b>.<br>
+                • Double check all your information before submitting for review.<br><br>
+                <b>🏆 List of Prizes & Rewards:</b>
+                <ul>
+                    <li>10K Views ፦ <b>200 ETB</b></li>
+                    <li>20K Views ፦ <b>400 ETB</b></li>
+                    <li>50K Views ፦ <b>1,000 ETB</b></li>
+                    <li>100K Views ፦ <b>2,200 ETB</b></li>
+                    <li>200K Views ፦ <b>4,500 ETB</b></li>
+                    <li>300K Views ፦ <b>7,000 ETB</b></li>
+                    <li>500K Views ፦ <b>12,000 ETB</b></li>
+                    <li>1M Views ፦ <b>25,000 ETB</b></li>
+                </ul>
+            </div>
+
+            <button class="btn-start-page" id="btnCloseInstructions">I Understand & Continue</button>
+        </div>
+    </div>
 
     <div class="app-view" id="mainAppView">
 
@@ -307,7 +446,22 @@
             <div style="width: 38px;"></div> <!-- Spacer element to balance layout -->
         </div>
 
-        <div class="app-content" style="padding-top: 10px;">
+        <!-- 350x50 Ad Placement Under Top Header -->
+        <div class="ad-container-350x50">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
+
+        <!-- Added padding-bottom so content doesn't get hidden behind bottom ad -->
+        <div class="app-content" style="padding-top: 5px; padding-bottom: 75px;">
 
             <!-- Shiny Burgundy Prize List Grid -->
             <div class="reward-tier-card">
@@ -346,7 +500,7 @@
 
                     <div class="checkbox-container">
                         <input type="checkbox" id="confirmBirrGoTopic" required>
-                        <label for="confirmBirrGoTopic">I confirm this video is about <strong>BirrGo</strong>.</label>
+                        <label for="confirmBirrGoTopic">I confirm this video is about <strong>BirrGo</strong> and view count is correct.</label>
                     </div>
 
                     <button type="submit" class="btn-submit-claim" id="submitBtn">Submit for Admin Review</button>
@@ -361,55 +515,19 @@
 
         </div>
 
-        <!-- 5-Item Bottom Navigation Bar -->
-        <nav class="bottom-nav-bar" id="bottomNavBar">
-            <div onclick="goToPage('dashboard.html')" class="nav-item">
-                <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24">
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                </div>
-                Home
-            </div>
-            <div onclick="goToPage('task.html')" class="nav-item active">
-                <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                </div>
-                Tasks
-            </div>
-            <div onclick="goToPage('Apps.html')" class="nav-item">
-                <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7" rx="2" />
-                        <rect x="14" y="3" width="7" height="7" rx="2" />
-                        <rect x="14" y="14" width="7" height="7" rx="2" />
-                        <rect x="3" y="14" width="7" height="7" rx="2" />
-                    </svg>
-                </div>
-                Apps
-            </div>
-            <div onclick="goToPage('lottery.html')" class="nav-item">
-                <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                </div>
-                Campaign
-            </div>
-            <div onclick="goToPage('wallet.html')" class="nav-item">
-                <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                        <line x1="2" y1="10" x2="22" y2="10"></line>
-                    </svg>
-                </div>
-                Wallet
-            </div>
-        </nav>
+        <!-- Replaced Bottom Navigation Bar with Fixed Bottom Ad Placement -->
+        <div class="bottom-ad-bar">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
 
         <!-- Custom View Tier Selection Modal Popup -->
         <div class="tier-modal-overlay" id="tierSelectModal">
@@ -525,6 +643,11 @@
                 window.goToPage("index.html");
                 return;
             }
+
+            // Handle pre-open instructions modal button
+            document.getElementById('btnCloseInstructions').addEventListener('click', () => {
+                document.getElementById('instructionsModal').style.display = 'none';
+            });
 
             setupCustomSelectModal();
             setupFormSubmission();

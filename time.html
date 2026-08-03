@@ -12,7 +12,6 @@
         :root {
             --primary-burgundy: #500614;
             --deep-red-gradient: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
-            /* Deposit button style gradient */
             --red-card-bg: linear-gradient(135deg, #500614 0%, #2a0005 100%);
             --accent-red: #dc2626;
             --neon-red: #ff2a4b;
@@ -111,6 +110,20 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
         }
 
+        /* Top Banner Ad Container */
+        .top-ad-banner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            z-index: 4;
+            min-height: 52px;
+        }
+
         .app-content { 
             flex: 1 1 auto; 
             min-height: 0; 
@@ -126,20 +139,43 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Level Cards UI Matching Deposit Button Style */
-        .levels-section-title {
-            font-size: 0.92rem;
+        /* Level 1 Expandable Dropdown Container */
+        .level-dropdown-container {
+            width: 100%;
+        }
+
+        .main-level-trigger-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #500614 0%, #7f1d1d 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
             font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: 0.3px;
-            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(80, 6, 20, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .main-level-trigger-btn:active {
+            transform: scale(0.98);
         }
 
         .levels-grid {
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 10px;
+            margin-top: 10px;
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .level-item {
@@ -147,29 +183,26 @@
             background: var(--red-card-bg);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 16px;
-            padding: 14px 16px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 25px -5px rgba(80, 6, 20, 0.3), 0 8px 10px -6px rgba(80, 6, 20, 0.2);
+            box-shadow: 0 10px 25px -5px rgba(80, 6, 20, 0.3);
             overflow: hidden;
         }
 
         .level-item.active {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
             background: linear-gradient(135deg, #620819 0%, #1f0004 100%);
-            box-shadow: 0 12px 28px -4px rgba(80, 6, 20, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2);
-            transform: translateY(-1px);
+            box-shadow: 0 12px 28px -4px rgba(80, 6, 20, 0.45);
         }
 
-        /* Locked State matching Deposit Button Style (No Shine/Animation) */
         .level-item.locked {
             cursor: not-allowed;
             border: 1px solid rgba(255, 255, 255, 0.15);
             background: linear-gradient(135deg, #42040f 0%, #150002 100%);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
             opacity: 0.85;
         }
 
@@ -180,7 +213,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .level-info p {
@@ -188,7 +220,6 @@
             color: #fca5a5;
             font-weight: 600;
             margin-top: 3px;
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .level-reward {
@@ -199,8 +230,6 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 4px 10px;
             border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .trial-pill {
@@ -210,10 +239,8 @@
             color: #ffffff;
             padding: 2px 6px;
             border-radius: 6px;
-            font-family: 'Times New Roman', Times, serif;
         }
 
-        /* Cooldown Lock Overlay matching Deposit Button Theme */
         .level-lock-overlay {
             position: absolute;
             inset: 0;
@@ -237,23 +264,19 @@
             font-size: 0.86rem;
             font-weight: 800;
             color: #ff859b;
-            letter-spacing: 0.3px;
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .lock-timer {
-            font-family: 'Times New Roman', Times, serif;
             font-size: 0.92rem;
             font-weight: 800;
             color: #ffffff;
             background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
             padding: 4px 10px;
             border-radius: 8px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* High Gloss 3D Glass Box Interactive Circle Clock */
+        /* Interactive Circle Clock Card */
         .timer-card {
             background: var(--card-tech-bg);
             border: 1px solid var(--border-light);
@@ -269,14 +292,12 @@
 
         .timer-3d-button {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 210px;
+            height: 210px;
             margin: 8px 0;
             border-radius: 50%;
-            /* Ultra glossy transparent glass look with vivid multi-layered highlights */
             background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(240, 244, 248, 0.8) 40%, rgba(203, 213, 225, 0.7) 75%, rgba(148, 163, 184, 0.85) 100%);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             box-shadow: 
                 0 20px 40px rgba(80, 6, 20, 0.25),
                 0 6px 15px rgba(0, 0, 0, 0.1),
@@ -294,27 +315,8 @@
             overflow: hidden;
         }
 
-        /* Glass reflection overlay streak */
-        .timer-3d-button::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0) 60%);
-            pointer-events: none;
-            border-radius: 50%;
-        }
-
         .timer-3d-button:active {
             transform: scale(0.96);
-            box-shadow: 
-                0 8px 20px rgba(80, 6, 20, 0.3),
-                inset 0 8px 16px rgba(0, 0, 0, 0.25),
-                inset 0 0 0 2px rgba(255, 255, 255, 0.6),
-                0 0 0 6px rgba(255, 255, 255, 0.9),
-                0 0 0 12px rgba(80, 6, 20, 0.25);
         }
 
         .digital-clock-overlay {
@@ -326,41 +328,32 @@
             justify-content: center;
             pointer-events: none;
             width: 100%;
-            padding: 0 10px;
         }
 
-        /* Large Logo Inside Timer */
         .inner-timer-logo {
-            height: 76px;
+            height: 65px;
             width: auto;
             object-fit: contain;
             margin-bottom: 4px;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
         }
 
-        /* Increased Font Size for Digital Clock */
         .digital-clock {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.6rem;
+            font-size: 1.55rem;
             font-weight: 800;
             color: #500614;
-            letter-spacing: -0.5px;
-            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(80, 6, 20, 0.15);
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
         }
 
         .click-action-hint {
             font-size: 0.74rem;
             font-weight: 800;
             color: #ffffff;
-            letter-spacing: 0.8px;
             margin-top: 6px;
             text-transform: uppercase;
             background: linear-gradient(135deg, #7f1d1d 0%, #500614 100%);
             padding: 4px 12px;
             border-radius: 14px;
             box-shadow: 0 3px 8px rgba(80, 6, 20, 0.25);
-            transition: background 0.2s ease;
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .target-subtext {
@@ -368,7 +361,6 @@
             color: var(--text-muted);
             font-weight: 700;
             margin-top: 8px;
-            font-family: 'Times New Roman', Times, serif;
         }
 
         .target-subtext span {
@@ -376,7 +368,7 @@
             font-weight: 800;
         }
 
-        /* Bottom Fixed Ad */
+        /* Bottom Fixed Ad Bar */
         .bottom-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -385,34 +377,20 @@
             flex-shrink: 0; 
             z-index: 30; 
             padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
-            background: rgba(248, 250, 252, 0.94); 
+            background: rgba(248, 250, 252, 0.95); 
             backdrop-filter: blur(10px); 
             border-top: 1px solid var(--border-light); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60px;
         }
 
-        .ad-container { 
-            position: relative; 
-            z-index: 2; 
-            background: var(--card-tech-bg); 
-            border: 1px dashed #cbd5e1; 
-            border-radius: 10px; 
-            padding: 5px 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-            min-height: 38px; 
-        }
-
-        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800; color: #94a3b8; font-family: 'Times New Roman', Times, serif; }
-        .ad-icon { font-size: 12px; }
-        .ad-label { font-size: 9.5px; font-weight: 700; color: #94a3b8; font-family: 'Times New Roman', Times, serif; }
-
-        /* Modal Popup */
+        /* Modal Popups (Daily Reward & Result) */
         .popup-backdrop { 
             position: fixed; 
             inset: 0; 
-            background-color: rgba(15, 23, 42, 0.6); 
+            background-color: rgba(15, 23, 42, 0.65); 
             backdrop-filter: blur(6px); 
             display: none; 
             justify-content: center; 
@@ -425,32 +403,26 @@
         .popup-card { 
             background-color: #ffffff; 
             border-radius: var(--border-radius-lg); 
-            padding: 20px 18px; 
+            padding: 22px 18px; 
             width: 100%; 
-            max-width: 300px; 
+            max-width: 310px; 
             text-align: center; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-        }
-
-        .popup-backdrop.active .popup-card {
-            transform: scale(1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); 
+            border: 2px solid #500614;
         }
 
         .popup-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 800;
-            margin-bottom: 6px;
-            font-family: 'Times New Roman', Times, serif;
+            color: #500614;
+            margin-bottom: 8px;
         }
 
         .popup-text {
             font-size: 0.88rem;
             color: var(--text-muted);
             font-weight: 600;
-            line-height: 1.4;
-            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.45;
         }
 
         .popup-btn { 
@@ -458,14 +430,13 @@
             background: linear-gradient(135deg, #500614 0%, #2a0005 100%); 
             border: none; 
             border-radius: var(--border-radius-md); 
-            padding: 10px; 
-            font-size: 0.88rem; 
+            padding: 11px; 
+            font-size: 0.9rem; 
             font-weight: 800; 
             color: white; 
             cursor: pointer; 
             margin-top: 14px; 
-            box-shadow: 0 4px 12px rgba(80, 6, 20, 0.2);
-            font-family: 'Times New Roman', Times, serif;
+            box-shadow: 0 4px 12px rgba(80, 6, 20, 0.3);
         }
     </style>
 </head>
@@ -495,32 +466,50 @@
             <img class="logo-image" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
 
+        <!-- TOP BANNER AD PLACEMENT -->
+        <div class="top-ad-banner">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
+
         <!-- App Content -->
         <div class="app-content">
             
-            <!-- 1. LEVEL SELECTOR SECTION -->
-            <div>
-                <h3 class="levels-section-title">Select Challenge Level:</h3>
-                <div class="levels-grid">
+            <!-- 1. LEVEL SELECTOR DROPDOWN SECTION -->
+            <div class="level-dropdown-container">
+                <button class="main-level-trigger-btn" id="levelTriggerBtn">
+                    <span id="selectedLevelTitle">🎯 Level 1 (5s Counting)</span>
+                    <span id="dropdownArrow">▼</span>
+                </button>
+
+                <div class="levels-grid" id="levelsGrid">
                     
-                    <!-- Easy Level -->
-                    <div class="level-item active" id="card-easy" data-level="easy" data-target="26.00" data-reward="10" data-display="00:00:26">
+                    <!-- 5 Seconds Level -->
+                    <div class="level-item active" id="card-5s" data-level="5s" data-target="5.00" data-reward="15" data-display="00:00:05">
                         <div class="level-info">
-                            <h4>Easy Mode <span class="trial-pill" id="badge-easy">2/2 Trials</span></h4>
-                            <p>Target exact stop time: 00:00:26</p>
+                            <h4>Level 1 (5s Counting) <span class="trial-pill" id="badge-5s">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:05</p>
                         </div>
-                        <div class="level-reward">+10 Birr</div>
+                        <div class="level-reward">+15 Birr</div>
                         
-                        <div class="level-lock-overlay" id="overlay-easy">
+                        <div class="level-lock-overlay" id="overlay-5s">
                             <div class="lock-msg">🔒 Level Locked</div>
-                            <div class="lock-timer" id="timer-easy">60:00</div>
+                            <div class="lock-timer" id="timer-5s">60:00</div>
                         </div>
                     </div>
 
-                    <!-- Medium Level -->
+                    <!-- Medium Level (25.5s) -->
                     <div class="level-item" id="card-medium" data-level="medium" data-target="25.50" data-reward="20" data-display="00:00:25:50">
                         <div class="level-info">
-                            <h4>Medium Mode <span class="trial-pill" id="badge-medium">2/2 Trials</span></h4>
+                            <h4>Level 2 (25.5s Medium) <span class="trial-pill" id="badge-medium">2/2 Trials</span></h4>
                             <p>Target exact stop time: 00:00:25:50</p>
                         </div>
                         <div class="level-reward">+20 Birr</div>
@@ -531,50 +520,67 @@
                         </div>
                     </div>
 
-                    <!-- Hard Level -->
-                    <div class="level-item" id="card-hard" data-level="hard" data-target="25.504" data-reward="100" data-display="00:00:25:50:40">
+                    <!-- Easy Level (26s) -->
+                    <div class="level-item" id="card-easy" data-level="easy" data-target="26.00" data-reward="30" data-display="00:00:26">
                         <div class="level-info">
-                            <h4>Hard Mode <span class="trial-pill" id="badge-hard">2/2 Trials</span></h4>
-                            <p>Target exact stop time: 00:00:25:50:40</p>
+                            <h4>Level 3 (26s Challenge) <span class="trial-pill" id="badge-easy">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:26</p>
                         </div>
-                        <div class="level-reward">+100 Birr</div>
+                        <div class="level-reward">+30 Birr</div>
                         
-                        <div class="level-lock-overlay" id="overlay-hard">
+                        <div class="level-lock-overlay" id="overlay-easy">
                             <div class="lock-msg">🔒 Level Locked</div>
-                            <div class="lock-timer" id="timer-hard">60:00</div>
+                            <div class="lock-timer" id="timer-easy">60:00</div>
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- 2. HIGH GLOSS 3D GLASS BOX INTERACTIVE CIRCLE CLOCK -->
+            <!-- 2. INTERACTIVE CIRCLE CLOCK -->
             <div class="timer-card">
                 
                 <div class="timer-3d-button" id="timerCircleBtn">
                     <div class="digital-clock-overlay">
-                        <!-- Extra Large BirrGo Logo Inside Timer -->
                         <img class="inner-timer-logo" src="birrgo-logo.png" alt="BirrGo Logo">
                         <div class="digital-clock" id="clockDisplay">00:00:00:00</div>
                         <div class="click-action-hint" id="actionHint">TAP TO START</div>
                     </div>
                 </div>
 
-                <div class="target-subtext">TARGET: <span id="targetLabel">00:00:26</span></div>
+                <div class="target-subtext">TARGET: <span id="targetLabel">00:00:05</span></div>
             </div>
 
         </div>
 
-        <!-- Bottom Ad -->
+        <!-- BOTTOM BANNER AD PLACEMENT -->
         <div class="bottom-wrapper">
-            <div class="ad-container">
-                <span class="ad-badge">AD</span>
-                <span class="ad-icon">📢</span>
-                <span class="ad-label">Advertisement Space</span>
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+        </div>
+
+        <!-- Daily Win 300 Birr Instruction Popup -->
+        <div class="popup-backdrop active" id="dailyRulesPopup">
+            <div class="popup-card">
+                <h3 class="popup-title">🏆 Win Up To 300 Birr Daily!</h3>
+                <div class="popup-text">
+                    • Stop the clock on the <b>EXACT target time</b>.<br>
+                    • Select your level to play.<br>
+                    • Earn instant Birr credited directly to your wallet for each win!
+                </div>
+                <button class="popup-btn" id="dailyPopupStartBtn">Start Playing Now</button>
             </div>
         </div>
 
-        <!-- Result Modal Popup -->
+        <!-- Result Popup -->
         <div class="popup-backdrop" id="resultPopup">
             <div class="popup-card">
                 <h3 class="popup-title" id="popupTitle">Result</h3>
@@ -617,10 +623,10 @@
             let timerInterval = null;
             let isRunning = false;
             
-            let selectedLevel = 'easy';
-            let targetSeconds = 26.00;
-            let currentReward = 10;
-            let currentDisplayTarget = '00:00:26';
+            let selectedLevel = '5s';
+            let targetSeconds = 5.00;
+            let currentReward = 15;
+            let currentDisplayTarget = '00:00:05';
 
             const COOLDOWN_TIME_MS = 60 * 60 * 1000; 
 
@@ -630,6 +636,23 @@
             const timerCircleBtn = document.getElementById('timerCircleBtn');
             const actionHint = document.getElementById('actionHint');
             const levelItems = document.querySelectorAll('.level-item');
+            const levelTriggerBtn = document.getElementById('levelTriggerBtn');
+            const levelsGrid = document.getElementById('levelsGrid');
+            const selectedLevelTitle = document.getElementById('selectedLevelTitle');
+            const dropdownArrow = document.getElementById('dropdownArrow');
+
+            // Daily Instructions Popup Action
+            document.getElementById('dailyPopupStartBtn').addEventListener('click', () => {
+                document.getElementById('dailyRulesPopup').classList.remove('active');
+            });
+
+            // Toggle Dropdown List of Levels
+            levelTriggerBtn.addEventListener('click', () => {
+                if (isRunning) return;
+                const isVisible = levelsGrid.style.display === 'flex';
+                levelsGrid.style.display = isVisible ? 'none' : 'flex';
+                dropdownArrow.innerText = isVisible ? '▼' : '▲';
+            });
 
             // --- PER LEVEL TRIAL & LOCK STORAGE SYSTEM ---
             function getLevelSession(levelKey) {
@@ -645,7 +668,7 @@
             const cooldownIntervals = {};
 
             function updateAllLevelsLockStates() {
-                const levels = ['easy', 'medium', 'hard'];
+                const levels = ['5s', 'medium', 'easy'];
                 let firstUnlockedLevel = null;
 
                 levels.forEach(lvl => {
@@ -712,7 +735,14 @@
                 currentReward = parseInt(item.getAttribute('data-reward'));
                 currentDisplayTarget = item.getAttribute('data-display');
 
+                const titleText = item.querySelector('h4').childNodes[0].textContent.trim();
+                selectedLevelTitle.innerText = `🎯 ${titleText}`;
                 targetLabel.innerText = currentDisplayTarget;
+                
+                // Close dropdown grid on selection
+                levelsGrid.style.display = 'none';
+                dropdownArrow.innerText = '▼';
+
                 resetClockDisplay();
             }
 
@@ -736,10 +766,9 @@
                 return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${millis.toString().padStart(2, '0')}`;
             }
 
-            // --- CLICKABLE 3D GLASS CIRCLE TIMER TRIGGER ---
+            // --- CLICKABLE 3D CIRCLE TIMER TRIGGER ---
             timerCircleBtn.addEventListener('click', () => {
                 if (!isRunning) {
-                    // START TIMER
                     const currentSession = getLevelSession(selectedLevel);
                     if (currentSession.cooldownEnd > Date.now()) {
                         showPopup("Level Locked", "This level has exhausted its 2 trials. Please select another level.", "#dc2626");
@@ -750,7 +779,7 @@
                     startTime = Date.now();
                     actionHint.innerText = "TAP TO STOP";
                     actionHint.style.background = "#dc2626";
-                    levelItems.forEach(i => i.style.pointerEvents = 'none');
+                    levelTriggerBtn.disabled = true;
 
                     timerInterval = setInterval(() => {
                         const elapsedTime = Date.now() - startTime;
@@ -761,7 +790,7 @@
                     // STOP TIMER
                     clearInterval(timerInterval);
                     isRunning = false;
-                    levelItems.forEach(i => i.style.pointerEvents = 'auto');
+                    levelTriggerBtn.disabled = false;
                     actionHint.innerText = "TAP TO START";
                     actionHint.style.background = "linear-gradient(135deg, #7f1d1d 0%, #500614 100%)";
 
@@ -769,20 +798,20 @@
                     const stoppedSeconds = stopTimeMs / 1000;
                     let levelSession = getLevelSession(selectedLevel);
 
-                    // WIN CHECK: Precision Matching
+                    // Precision Check
                     let isWinner = false;
                     
-                    if (selectedLevel === 'easy') {
-                        isWinner = Math.abs(stoppedSeconds - 26.00) < 0.03;
+                    if (selectedLevel === '5s') {
+                        isWinner = Math.abs(stoppedSeconds - 5.00) < 0.05;
                     } else if (selectedLevel === 'medium') {
-                        isWinner = Math.abs(stoppedSeconds - 25.50) < 0.02;
-                    } else if (selectedLevel === 'hard') {
-                        isWinner = Math.abs(stoppedSeconds - 25.504) < 0.01;
+                        isWinner = Math.abs(stoppedSeconds - 25.50) < 0.03;
+                    } else if (selectedLevel === 'easy') {
+                        isWinner = Math.abs(stoppedSeconds - 26.00) < 0.03;
                     }
 
                     if (isWinner) {
                         awardUser(currentReward);
-                        showPopup("CONGRATS!", `🎉 Congra! Perfect exact timing! ${currentReward} Birr credited to wallet!`, "#10b981");
+                        showPopup("CONGRATS!", `🎉 Congra! Perfect exact timing! ${currentReward} Birr credited to your wallet!`, "#10b981");
                     } else {
                         levelSession.trials -= 1;
 

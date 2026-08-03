@@ -17,9 +17,9 @@
             --text-muted: #64748b;
             --bg-light: #f8fafc;
             --border-light: #e2e8f0;
-            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
-            --border-radius-lg: 12px;
-            --border-radius-md: 8px;
+            --card-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+            --border-radius-lg: 14px;
+            --border-radius-md: 10px;
             --nav-bar-height: 70px;
         }
 
@@ -38,7 +38,7 @@
             min-height: 100vh; 
             background-color: var(--bg-light); 
             overflow: hidden; 
-            font-size: 12px; 
+            font-size: 13px; 
         }
 
         /* PWA Shell Structure */
@@ -52,7 +52,7 @@
             position: relative; 
             overflow: hidden; 
             transition: filter 0.3s ease; 
-        }
+        } 
         
         .app-view.network-offline-blur { 
             filter: blur(10px) grayscale(20%); 
@@ -80,23 +80,23 @@
 
         /* Liquid Wave Decorations */
         .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
-        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-top { top: 0; height: 95px; }
         .bg-wave-bottom { bottom: 0; height: 35px; }
 
         /* Header Layout - Centered Title & Clear Icon-Only Back Button */
         .brand-header { 
             display: grid; 
-            grid-template-columns: 32px 1fr 32px; 
+            grid-template-columns: 36px 1fr 36px; 
             align-items: center; 
-            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 8px 14px; 
             position: relative; 
             z-index: 5; 
             flex-shrink: 0; 
         }
 
         .back-btn-icon {
-            width: 30px; 
-            height: 30px; 
+            width: 34px; 
+            height: 34px; 
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.95);
             border: none; 
@@ -105,15 +105,15 @@
             justify-content: center;
             cursor: pointer; 
             outline: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); 
             transition: transform 0.15s ease, background-color 0.15s ease;
         }
         .back-btn-icon:active { transform: scale(0.90); }
-        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
+        .back-btn-icon svg { width: 18px; height: 18px; stroke: var(--primary-burgundy); }
 
         .header-center-title {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #ffffff;
             text-transform: uppercase;
@@ -125,7 +125,7 @@
         }
 
         .logo-image { 
-            height: 22px; 
+            height: 24px; 
             width: auto; 
             object-fit: contain; 
             justify-self: end; 
@@ -136,42 +136,75 @@
         .img-blur-loading { filter: blur(8px); opacity: 0.5; }
         .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        /* Content Container with Navigation Safe Areas */
+        /* Content Container */
         .app-content { 
             flex: 1 1 auto; 
             min-height: 0; 
             display: flex; 
             flex-direction: column; 
-            padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px; 
+            padding: 12px 12px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 12px; 
             position: relative; 
             z-index: 2; 
-            gap: 10px; 
+            gap: 12px; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
             scrollbar-width: none; 
         }
         .app-content::-webkit-scrollbar { display: none; }
 
+        /* General Ad Box Styling */
+        .ad-box {
+            position: relative;
+            background: var(--card-tech-bg);
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            user-select: none;
+            flex-shrink: 0;
+            min-height: 58px;
+            overflow: hidden;
+        }
+
+        .ad-box-top {
+            margin-bottom: 2px;
+        }
+
+        .ad-badge { 
+            position: absolute; 
+            top: 2px; 
+            right: 6px; 
+            font-size: 7px; 
+            font-weight: 800; 
+            color: #94a3b8; 
+            text-transform: uppercase;
+            z-index: 1;
+        }
+
         .task-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* Tech Light Cards with Burgundy Accents */
+        /* Tech Light Cards */
         .task-card {
             background: var(--card-tech-bg);
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-lg);
-            padding: 10px 12px;
+            padding: 14px 14px;
             box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
             position: relative;
             overflow: hidden;
             transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            cursor: pointer;
         }
 
         .task-card:active {
@@ -181,46 +214,58 @@
         .task-card.completed {
             border-color: #cbd5e1;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            cursor: default;
         }
 
         .task-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
         }
 
         .task-icon-badge {
             background: #ffffff;
             border: 1px solid var(--border-light);
-            width: 38px;
-            height: 38px;
+            width: 46px;
+            height: 46px;
             border-radius: var(--border-radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
         }
 
         .task-logo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 8px;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
+        .task-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
         .task-details h4 {
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 2px;
-            line-height: 1.2;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .task-details p {
-            font-size: 0.68rem;
+            font-size: 0.74rem;
             color: var(--primary-burgundy);
             font-weight: 800;
         }
@@ -228,16 +273,17 @@
         /* Standard Action Buttons */
         .task-btn {
             border: none;
-            border-radius: 16px;
-            padding: 5px 14px;
-            font-size: 0.65rem;
+            border-radius: 20px;
+            padding: 7px 16px;
+            font-size: 0.72rem;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
             white-space: nowrap;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+            display: inline-block;
         }
 
         .btn-follow {
@@ -254,18 +300,18 @@
 
         .status-checking {
             color: #d97706;
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-size: 0.70rem;
+            font-weight: 800;
         }
 
         .status-verified {
             color: #64748b;
-            font-size: 0.65rem;
+            font-size: 0.70rem;
             font-weight: 800;
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            border-radius: 16px;
+            padding: 5px 12px;
+            border-radius: 20px;
             display: inline-block;
         }
 
@@ -277,39 +323,23 @@
             width: 100%; 
             flex-shrink: 0; 
             z-index: 30; 
-            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
+            padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px)) 12px; 
             background: rgba(248, 250, 252, 0.94); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px); 
             border-top: 1px solid var(--border-light); 
         }
 
-        .ad-container { 
-            position: relative; 
-            z-index: 2; 
-            background: var(--card-tech-bg); 
-            border: 1px dashed #cbd5e1; 
-            border-radius: 10px; 
-            padding: 5px 10px; 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-            min-height: 38px; 
-            box-shadow: var(--card-shadow); 
-            user-select: none; 
+        .bottom-wrapper .ad-box {
+            min-height: 58px;
+            box-shadow: var(--card-shadow);
         }
 
-        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
-        .ad-icon { font-size: 12px; }
-        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
-
-        /* Modal Popup */
+        /* Modal Popups */
         .popup-backdrop { 
             position: fixed; 
             inset: 0; 
-            background-color: rgba(15, 23, 42, 0.55); 
+            background-color: rgba(15, 23, 42, 0.65); 
             backdrop-filter: blur(6px); 
             -webkit-backdrop-filter: blur(6px); 
             display: none; 
@@ -317,7 +347,8 @@
             align-items: center; 
             z-index: 2000; 
             opacity: 0; 
-            transition: opacity 0.2s ease; 
+            transition: opacity 0.25s ease; 
+            padding: 16px;
         }
 
         .popup-backdrop.active { display: flex; opacity: 1; }
@@ -325,11 +356,74 @@
         .popup-card { 
             background-color: #ffffff; 
             border-radius: var(--border-radius-lg); 
-            padding: 16px 14px; 
-            width: 84%; 
-            max-width: 290px; 
+            padding: 22px 18px; 
+            width: 90%; 
+            max-width: 320px; 
             text-align: center; 
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); 
+            position: relative;
+        }
+
+        .popup-badge {
+            background: rgba(80, 6, 20, 0.08);
+            color: var(--primary-burgundy);
+            font-weight: 800;
+            font-size: 0.68rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .popup-title {
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .popup-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.45;
+            margin-bottom: 14px;
+        }
+
+        .rules-list {
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.74rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .rule-item span {
+            background: var(--primary-burgundy);
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 800;
+            flex-shrink: 0;
         }
 
         .popup-btn { 
@@ -337,14 +431,36 @@
             background: var(--primary-gradient); 
             border: none; 
             border-radius: var(--border-radius-md); 
-            padding: 9px; 
-            font-size: 0.72rem; 
-            font-weight: 700; 
+            padding: 11px; 
+            font-size: 0.78rem; 
+            font-weight: 800; 
             color: white; 
             cursor: pointer; 
-            margin-top: 10px; 
-            box-shadow: 0 3px 8px rgba(80, 6, 20, 0.22); 
+            box-shadow: 0 4px 10px rgba(80, 6, 20, 0.25); 
+            text-decoration: none;
+            display: inline-block;
         }
+
+        .popup-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+            box-shadow: none;
+            margin-top: 8px;
+        }
+
+        /* Checkbox option to skip popup today */
+        .modal-footer-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .modal-footer-option input { accent-color: var(--primary-burgundy); }
     </style>
 </head>
 <body>
@@ -353,8 +469,8 @@
         <div class="offline-banner">📡 Weak Connection - Reconnecting...</div>
 
         <!-- Top Wave Decoration -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 95" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V42 C 240 85, 130 32, 0 42 Z" fill="#500614"/>
         </svg>
 
         <!-- Bottom Wave Decoration -->
@@ -362,7 +478,7 @@
             <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
         </svg>
 
-        <!-- Header with Centered Title & Icon-Only Back Button -->
+        <!-- Header -->
         <div class="brand-header">
             <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -378,23 +494,90 @@
 
         <!-- Scrollable Content Area -->
         <div class="app-content">
+            <!-- Top Banner Ad Slot -->
+            <div class="ad-box ad-box-top">
+                <span class="ad-badge"></span>
+                <script type="text/javascript">
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
+            </div>
+
             <div class="task-container" id="socialTasksContainer"></div>
         </div>
 
-        <!-- Bottom Fixed Ad Banner -->
+        <!-- Bottom Fixed Ad Slot -->
         <div class="bottom-wrapper">
-            <div class="ad-container">
-                <span class="ad-badge">AD</span>
-                <span class="ad-icon">📢</span>
-                <span class="ad-label">Advertisement Space</span>
+            <div class="ad-box">
+                <span class="ad-badge"></span>
+                <script type="text/javascript">
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
             </div>
         </div>
 
-        <!-- Completion Modal -->
+        <!-- AUTO WELCOME / RULES POPUP (Fires automatically on page load) -->
+        <div class="popup-backdrop" id="welcomeRulesModal">
+            <div class="popup-card">
+                <span class="popup-badge">🎁 Earn 100 Birr / Day</span>
+                <h3 class="popup-title">Daily Social Challenge</h3>
+                
+                <p class="popup-desc">Follow our official channels every day to collect your total daily reward instant balance!</p>
+                
+                <div class="rules-list">
+                    <div class="rule-item">
+                        <span>1</span>
+                        <div>Tap <strong>Follow</strong> & subscribe to each page.</div>
+                    </div>
+                    <div class="rule-item">
+                        <span>2</span>
+                        <div>Return & tap <strong>Verify</strong> button.</div>
+                    </div>
+                    <div class="rule-item">
+                        <span>3</span>
+                        <div>Wait <strong>3 minutes</strong> verification timer to complete.</div>
+                    </div>
+                </div>
+
+                <button class="popup-btn" id="welcomeStartBtn">Got It! Start Tasks</button>
+                
+                <div class="modal-footer-option">
+                    <input type="checkbox" id="dontShowTodayCheck">
+                    <label for="dontShowTodayCheck">Don't show this again today</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Specific Instruction Modal -->
+        <div class="popup-backdrop" id="taskDetailModal">
+            <div class="popup-card">
+                <h3 class="popup-title" id="infoModalTitle">Social Challenge</h3>
+                <p class="popup-desc" id="infoModalDesc">
+                    Follow or subscribe to this platform channel to complete the verification and earn your prize.
+                </p>
+                <a href="#" target="_blank" class="popup-btn" id="infoModalStartBtn">Start Challenge</a>
+                <button class="popup-btn popup-btn-secondary" id="infoModalCloseBtn">Close</button>
+            </div>
+        </div>
+
+        <!-- Task Completion Success Modal -->
         <div class="popup-backdrop" id="completionPopup">
             <div class="popup-card">
-                <h3 style="font-size:0.88rem; font-weight:800; color:#059669; margin-bottom:5px;">Congratulations!</h3>
-                <p style="font-size:0.72rem; color:var(--text-muted); font-weight:500; line-height:1.4;"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">20</span> Birr has been credited to your wallet balance.</p>
+                <h3 class="popup-title" style="color:#059669;">Congratulations!</h3>
+                <p class="popup-desc"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">20</span> Birr has been credited to your wallet balance.</p>
                 <button class="popup-btn" id="popupCloseBtn">Great!</button>
             </div>
         </div>
@@ -412,6 +595,28 @@
                 return;
             }
 
+            // Automatic Welcome Popup Handler
+            const welcomeRulesModal = document.getElementById('welcomeRulesModal');
+            const welcomeStartBtn = document.getElementById('welcomeStartBtn');
+            const dontShowTodayCheck = document.getElementById('dontShowTodayCheck');
+            
+            const todayDateStr = new Date().toISOString().split('T')[0];
+            const hideWelcomeKey = `hide_social_welcome_${activeUserPhone}_${todayDateStr}`;
+
+            if (!localStorage.getItem(hideWelcomeKey)) {
+                setTimeout(() => {
+                    welcomeRulesModal.classList.add('active');
+                }, 300);
+            }
+
+            welcomeStartBtn.addEventListener('click', () => {
+                if (dontShowTodayCheck.checked) {
+                    localStorage.setItem(hideWelcomeKey, 'true');
+                }
+                welcomeRulesModal.classList.remove('active');
+            });
+
+            // Handle Image Smooth Blurring
             const mainLogo = document.getElementById('mainLogo');
             if (mainLogo) {
                 if (mainLogo.complete) {
@@ -425,6 +630,7 @@
                 }
             }
 
+            // Offline Detector
             const appView = document.getElementById('appView');
             const handleNetworkStatus = () => {
                 if (!navigator.onLine) {
@@ -486,6 +692,28 @@
 
             const taskTracker = {}; 
             const container = document.getElementById('socialTasksContainer');
+
+            // Task Detail Popup Controls
+            const taskDetailModal = document.getElementById('taskDetailModal');
+            const infoModalTitle = document.getElementById('infoModalTitle');
+            const infoModalDesc = document.getElementById('infoModalDesc');
+            const infoModalStartBtn = document.getElementById('infoModalStartBtn');
+            const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+            function openTaskInfoModal(taskItem) {
+                infoModalTitle.innerText = taskItem.name;
+                infoModalDesc.innerHTML = `Visit our ${taskItem.name} channel, follow or subscribe, then click Verify. You will receive <strong>${taskItem.prize} Birr</strong> after the 3-minute check.`;
+                infoModalStartBtn.href = taskItem.link;
+                infoModalStartBtn.onclick = () => {
+                    taskDetailModal.classList.remove('active');
+                    processFollowInitialization(taskItem.id);
+                };
+                taskDetailModal.classList.add('active');
+            }
+
+            infoModalCloseBtn.addEventListener('click', () => {
+                taskDetailModal.classList.remove('active');
+            });
 
             function initSocialCampaign() {
                 container.innerHTML = '';
@@ -552,7 +780,13 @@
                     }
 
                     if (!isAlreadyClaimed) {
-                        document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
+                        card.addEventListener('click', (e) => {
+                            if (e.target.closest('.task-btn') || e.target.closest('.status-checking')) return;
+                            openTaskInfoModal(item);
+                        });
+
+                        document.getElementById(`link-click-${item.id}`).addEventListener('click', (e) => {
+                            e.stopPropagation();
                             processFollowInitialization(item.id);
                         });
                     }
@@ -567,7 +801,8 @@
                     if (actionableNode) {
                         actionableNode.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Verify</button>`;
                         
-                        document.getElementById(`verify-action-${id}`).addEventListener('click', () => {
+                        document.getElementById(`verify-action-${id}`).addEventListener('click', (e) => {
+                            e.stopPropagation();
                             executeLedgerConfirmation(id);
                         });
                     }
@@ -579,7 +814,7 @@
                 const targetedChannel = adminSocialChannels.find(c => c.id === id);
                 const operationalPrize = targetedChannel ? targetedChannel.prize : 20;
 
-                let totalSecondsLeft = 180; 
+                let totalSecondsLeft = 180; // 3 minutes wait
 
                 const countdownLoop = setInterval(async () => {
                     totalSecondsLeft--;
@@ -630,7 +865,8 @@
                         } catch (err) {
                             console.error("Pipeline Sync Error:", err);
                             node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Retry Verify</button>`;
-                            document.getElementById(`verify-action-${id}`).addEventListener('click', () => {
+                            document.getElementById(`verify-action-${id}`).addEventListener('click', (e) => {
+                                e.stopPropagation();
                                 executeLedgerConfirmation(id);
                             });
                         }

@@ -59,18 +59,29 @@
             font-weight: 700;
             flex-grow: 1;
             text-align: center;
-            padding-right: 38px; /* Centers text by offsetting back button width */
+            padding-right: 38px;
         }
 
-        .quiz-hero-card {
-            background: linear-gradient(135deg, rgba(74, 0, 18, 0.95), rgba(128, 0, 32, 0.9));
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            color: #ffffff;
-            margin: 20px 15px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        /* Top Ad Container under Header Bar */
+        .ad-container-box-top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 12px auto 0 auto;
+            min-height: 50px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        /* Bottom Ad Container under Question Card */
+        .ad-container-box-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto 25px auto;
+            min-height: 60px;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         .timer-container {
@@ -80,7 +91,7 @@
             background: #ffffff;
             border-radius: 14px;
             padding: 12px 18px;
-            margin: 0 15px 18px 15px;
+            margin: 12px 15px 18px 15px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.08);
             border: 1.5px solid #800020;
         }
@@ -97,7 +108,7 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            margin: 0 15px 25px 15px;
+            margin: 0 15px 15px 15px;
         }
 
         .question-tracker {
@@ -112,10 +123,10 @@
             font-weight: 700;
             color: #222;
             line-height: 1.6;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
-        /* 2-Column Grid Layout for Options (A C / B D) */
+        /* 2-Column Grid Layout for Options */
         .options-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -153,25 +164,27 @@
 
         .nav-controls {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 10px;
         }
 
         .btn-quiz-nav {
-            flex: 1;
-            padding: 13px;
+            width: 100%;
+            padding: 14px;
             border: none;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
         }
 
-        .btn-prev { background: #e0e0e0; color: #333; }
-        .btn-next { background: linear-gradient(135deg, #4a0012 0%, #800020 100%); color: #fff; }
-        .btn-quiz-nav:disabled { opacity: 0.5; cursor: not-allowed; }
-
+        .btn-next { 
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+        }
+        
         .score-summary-card {
             display: none;
             background: #ffffff;
@@ -201,6 +214,69 @@
 
         .stat-number { font-size: 22px; font-weight: 800; }
         .stat-label { font-size: 12px; color: #666; font-weight: 600; }
+
+        /* Welcome Rules Modal Styling */
+        .rules-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .rules-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid #800020;
+        }
+
+        .rules-title {
+            color: #800020;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .rules-list {
+            text-align: left;
+            background: #fff0f3;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .rules-list ul {
+            margin: 6px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .btn-start-quiz {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -209,6 +285,30 @@
     <script src="loader.js"></script>
 
     <div class="network-blur-overlay" id="networkBlurGate"></div>
+
+    <!-- Instructions Welcome Modal -->
+    <div class="rules-modal-backdrop" id="welcomeModal">
+        <div class="rules-modal-card">
+            <div style="font-size: 40px; margin-bottom: 5px;">📜</div>
+            <div class="rules-title">የፈተናው ደንቦችና መመሪያዎች</div>
+            
+            <div class="rules-list">
+                • ይህ ፈተና <b>30 የኢትዮጵያ ታሪክ ጥያቄዎችን</b> ያካተተ ሲሆን በ<b>5 ደቂቃ</b> ውስጥ መጠናቀቅ አለበት።<br>
+                • በ24 ሰዓት ውስጥ <b>2 ጊዜ ብቻ</b> መፈተን ይፈቀዳል።<br><br>
+                <b>🏆 የሽልማት ደረጃዎች፡</b>
+                <ul>
+                    <li>30/30 ከተመለሰ ፦ <b>500 ብር</b></li>
+                    <li>29/30 ከተመለሰ ፦ <b>400 ብር</b></li>
+                    <li>28/30 ከተመለሰ ፦ <b>300 ብር</b></li>
+                    <li>27/30 ከተመለሰ ፦ <b>200 ብር</b></li>
+                    <li>26/30 ከተመለሰ ፦ <b>100 ብር</b></li>
+                    <li>ከ26 በታች ፦ <b>0 ብር</b></li>
+                </ul>
+            </div>
+
+            <button class="btn-start-quiz" id="btnStartQuiz">ተረድቻለሁ ፈተናውን ጀምር</button>
+        </div>
+    </div>
 
     <div class="app-view" id="mainAppView">
 
@@ -224,13 +324,18 @@
 
         <div class="app-content">
 
-            <!-- Quiz Banner -->
-            <div class="quiz-hero-card">
-                <div style="font-size: 32px; margin-bottom: 4px;">📜</div>
-                <h2 style="margin: 0; font-size: 18px; color: #ffd700;">የታሪክ እና እውቀት ፈተና</h2>
-                <p style="margin: 4px 0 0 0; font-size: 12px; color: #e0e0e0;">
-                    እስከ <b>500 ብር</b> የሚያሸልም ፈተና! (በ24 ሰዓት 2 ጊዜ ብቻ ይፈቀዳል)
-                </p>
+            <!-- AD (320x50) Placed Under Top Header Bar -->
+            <div class="ad-container-box-top" id="topAdBox">
+                <script>
+                  atOptions = {
+                    'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
             </div>
 
             <!-- Timer Header Bar -->
@@ -239,7 +344,7 @@
                 <span class="timer-badge" id="timerDisplay">05:00</span>
             </div>
 
-            <!-- Main Question Card -->
+            <!-- Main Question Card (Clean - No Ad inside) -->
             <div class="quiz-card" id="quizBox">
                 <div class="question-tracker" id="qTracker">ጥያቄ 1 ከ 30</div>
                 <div class="question-text" id="qText">ጥያቄዎች በመጫን ላይ ናቸው...</div>
@@ -250,9 +355,23 @@
                 </div>
 
                 <div class="nav-controls">
-                    <button class="btn-quiz-nav btn-prev" id="btnPrev" disabled>የፊት</button>
+                    <!-- Next Button Only (Prev Removed) -->
                     <button class="btn-quiz-nav btn-next" id="btnNext">ቀጣይ</button>
                 </div>
+            </div>
+
+            <!-- Bottom Ad (468x60) Under Question Box -->
+            <div class="ad-container-box-bottom" id="bottomAdBox">
+                <script>
+                  atOptions = {
+                    'key' : '7cfdda874d43bf8db90ca3394ed6694d',
+                    'format' : 'iframe',
+                    'height' : 60,
+                    'width' : 468,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highperformanceformat.com/7cfdda874d43bf8db90ca3394ed6694d/invoke.js"></script>
             </div>
 
             <!-- Score Summary -->
@@ -490,18 +609,21 @@
             if (!canPlay) return;
 
             activeQuestions = generateProceduralQuestionPool();
-
-            startTimer();
             renderQuestion(0);
 
-            document.getElementById('btnPrev').addEventListener('click', () => {
-                if (currentQuestionIndex > 0) {
-                    currentQuestionIndex--;
-                    renderQuestion(currentQuestionIndex);
-                }
+            // Handle start quiz button on welcome popup
+            document.getElementById('btnStartQuiz').addEventListener('click', () => {
+                document.getElementById('welcomeModal').style.display = 'none';
+                startTimer();
             });
 
+            // Handle Next Button with validation (Must select an answer first)
             document.getElementById('btnNext').addEventListener('click', () => {
+                if (selectedAnswers[currentQuestionIndex] === undefined) {
+                    displayModal('error', 'መልስ አልመረጡም!', 'እባክዎን ወደ ቀጣዩ ጥያቄ ለማለፍ አስቀድመው ከአማራጮቹ አንዱን ይምረጡ።');
+                    return;
+                }
+
                 if (currentQuestionIndex < activeQuestions.length - 1) {
                     currentQuestionIndex++;
                     renderQuestion(currentQuestionIndex);
@@ -533,6 +655,7 @@
                 hideGlobalLoader();
 
                 if (attemptsCount >= 2) {
+                    document.getElementById('welcomeModal').style.display = 'none';
                     displayModal('error', 'የጨዋታ ገደብ አልፏል!', 'በ24 ሰዓት ውስጥ ለፈተና የተፈቀደሎትን 2 እድሎች ጨርሰዋል። እባክዎን ከ24 ሰዓት በኋላ ይሞክሩ።', () => {
                         window.goToPage('task.html');
                     });
@@ -585,8 +708,6 @@
             optionsContainer.innerHTML = '';
 
             const optionLetters = ["ሀ", "ለ", "ሐ", "መ"];
-
-            // Layout mapping for 2-column Grid: Left column (0, 1 -> A, B), Right column (2, 3 -> C, D)
             const layoutOrder = [0, 2, 1, 3]; 
 
             layoutOrder.forEach(optIdx => {
@@ -607,7 +728,6 @@
                 optionsContainer.appendChild(btn);
             });
 
-            document.getElementById('btnPrev').disabled = index === 0;
             document.getElementById('btnNext').innerText = index === activeQuestions.length - 1 ? "ፈተናውን ጨርስ" : "ቀጣይ";
         }
 
@@ -617,7 +737,7 @@
                 case 29: return 400;
                 case 28: return 300;
                 case 27: return 200;
-                case 26: return 10;
+                case 26: return 100;
                 default: return 0;
             }
         }
@@ -687,6 +807,8 @@
 
                 document.getElementById('quizBox').style.display = 'none';
                 document.getElementById('timerBox').style.display = 'none';
+                document.getElementById('topAdBox').style.display = 'none';
+                document.getElementById('bottomAdBox').style.display = 'none';
                 document.getElementById('scoreCard').style.display = 'block';
 
                 document.getElementById('statCorrect').innerText = correctCount;
