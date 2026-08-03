@@ -6,8 +6,11 @@
     <title>BirrGo - Daily Birrgo Giveaway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- Ad Loader External Script -->
+    <script src="loader.js" defer></script>
+
     <style>
         :root {
             --primary-burgundy: #500614;
@@ -20,27 +23,70 @@
             --card-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -2px rgba(0, 0, 0, 0.03);
             --border-radius-lg: 12px;
             --border-radius-md: 6px;
-            --nav-bar-height: 44px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.15px; -webkit-tap-highlight-color: transparent; }
-        html, body { width: 100%; height: 100%; min-height: 100vh; background-color: var(--bg-light); overflow: hidden; font-size: 13px; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+            letter-spacing: -0.15px; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            min-height: 100vh; 
+            background-color: var(--bg-light); 
+            overflow: hidden; 
+            font-size: 13px; 
+        }
 
         /* PWA Shell Structure */
-        .app-view { width: 100%; height: 100vh; height: 100dvh; background-color: var(--bg-light); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: filter 0.3s ease; }
-        .app-view.network-offline-blur { filter: blur(10px) grayscale(20%); pointer-events: none; }
+        .app-view { 
+            width: 100%; 
+            height: 100vh; 
+            height: 100dvh; 
+            background-color: var(--bg-light); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+            transition: filter 0.3s ease; 
+        }
+        
+        .app-view.network-offline-blur { 
+            filter: blur(10px) grayscale(20%); 
+            pointer-events: none; 
+        }
 
         /* Offline Banner */
-        .offline-banner { position: absolute; top: env(safe-area-inset-top, 6px); left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; z-index: 1000; display: none; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .offline-banner { 
+            position: absolute; 
+            top: env(safe-area-inset-top, 6px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(15, 23, 42, 0.9); 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            z-index: 1000; 
+            display: none; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        }
         .app-view.network-offline-blur .offline-banner { display: block; }
 
-        /* Content Container - Compact Viewport Fit */
+        /* Content Container - Equalized Padding */
         .app-content { 
             flex: 1 1 auto; 
             min-height: 0; 
             display: flex; 
             flex-direction: column; 
-            padding: 8px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 6px)) 10px; 
+            padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 6px)) 12px; 
             position: relative; 
             z-index: 2; 
             gap: 10px; 
@@ -50,11 +96,11 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Card Component - Adjusted Height (62px) */
+        /* Card Component - Increased Height (70px) & Adjusted Spacing */
         .featured-card { 
             width: 100%; 
-            height: 62px; 
-            min-height: 62px; 
+            height: 70px; 
+            min-height: 70px; 
             border-radius: var(--border-radius-lg); 
             overflow: hidden; 
             background: var(--primary-gradient); 
@@ -70,29 +116,96 @@
         }
         .featured-card:active { transform: scale(0.98); }
 
-        .shine-glow::after { content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: rotate(25deg); animation: shimmerEffect 4.5s infinite ease-in-out; pointer-events: none; z-index: 4; }
+        .shine-glow::after { 
+            content: ''; 
+            position: absolute; 
+            top: -50%; 
+            left: -60%; 
+            width: 30%; 
+            height: 200%; 
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); 
+            transform: rotate(25deg); 
+            animation: shimmerEffect 4.5s infinite ease-in-out; 
+            pointer-events: none; 
+            z-index: 4; 
+        }
         @keyframes shimmerEffect { 0% { left: -60%; } 30% { left: 140%; } 100% { left: 140%; } }
 
-        .card-img-wrapper { width: 22%; height: 100%; background-color: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
-        .image-lazy-blur { width: 100%; height: 100%; object-fit: cover; filter: blur(12px); opacity: 0.6; transition: filter 0.4s ease, opacity 0.4s ease; position: absolute; top: 0; left: 0; z-index: 2; }
+        /* Thumbnail Image Area */
+        .card-img-wrapper { 
+            width: 70px; 
+            height: 100%; 
+            background-color: #1e293b; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            flex-shrink: 0; 
+        }
+        .image-lazy-blur { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            filter: blur(12px); 
+            opacity: 0.6; 
+            transition: filter 0.4s ease, opacity 0.4s ease; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: 2; 
+        }
         .image-lazy-blur.loaded { filter: blur(0); opacity: 1; }
 
-        .featured-card-body { flex: 1; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; min-width: 0; gap: 10px; }
-        .featured-info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+        /* Unified Card Content Layout */
+        .featured-card-body { 
+            flex: 1; 
+            padding: 0 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            min-width: 0; 
+            gap: 12px; 
+        }
+        
+        .featured-info-col { 
+            flex: 1; 
+            min-width: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
 
         /* Main Title & Secondary Subtext */
-        .featured-title { font-size: 0.88rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff; line-height: 1.2; }
-        .featured-meta { font-size: 0.68rem; color: rgba(255, 255, 255, 0.88); line-height: 1.2; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+        .featured-title { 
+            font-size: 0.9rem; 
+            font-weight: 800; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            color: #ffffff; 
+            line-height: 1.25; 
+        }
+        .featured-meta { 
+            font-size: 0.7rem; 
+            color: rgba(255, 255, 255, 0.88); 
+            line-height: 1.2; 
+            font-weight: 500; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            margin-top: 3px; 
+        }
         .featured-meta span { color: #ffd700; font-weight: 800; }
 
-        /* Large Action Button Positioned on the Right Corner */
+        /* Action Button */
         .btn-card-action { 
             background: #ffffff; 
             color: var(--primary-burgundy); 
             border: none; 
             border-radius: 18px; 
-            padding: 8px 18px; 
-            font-size: 0.82rem; 
+            padding: 8px 16px; 
+            font-size: 0.8rem; 
             font-weight: 900; 
             cursor: pointer; 
             box-shadow: 0 3px 8px rgba(0,0,0,0.25); 
@@ -101,13 +214,6 @@
             flex-shrink: 0;
         }
         .btn-card-action:active { transform: scale(0.94); background: #f1f5f9; }
-
-        /* Fixed Bottom Ad Wrapper */
-        .bottom-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; flex-shrink: 0; z-index: 30; padding: 4px 8px calc(4px + env(safe-area-inset-bottom, 0px)) 8px; background: rgba(248, 250, 252, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-light); }
-        .ad-container { position: relative; z-index: 2; background: var(--card-tech-bg); border: 1px dashed #cbd5e1; border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 36px; box-shadow: var(--card-shadow); user-select: none; }
-        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
-        .ad-icon { font-size: 12px; }
-        .ad-label { font-size: 9px; font-weight: 700; color: #94a3b8; }
 
         /* Modal Dialog */
         .popup-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
@@ -134,7 +240,7 @@
                         <h2 class="featured-title">Premium Pool</h2>
                         <p class="featured-meta">Reward: <span>System Multipliers</span></p>
                     </div>
-                    <button class="btn-card-action" id="claimRewardBtn">Claim</button>
+                    <button class="btn-card-action" id="claimRewardBtn">Open</button>
                 </div>
             </div>
 
@@ -162,7 +268,7 @@
                         <h2 class="featured-title">Stop Timer Challenge</h2>
                         <p class="featured-meta">Reward: <span>Win 500 Birr Daily</span></p>
                     </div>
-                    <button class="btn-card-action" id="timerGiveawayBtn">Start</button>
+                    <button class="btn-card-action" id="timerGiveawayBtn">Open</button>
                 </div>
             </div>
 
@@ -176,7 +282,7 @@
                         <h2 class="featured-title">Watch Video & Fill Key</h2>
                         <p class="featured-meta">Reward: <span>Unlock Secret Codes</span></p>
                     </div>
-                    <button class="btn-card-action" id="videoGiveawayBtn">Watch</button>
+                    <button class="btn-card-action" id="videoGiveawayBtn">Open</button>
                 </div>
             </div>
 
@@ -204,19 +310,10 @@
                         <h2 class="featured-title">Like Video & Get Bonus</h2>
                         <p class="featured-meta">Reward: <span>Extra Credit Multiplier</span></p>
                     </div>
-                    <button class="btn-card-action" id="likeGiveawayBtn">Like</button>
+                    <button class="btn-card-action" id="likeGiveawayBtn">Open</button>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Bottom Fixed Ad Banner -->
-        <div class="bottom-wrapper">
-            <div class="ad-container">
-                <span class="ad-badge">AD</span>
-                <span class="ad-icon">📢</span>
-                <span class="ad-label">Advertisement Space</span>
-            </div>
         </div>
 
         <!-- Modal Dialog -->
