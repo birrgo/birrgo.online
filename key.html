@@ -143,7 +143,7 @@
         /* Compact Action Row */
         .compact-action-row { display: flex; align-items: center; gap: 6px; width: 100%; margin-top: 2px; }
 
-        /* Watch Button - Increased size for easier tap target */
+        /* Watch Button */
         .btn-watch {
             display: flex; align-items: center; justify-content: center; gap: 5px; 
             padding: 8px 16px; min-width: 96px; font-size: 0.76rem; font-weight: 800;
@@ -156,23 +156,25 @@
         .key-input {
             flex: 1; min-width: 0; padding: 7px 8px; border: 1.2px solid #cbd5e1; border-radius: var(--border-radius-md);
             font-size: 0.72rem; font-weight: 700; outline: none; text-align: center; color: var(--text-dark);
-            background: #ffffff; transition: border-color 0.2s ease;
+            background: #ffffff; transition: border-color 0.2s ease, opacity 0.2s ease;
         }
         .key-input:focus { border-color: var(--primary-burgundy); }
+        .key-input:disabled { background: #f1f5f9; cursor: not-allowed; opacity: 0.6; }
 
         .btn-claim {
             border: none; border-radius: var(--border-radius-md); padding: 7px 12px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
             color: #ffffff; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2); transition: transform 0.15s ease; white-space: nowrap; flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2); transition: transform 0.15s ease, opacity 0.2s ease; white-space: nowrap; flex-shrink: 0;
         }
         .btn-claim:active { transform: scale(0.95); }
+        .btn-claim:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.6; box-shadow: none; }
 
         .status-verified {
             color: #059669; font-size: 0.62rem; font-weight: 800; background: #dcfce7; border: 1px solid #a7f3d0;
             padding: 4px 10px; border-radius: 100px; display: inline-block;
         }
 
-        /* Fixed Bottom Ad Wrapper - Burgundy Theme */
+        /* Fixed Bottom Ad Wrapper */
         .bottom-wrapper { 
             position: fixed; 
             bottom: 0; 
@@ -253,7 +255,6 @@
 
         <!-- Scrollable Content Container -->
         <div class="app-content">
-
             <div class="task-container" id="videoTasksContainer">
                 <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.75rem;">
                     Loading video tasks...
@@ -261,7 +262,7 @@
             </div>
         </div>
 
-        <!-- BOTTOM BANNER AD PLACEMENT (Burgundy Background) -->
+        <!-- BOTTOM BANNER AD PLACEMENT -->
         <div class="bottom-wrapper">
             <script>
               atOptions = {
@@ -312,6 +313,7 @@
                 return;
             }
 
+            // Standardize user phone key (digits only)
             const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
 
             // Daily Instructions Popup Close
@@ -427,6 +429,7 @@
                 for (const item of taskList) {
                     const storageKey = `claimed_vid_${activeUserPhone}_${item.id}`;
                     const savedUrlKey = `task_url_${activeUserPhone}_${item.id}`;
+                    const watchedKey = `watched_vid_${activeUserPhone}_${item.id}`;
                     
                     const previousUrl = localStorage.getItem(savedUrlKey);
                     let isAlreadyClaimed = localStorage.getItem(storageKey) === 'true' || claimedData[item.id] === true;
@@ -434,6 +437,7 @@
                     if (previousUrl && previousUrl !== item.url) {
                         isAlreadyClaimed = false;
                         localStorage.removeItem(storageKey);
+                        sessionStorage.removeItem(watchedKey);
                         await remove(ref(db, `users/${activeUserPhone}/claimed_tasks/${item.id}`));
                     }
                     
@@ -462,6 +466,8 @@
                             </div>
                         `;
                     } else {
+                        const hasWatched = sessionStorage.getItem(watchedKey) === 'true';
+
                         card.innerHTML = `
                             <div class="task-top-row">
                                 <div class="task-left">
@@ -476,11 +482,11 @@
                             </div>
 
                             <div class="compact-action-row">
-                                <a href="${item.url}" target="_blank" class="btn-watch">
+                                <a href="${item.url}" target="_blank" class="btn-watch" id="watch-btn-${item.id}">
                                     ▶ Watch
                                 </a>
-                                <input type="text" class="key-input" id="input-${item.id}" placeholder="Secret Key">
-                                <button class="btn-claim" id="claim-btn-${item.id}">Claim</button>
+                                <input type="text" class="key-input" id="input-${item.id}" placeholder="Secret Key" ${hasWatched ? '' : 'disabled'}>
+                                <button class="btn-claim" id="claim-btn-${item.id}" ${hasWatched ? '' : 'disabled'}>Claim</button>
                             </div>
                         `;
                     }
@@ -490,7 +496,18 @@
                     setupBlurImage(cardImg);
 
                     if (!isAlreadyClaimed) {
-                        document.getElementById(`claim-btn-${item.id}`).addEventListener('click', () => {
+                        const watchBtn = document.getElementById(`watch-btn-${item.id}`);
+                        const inputField = document.getElementById(`input-${item.id}`);
+                        const claimBtn = document.getElementById(`claim-btn-${item.id}`);
+
+                        // Track when user clicks Watch
+                        watchBtn.addEventListener('click', () => {
+                            sessionStorage.setItem(watchedKey, 'true');
+                            inputField.disabled = false;
+                            claimBtn.disabled = false;
+                        });
+
+                        claimBtn.addEventListener('click', () => {
                             verifyAndClaim(item);
                         });
                     }
@@ -498,6 +515,15 @@
             }
 
             async function verifyAndClaim(item) {
+                const watchedKey = `watched_vid_${activeUserPhone}_${item.id}`;
+                const hasWatched = sessionStorage.getItem(watchedKey) === 'true';
+
+                // Check if watch button was clicked
+                if (!hasWatched) {
+                    showCustomPopup('warning', 'Watch Video First', 'Please click the Watch button and view the video to find the secret key.');
+                    return;
+                }
+
                 const inputField = document.getElementById(`input-${item.id}`);
                 const enteredKey = inputField.value.trim();
                 const btn = document.getElementById(`claim-btn-${item.id}`);
@@ -524,12 +550,14 @@
                 inputField.style.borderColor = "#059669";
 
                 try {
+                    // 1. Transaction to atomically add money to user's wallet
                     const walletBalanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
                     await runTransaction(walletBalanceRef, (currentBalance) => {
                         let balance = parseFloat(currentBalance) || 0;
                         return balance + item.prize;
                     });
 
+                    // 2. Log transaction in user's transaction history
                     const now = new Date();
                     const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
                                     now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -541,10 +569,12 @@
                         timestamp: timeStr
                     });
 
+                    // 3. Mark task as completed in Firebase & LocalStorage to prevent double payouts
                     await set(ref(db, `users/${activeUserPhone}/claimed_tasks/${item.id}`), true);
                     localStorage.setItem(storageKey, 'true');
                     localStorage.setItem(`task_url_${activeUserPhone}_${item.id}`, item.url);
 
+                    // 4. Update UI card state instantly
                     const card = document.getElementById(`card-${item.id}`);
                     card.classList.add('completed');
                     card.innerHTML = `
