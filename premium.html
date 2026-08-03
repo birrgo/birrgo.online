@@ -6,11 +6,21 @@
     <title>BirrGo - የኢትዮጵያ ታሪክ አብይ ፈተና</title>
     <link rel="stylesheet" href="wallet.css">
     <style>
-        body {
-            background-color: #2b000a;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
+            background-color: #2b000a;
             font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .app-view {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
+            padding-bottom: 65px; /* Ensures space for the sticky bottom ad */
         }
 
         /* Straight Top Header Bar with Back Button */
@@ -23,6 +33,7 @@
             border-bottom: 2px solid #ffd700;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             position: relative;
+            flex-shrink: 0;
         }
 
         .header-back-btn {
@@ -62,26 +73,51 @@
             padding-right: 38px;
         }
 
-        /* Top Ad Container under Header Bar */
-        .ad-container-box-top {
+        .app-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
+            padding-bottom: 10px;
+        }
+
+        /* Top In-Flow Ad Container Box */
+        .ad-container-box {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 12px auto 0 auto;
+            margin: 12px auto;
+            width: 100%;
+            max-width: 320px;
             min-height: 50px;
             overflow: hidden;
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
         }
 
-        /* Bottom Ad Container under Question Card */
-        .ad-container-box-bottom {
+        /* Fixed Sticky Bottom Burgundy Ad Banner Bar (CENTERED) */
+        .sticky-bottom-ad-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+            background: linear-gradient(180deg, #4a0012 0%, #2b000a 100%);
+            border-top: 2px solid #800020;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.6);
             display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px auto 25px auto;
-            min-height: 60px;
+            justify-content: center; /* Center horizontally */
+            align-items: center;     /* Center vertically */
+            padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+            box-sizing: border-box;
             overflow: hidden;
-            border-radius: 8px;
+        }
+
+        .sticky-bottom-ad-bar iframe {
+            display: block;
+            margin: 0 auto; /* Center inside container */
         }
 
         .timer-container {
@@ -91,9 +127,10 @@
             background: #ffffff;
             border-radius: 14px;
             padding: 12px 18px;
-            margin: 12px 15px 18px 15px;
+            margin: 12px 15px 15px 15px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.08);
             border: 1.5px solid #800020;
+            flex-shrink: 0;
         }
 
         .timer-badge {
@@ -324,8 +361,8 @@
 
         <div class="app-content">
 
-            <!-- AD (320x50) Placed Under Top Header Bar -->
-            <div class="ad-container-box-top" id="topAdBox">
+            <!-- TOP AD CONTAINER (320x50) -->
+            <div class="ad-container-box" id="topAdBox">
                 <script>
                   atOptions = {
                     'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
@@ -344,7 +381,7 @@
                 <span class="timer-badge" id="timerDisplay">05:00</span>
             </div>
 
-            <!-- Main Question Card (Clean - No Ad inside) -->
+            <!-- Main Question Card -->
             <div class="quiz-card" id="quizBox">
                 <div class="question-tracker" id="qTracker">ጥያቄ 1 ከ 30</div>
                 <div class="question-text" id="qText">ጥያቄዎች በመጫን ላይ ናቸው...</div>
@@ -355,23 +392,8 @@
                 </div>
 
                 <div class="nav-controls">
-                    <!-- Next Button Only (Prev Removed) -->
                     <button class="btn-quiz-nav btn-next" id="btnNext">ቀጣይ</button>
                 </div>
-            </div>
-
-            <!-- Bottom Ad (468x60) Under Question Box -->
-            <div class="ad-container-box-bottom" id="bottomAdBox">
-                <script>
-                  atOptions = {
-                    'key' : '7cfdda874d43bf8db90ca3394ed6694d',
-                    'format' : 'iframe',
-                    'height' : 60,
-                    'width' : 468,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://www.highperformanceformat.com/7cfdda874d43bf8db90ca3394ed6694d/invoke.js"></script>
             </div>
 
             <!-- Score Summary -->
@@ -396,6 +418,20 @@
                 <button class="btn-quiz-nav btn-next" onclick="goToPage('task.html')" style="width: 100%;">ወደ ዋናው ገጽ ተመለስ</button>
             </div>
 
+        </div>
+
+        <!-- FIXED STICKY BURGUNDY BOTTOM AD BANNER (320x50 - Pinned & Centered) -->
+        <div class="sticky-bottom-ad-bar" id="bottomAdBox">
+            <script>
+              atOptions = {
+                'key' : 'd4156cac6fbc51c9f8c7d95347cd1098',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/d4156cac6fbc51c9f8c7d95347cd1098/invoke.js"></script>
         </div>
 
         <!-- Custom Modal -->
@@ -617,10 +653,10 @@
                 startTimer();
             });
 
-            // Handle Next Button with validation (Must select an answer first)
+            // Handle Next Button with validation
             document.getElementById('btnNext').addEventListener('click', () => {
                 if (selectedAnswers[currentQuestionIndex] === undefined) {
-                    displayModal('error', 'መልስ አልመረጡም!', 'እባክዎን ወደ ቀጣዩ ጥያቄ ለማለፍ አስቀድመው ከአማራጮቹ አንዱን ይምረጡ።');
+                    displayModal('error', 'መልስ አልመረቱም!', 'እባክዎን ወደ ቀጣዩ ጥያቄ ለማለፍ አስቀድመው ከአማራጮቹ አንዱን ይምረጡ።');
                     return;
                 }
 
@@ -827,7 +863,7 @@
             } catch (err) {
                 hideGlobalLoader();
                 console.error(err);
-                displayModal('error', 'የማስቀመጥ ስህተት', 'ውጤቱን መመዝገብ አልተቻለም። እባክዎን ኢንተርኔትዎን አረጋግጠው ድጋሚ ይሞክሩ።');
+                displayModal('error', 'የማስቀመጥ ስህተት', 'ውጤቱን መመዝገብ አልተቻለም። እባክዎን ኢንተርኔትዎን አረጋግተው ድጋሚ ይሞክሩ።');
             }
         }
 
