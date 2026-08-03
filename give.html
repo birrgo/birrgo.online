@@ -32,6 +32,7 @@
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
             letter-spacing: -0.15px; 
             -webkit-tap-highlight-color: transparent; 
+            touch-action: manipulation;
         }
         
         html, body { 
@@ -331,11 +332,30 @@
         document.addEventListener('DOMContentLoaded', () => {
             const activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.location.replace("new2.html");
+                fastNavigate("new2.html");
                 return;
             }
 
-            // Progressive Blur Image Load Strategy
+            // High-Speed Frame Breakout Navigator
+            function fastNavigate(targetUrl) {
+                if (window.top && window.top !== window) {
+                    window.top.location.replace(targetUrl);
+                } else {
+                    window.location.replace(targetUrl);
+                }
+            }
+
+            // Dynamic Prefetch Engine
+            function prefetchUrl(url) {
+                if (!document.querySelector(`link[href="${url}"]`)) {
+                    const link = document.createElement('link');
+                    link.rel = 'prefetch';
+                    link.href = url;
+                    document.head.appendChild(link);
+                }
+            }
+
+            // Progressive Blur Image Strategy
             const lazyImages = document.querySelectorAll('.image-lazy-blur');
             lazyImages.forEach(img => {
                 const onLoaded = () => img.classList.add('loaded');
@@ -349,7 +369,7 @@
                 }
             });
 
-            // Network Connection Blur Protection
+            // Network Connection Status Handler
             const appView = document.getElementById('appView');
             const handleNetworkStatus = () => {
                 if (!navigator.onLine) {
@@ -367,45 +387,34 @@
             const popupTitle = document.getElementById('popupTitle');
             const popupDesc = document.getElementById('popupDesc');
 
-            const openPopup = (title, message) => {
-                popupTitle.innerText = title;
-                popupDesc.innerText = message;
-                modal.classList.add('active');
-            };
-
-            document.getElementById('popupCloseBtn').addEventListener('click', () => {
+            document.getElementById('popupCloseBtn').addEventListener('pointerdown', (e) => {
+                e.preventDefault();
                 modal.classList.remove('active');
             });
 
-            // Navigation Route Actions
-            document.getElementById('premiumPoolCard').addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.location.replace('premium.html');
-            });
+            // Fast Route Bindings
+            const routes = [
+                { id: 'premiumPoolCard', url: 'premium.html' },
+                { id: 'tiktokGiveawayCard', url: 'tiktok.html' },
+                { id: 'timerGiveawayCard', url: 'time.html' },
+                { id: 'videoGiveawayCard', url: 'key.html' },
+                { id: 'socialGiveawayCard', url: 'social.html' },
+                { id: 'likeGiveawayCard', url: 'like.html' }
+            ];
 
-            document.getElementById('tiktokGiveawayCard').addEventListener('click', (e) => { 
-                e.stopPropagation();
-                window.location.replace('tiktok.html'); 
-            });
+            routes.forEach(route => {
+                const card = document.getElementById(route.id);
+                if (!card) return;
 
-            document.getElementById('timerGiveawayCard').addEventListener('click', (e) => { 
-                e.stopPropagation();
-                window.location.replace('time.html'); 
-            });
+                // Prefetch link on touch or hover
+                card.addEventListener('touchstart', () => prefetchUrl(route.url), { passive: true });
+                card.addEventListener('mouseenter', () => prefetchUrl(route.url), { passive: true });
 
-            document.getElementById('videoGiveawayCard').addEventListener('click', (e) => { 
-                e.stopPropagation();
-                window.location.replace('key.html'); 
-            });
-
-            document.getElementById('socialGiveawayCard').addEventListener('click', (e) => { 
-                e.stopPropagation();
-                window.location.replace('social.html'); 
-            });
-
-            document.getElementById('likeGiveawayCard').addEventListener('click', (e) => { 
-                e.stopPropagation();
-                window.location.replace('like.html'); 
+                // Instant navigation execution on touch-down
+                card.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation();
+                    fastNavigate(route.url);
+                });
             });
         });
     </script>
