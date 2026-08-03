@@ -6,11 +6,8 @@
     <title>BirrGo - World Updates Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="bu.css">
-    
-    <!-- Official Google AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -277,6 +274,52 @@
             }
         }
 
+        function triggerNativeAdExecution(containerId) {
+            const target = document.getElementById(containerId);
+            if (!target) return;
+
+            target.innerHTML = '';
+
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '300px';
+            iframe.style.height = '250px';
+            iframe.style.border = 'none';
+            iframe.style.overflow = 'hidden';
+            iframe.style.display = 'block';
+            iframe.style.margin = '0 auto';
+            iframe.scrolling = 'no';
+
+            target.appendChild(iframe);
+
+            const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
+                    </style>
+                </head>
+                <body>
+                    <script type="text/javascript">
+                        var atOptions = {
+                            'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+                            'format' : 'iframe',
+                            'height' : 250,
+                            'width' : 300,
+                            'params' : {}
+                        };
+                    <\/script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+        }
+
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || "News Update";
             const fullContent = item.content || item.message || "";
@@ -435,53 +478,29 @@
                 return;
             }
 
-            // Up to 8 native ads inserted into feed
-            const maxAdLimit = 8;
-            let adsInserted = 0;
-
             filtered.forEach((item, index) => {
-                // 1. Render News Card
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 container.appendChild(card);
 
-                // 2. Render Google Ad Banner Slot after every 3rd news card
-                if ((index + 1) % 3 === 0 && adsInserted < maxAdLimit) {
-                    adsInserted++;
+                const adCard = document.createElement('article');
+                adCard.className = "featured-broadcast-card native-ad-card";
+                
+                const dynamicAdSlotId = `live-inline-ad-${index}-${Date.now()}`;
+                
+                adCard.innerHTML = `
+                    <div class="badge-meta-row" style="margin-bottom: 8px;">
+                        <span class="spotlight-pill inline-ad-badge">Our Partner</span>
+                        <span class="timestamp-log-text">Verified Partner Content</span>
+                    </div>
+                    <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
+                `;
+                container.appendChild(adCard);
 
-                    const adCard = document.createElement('div');
-                    adCard.className = "native-ad-card";
-                    
-                    adCard.innerHTML = `
-                        <div class="partner-line-header">
-                            <span class="spotlight-pill inline-ad-badge">SPONSORED</span>
-                            <span class="timestamp-log-text">Advertisement</span>
-                        </div>
-                        
-                        <div class="ad-slot-wrapper">
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-3940256099942544"
-                                 data-ad-slot="6300978111"
-                                 data-ad-format="auto"
-                                 data-full-width-responsive="true"></ins>
-                        </div>
-                        
-                        <div class="card-footer-branding-row">
-                            <div></div>
-                            <img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token">
-                        </div>
-                    `;
-                    container.appendChild(adCard);
-
-                    // Push AdSense Request
-                    try {
-                        (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    } catch (e) {
-                        console.log("AdSense initialization deferred/active");
-                    }
-                }
+                setTimeout(() => {
+                    triggerNativeAdExecution(dynamicAdSlotId);
+                }, index * 100 + 20);
             });
         }
 
