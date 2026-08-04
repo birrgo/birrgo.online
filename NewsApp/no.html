@@ -280,7 +280,6 @@
             }
         }
 
-        // Fixed Ad execution for Chrome standard security compliance
         function triggerNativeAdExecution(containerId) {
             const target = document.getElementById(containerId);
             if (!target) return;
@@ -296,9 +295,13 @@
             iframe.style.margin = '0 auto';
             iframe.scrolling = 'no';
 
+            target.appendChild(iframe);
+
             const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             
-            iframe.srcdoc = `
+            iframeDoc.open();
+            iframeDoc.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -316,12 +319,11 @@
                             'params' : {}
                         };
                     <\/script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}"><\/script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
                 </body>
                 </html>
-            `;
-
-            target.appendChild(iframe);
+            `);
+            iframeDoc.close();
         }
 
         function buildSingleNewsCardHTML(item) {
@@ -342,7 +344,7 @@
 
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0) {
-                imageHTML = `<div class="broadcast-image-frame" data-news-id="${item.id}"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
+                imageHTML = `<div class="broadcast-image-frame" onclick="openFullNewsReader('${item.id}')"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
             }
 
             return `
@@ -353,7 +355,7 @@
                     <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
                 </div>
                 ${imageHTML}
-                <div class="clickable-news-content" data-news-id="${item.id}">
+                <div class="clickable-news-content" onclick="openFullNewsReader('${item.id}')">
                     <h2 class="broadcast-title">${headline}</h2>
                     <p class="broadcast-body-text">${previewContent}</p>
                 </div>
@@ -391,6 +393,7 @@
             let mainMediaHTML = "";
 
             if (isDuplicateActive) {
+                // Duplicate active: Only show top cover image (bottom image removed)
                 if (imageUrl && imageUrl.trim().length > 0) {
                     mainMediaHTML = `
                         <div class="reader-image-frame" style="margin-bottom:12px;"><img src="${imageUrl}"></div>
@@ -399,11 +402,12 @@
                     mainMediaHTML = `<div class="reader-full-body">${fullContent}</div>`;
                 }
             } else {
+                // Duplicate inactive: Show YouTube video instead of image
                 let videoIframeHTML = "";
                 if (ytId && ytId.length === 11) {
                     videoIframeHTML = `
                         <div style="margin-bottom:14px; width:100%; border-radius:12px; overflow:hidden; aspect-ratio:16/9; background:#000;">
-                            <iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%; height:100%; border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
                         </div>`;
                 }
 
@@ -497,20 +501,6 @@
                     triggerNativeAdExecution(dynamicAdSlotId);
                 }, index * 100 + 20);
             });
-
-            bindCardClickEvents(container);
-        }
-
-        function bindCardClickEvents(parentContainer) {
-            const clickableNodes = parentContainer.querySelectorAll('[data-news-id]');
-            clickableNodes.forEach(node => {
-                node.addEventListener('click', (e) => {
-                    const newsId = node.getAttribute('data-news-id');
-                    if (newsId) {
-                        window.openFullNewsReader(newsId);
-                    }
-                });
-            });
         }
 
         function bindVisualInterfaceControls() {
@@ -588,14 +578,12 @@
             }
 
             resultsArea.innerHTML = '';
-            matchedNews.forEach((item) => {
+            matchedNews.forEach((item, index) => {
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 resultsArea.appendChild(card);
             });
-
-            bindCardClickEvents(resultsArea);
         }
 
         async function processPromoClaim() {
@@ -746,3 +734,4 @@
     </script>
 </body>
 </html>
+
