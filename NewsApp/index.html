@@ -191,34 +191,34 @@
       </div>
 
       <!-- Page Content Loader (iframe) -->
-      <iframe id="newsFrame" class="content-frame" src="./n.html" title="News Content"></iframe>
+      <iframe id="newsFrame" class="content-frame" src="n.html" title="News Content"></iframe>
     </div>
   </main>
 
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
-    <button id="nav-news" type="button" class="nav-item active" onclick="switchTab('./n.html', this)">
+    <button id="nav-news" type="button" class="nav-item active" onclick="switchTab('n.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M9 12h6m-6 4h6"/></svg>
       </div>
       <span>News</span>
     </button>
 
-    <button id="nav-sports" type="button" class="nav-item" onclick="switchTab('./sp.html', this)">
+    <button id="nav-sports" type="button" class="nav-item" onclick="switchTab('sp.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
       </div>
       <span>Sport</span>
     </button>
 
-    <button id="nav-ent" type="button" class="nav-item" onclick="switchTab('./wo.html', this)">
+    <button id="nav-ent" type="button" class="nav-item" onclick="switchTab('wo.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
       <span>Entertainment</span>
     </button>
 
-    <button id="nav-tech" type="button" class="nav-item" onclick="switchTab('./bu.html', this)">
+    <button id="nav-tech" type="button" class="nav-item" onclick="switchTab('bu.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </div>
@@ -229,21 +229,31 @@
   <!-- JavaScript -->
   <script>
     const iframe = document.getElementById('newsFrame');
-    const tabHistory = ['./n.html'];
 
-    function switchTab(pageUrl, element) {
+    // Automatically determine sub-folder path (e.g. "/NewsApp/")
+    const getBasePath = () => {
+      const path = window.location.pathname;
+      return path.substring(0, path.lastIndexOf('/') + 1);
+    };
+
+    const basePath = getBasePath();
+    const tabHistory = [window.location.origin + basePath + 'n.html'];
+
+    function switchTab(pageName, element) {
       if (!iframe) return;
 
-      // Avoid re-triggering if already on this tab
-      if (iframe.src.endsWith(pageUrl.replace('./', ''))) {
+      const targetUrl = window.location.origin + basePath + pageName;
+
+      // Avoid re-triggering if already on this exact target URL
+      if (iframe.src === targetUrl) {
         return;
       }
 
-      iframe.src = pageUrl;
+      iframe.src = targetUrl;
       
       // Push tab state to custom history stack
-      if (tabHistory[tabHistory.length - 1] !== pageUrl) {
-        tabHistory.push(pageUrl);
+      if (tabHistory[tabHistory.length - 1] !== targetUrl) {
+        tabHistory.push(targetUrl);
       }
 
       updateActiveNav(element);
@@ -264,24 +274,25 @@
         e.stopPropagation();
       }
 
-      // Pop from tab custom navigation stack if available
       if (tabHistory.length > 1) {
         tabHistory.pop(); // Remove current active tab
-        const previousPage = tabHistory[tabHistory.length - 1];
-        iframe.src = previousPage;
+        const previousPageUrl = tabHistory[tabHistory.length - 1];
+        iframe.src = previousPageUrl;
 
-        // Update active tab highlight dynamically
-        const targetBtn = document.querySelector(`button[onclick*="${previousPage}"]`);
+        // Match target button using raw filename
+        const pageFileName = previousPageUrl.split('/').pop();
+        const targetBtn = document.querySelector(`button[onclick*="${pageFileName}"]`);
         updateActiveNav(targetBtn);
       } else {
-        // Fallback default home tab
-        iframe.src = './n.html';
+        // Fallback default home page
+        const defaultUrl = window.location.origin + basePath + 'n.html';
+        iframe.src = defaultUrl;
         const homeBtn = document.getElementById('nav-news');
         updateActiveNav(homeBtn);
       }
     }
 
-    // Unregister stale service workers
+    // Unregister stale service workers that interfere with web navigation
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (let registration of registrations) {
