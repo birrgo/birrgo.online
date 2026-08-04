@@ -1,4 +1,12 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    {
+      "src": "/NewsApp",
+      "dest": "/NewsApp/index.html"
+    }
+  ],
   "crons": [
     {
       "path": "/api/track",
