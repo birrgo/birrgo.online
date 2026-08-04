@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "routes": [
     {
-      "src": "/NewsApp",
+      "src": "^/NewsApp/?$",
       "dest": "/NewsApp/index.html"
     }
   ],
@@ -20,6 +20,12 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    },
+    {
+      "source": "/NewsApp/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
   ]
