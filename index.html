@@ -231,6 +231,15 @@
             flex-direction: column;
             gap: 12px;
         }
+
+        /* Reduced font size for copyright text */
+        .copyright-text {
+            margin-top: 8px;
+            font-size: 0.65rem;
+            color: #ffffff;
+            opacity: 0.85;
+            text-align: center;
+        }
     </style>
 
     <!-- ONESIGNAL SDK -->
@@ -379,8 +388,8 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </a>
 
-                    <!-- NEWS ARTICLE BUTTON (OPENS DIRECTLY IN CHROME, BYPASSES PWA INSTALL PROMPT) -->
-                    <a href="NewsApp/no.html" id="newsArticleBtn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="Read BirrGo News Articles">
+                    <!-- NEWS ARTICLE BUTTON (OPENS DIRECTLY IN BROWSER, BYPASSES PWA INSTALL PROMPT) -->
+                    <a href="NewsApp/no.html" id="newsArticleBtn" class="btn btn-secondary direct-browser-link" title="Read BirrGo News Articles">
                         <div class="btn-left">
                             <div class="btn-icon-wrapper">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -405,9 +414,16 @@
                             <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
                         </svg>
                     </div>
-                    <span>Need help?</span> <a href="support.html" class="highlight external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Support">Contact support</a> <span class="divider">|</span> <a href="about.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="About BirrGo">About BirrGo</a> <span class="divider">|</span> <a href="term.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Terms">Terms</a> <span class="divider">|</span> <a href="privacy.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Privacy Policy">Privacy</a>
+                    <span>Need help?</span> 
+                    <a href="support.html" class="highlight direct-browser-link" title="BirrGo Support">Contact support</a> 
+                    <span class="divider">|</span> 
+                    <a href="about.html" class="direct-browser-link" title="About BirrGo">About BirrGo</a> 
+                    <span class="divider">|</span> 
+                    <a href="term.html" class="direct-browser-link" title="BirrGo Terms">Terms</a> 
+                    <span class="divider">|</span> 
+                    <a href="privacy.html" class="direct-browser-link" title="BirrGo Privacy Policy">Privacy</a>
                 </div>
-                <div style="margin-top: 8px; font-size: 0.75rem; color: #ffffff; text-align: center;">
+                <div class="copyright-text">
                     &copy; 2026 BirrGo. All rights reserved.
                 </div>
             </footer>
@@ -419,23 +435,32 @@
     <!-- EXTERNAL SCRIPT -->
     <script src="index.js"></script>
 
-    <!-- INLINE SCRIPT TO FORCE CHROME & PREVENT PWA INSTALL MODALS FOR NEWS, SUPPORT, ABOUT, TERMS, AND PRIVACY -->
+    <!-- STRICT INLINE SCRIPT: PREVENT ALL PWA INSTALLATION INTERCEPTIONS AND FORCE DIRECT BROWSER NAVIGATION -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const bypassElements = document.querySelectorAll("#newsArticleBtn, .external-browser-link");
-        
-        bypassElements.forEach(function (el) {
-          el.addEventListener("click", function (e) {
-            // Stop PWA installation prompts or global index.js click listeners
-            e.stopPropagation();
+      (function() {
+        function handleDirectNavigation(e) {
+          // Stop PWA install triggers or listeners from index.js
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.stopImmediatePropagation) {
             e.stopImmediatePropagation();
-            
-            // Force open in system browser/Chrome window directly
-            window.open(this.getAttribute("href"), "_blank", "noopener,noreferrer");
-            e.preventDefault();
+          }
+
+          var targetUrl = this.getAttribute("href");
+          if (targetUrl) {
+            // Direct browser navigation in current window, bypassing PWA prompt entirely
+            window.location.href = targetUrl;
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          var links = document.querySelectorAll(".direct-browser-link, #newsArticleBtn");
+          links.forEach(function (link) {
+            // Use capture phase to intercept click before external scripts handle it
+            link.addEventListener("click", handleDirectNavigation, true);
           });
         });
-      });
+      })();
     </script>
 </body>
 </html>
