@@ -243,21 +243,28 @@
     const basePath = getBasePath();
     const tabHistory = [window.location.origin + basePath + 'b.html'];
 
+    // Load initial page with cache-busting timestamp
+    if (iframe) {
+      iframe.src = window.location.origin + basePath + 'b.html?v=' + Date.now();
+    }
+
     function switchTab(pageName, element) {
       if (!iframe) return;
 
-      const targetUrl = window.location.origin + basePath + pageName;
+      const rawUrl = window.location.origin + basePath + pageName;
+      const targetUrlWithCacheBust = rawUrl + '?v=' + Date.now();
 
-      // Avoid re-triggering if already on this exact target URL
-      if (iframe.src === targetUrl) {
+      // Compare base URLs to avoid duplicate history pushes on the same tab
+      const currentBaseUrl = iframe.src.split('?')[0];
+      if (currentBaseUrl === rawUrl) {
         return;
       }
 
-      iframe.src = targetUrl;
+      iframe.src = targetUrlWithCacheBust;
       
-      // Push tab state to custom history stack
-      if (tabHistory[tabHistory.length - 1] !== targetUrl) {
-        tabHistory.push(targetUrl);
+      // Push raw target state to custom history stack
+      if (tabHistory[tabHistory.length - 1] !== rawUrl) {
+        tabHistory.push(rawUrl);
       }
 
       updateActiveNav(element);
@@ -281,7 +288,7 @@
       if (tabHistory.length > 1) {
         tabHistory.pop(); // Remove current active tab
         const previousPageUrl = tabHistory[tabHistory.length - 1];
-        iframe.src = previousPageUrl;
+        iframe.src = previousPageUrl + '?v=' + Date.now();
 
         // Match target button using raw filename
         const pageFileName = previousPageUrl.split('/').pop();
@@ -290,7 +297,7 @@
       } else {
         // Fallback default home page
         const defaultUrl = window.location.origin + basePath + 'b.html';
-        iframe.src = defaultUrl;
+        iframe.src = defaultUrl + '?v=' + Date.now();
         const homeBtn = document.getElementById('nav-tech');
         updateActiveNav(homeBtn);
       }
