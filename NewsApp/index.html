@@ -229,12 +229,20 @@
   <!-- JavaScript -->
   <script>
     const iframe = document.getElementById('newsFrame');
+    // History array for cross-browser & PWA reliable navigation
+    const tabHistory = ['n.html'];
 
     function switchTab(pageUrl, element) {
       if (iframe) {
         iframe.src = pageUrl;
+        
+        // Push tab state to custom history stack
+        if (tabHistory[tabHistory.length - 1] !== pageUrl) {
+          tabHistory.push(pageUrl);
+        }
       }
 
+      // Update UI state
       const navItems = document.querySelectorAll('.nav-item');
       navItems.forEach(item => item.classList.remove('active'));
 
@@ -243,34 +251,52 @@
       }
     }
 
-    // Fixed browser-safe back navigation
+    // Dual Chrome & PWA safe back navigation
     function goBackInFrame(e) {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
+
+      // Try iframe inner page navigation first (for links clicked inside iframe)
+      let innerBackSuccess = false;
       try {
-        if (iframe && iframe.contentWindow) {
-          // Check if history navigation can be performed inside browser security context
-          if (iframe.contentWindow.history && iframe.contentWindow.history.length > 1) {
-            iframe.contentWindow.history.back();
-          } else {
-            iframe.src = 'n.html'; // Points strictly to valid n.html
-          }
+        if (iframe && iframe.contentWindow && iframe.contentWindow.history.length > 1) {
+          iframe.contentWindow.history.back();
+          innerBackSuccess = true;
         }
       } catch (err) {
-        // Safe fallback pointing directly to n.html instead of news.html
-        if (iframe) iframe.src = 'n.html';
+        // Cross-origin restriction fallback
+        innerBackSuccess = false;
+      }
+
+      // Fallback to custom JS tab history array if iframe history was blocked or empty
+      if (!innerBackSuccess) {
+        if (tabHistory.length > 1) {
+          tabHistory.pop(); // Remove current tab
+          const previousPage = tabHistory[tabHistory.length - 1];
+          iframe.src = previousPage;
+
+          // Update navbar active state dynamically
+          const targetBtn = document.querySelector(`button[onclick*="${previousPage}"]`);
+          if (targetBtn) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            targetBtn.classList.add('active');
+          }
+        } else {
+          // Reset to home page if history is fully popped
+          iframe.src = 'n.html';
+        }
       }
     }
 
-    // Completely unregister any active Service Workers to remove PWA caching behavior in browsers
+    // Safely unregister legacy service workers if PWA is turned off
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (let registration of registrations) {
-          registration.unregister();
+          registration.unregister().catch(() => {});
         }
-      });
+      }).catch(() => {});
     }
   </script>
 </body>
