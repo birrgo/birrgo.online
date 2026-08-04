@@ -191,34 +191,34 @@
       </div>
 
       <!-- Page Content Loader (iframe) -->
-      <iframe id="newsFrame" class="content-frame" src="n.html" title="News Content"></iframe>
+      <iframe id="newsFrame" class="content-frame" src="./n.html" title="News Content"></iframe>
     </div>
   </main>
 
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
-    <button id="nav-news" type="button" class="nav-item active" onclick="switchTab('n.html', this)">
+    <button id="nav-news" type="button" class="nav-item active" onclick="switchTab('./n.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M9 12h6m-6 4h6"/></svg>
       </div>
       <span>News</span>
     </button>
 
-    <button id="nav-sports" type="button" class="nav-item" onclick="switchTab('sp.html', this)">
+    <button id="nav-sports" type="button" class="nav-item" onclick="switchTab('./sp.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
       </div>
       <span>Sport</span>
     </button>
 
-    <button id="nav-ent" type="button" class="nav-item" onclick="switchTab('wo.html', this)">
+    <button id="nav-ent" type="button" class="nav-item" onclick="switchTab('./wo.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
       <span>Entertainment</span>
     </button>
 
-    <button id="nav-tech" type="button" class="nav-item" onclick="switchTab('bu.html', this)">
+    <button id="nav-tech" type="button" class="nav-item" onclick="switchTab('./bu.html', this)">
       <div class="icon-bg">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </div>
@@ -229,68 +229,59 @@
   <!-- JavaScript -->
   <script>
     const iframe = document.getElementById('newsFrame');
-    // History array for cross-browser & PWA reliable navigation
-    const tabHistory = ['n.html'];
+    const tabHistory = ['./n.html'];
 
     function switchTab(pageUrl, element) {
-      if (iframe) {
-        iframe.src = pageUrl;
-        
-        // Push tab state to custom history stack
-        if (tabHistory[tabHistory.length - 1] !== pageUrl) {
-          tabHistory.push(pageUrl);
-        }
+      if (!iframe) return;
+
+      // Avoid re-triggering if already on this tab
+      if (iframe.src.endsWith(pageUrl.replace('./', ''))) {
+        return;
       }
 
-      // Update UI state
+      iframe.src = pageUrl;
+      
+      // Push tab state to custom history stack
+      if (tabHistory[tabHistory.length - 1] !== pageUrl) {
+        tabHistory.push(pageUrl);
+      }
+
+      updateActiveNav(element);
+    }
+
+    function updateActiveNav(activeElement) {
       const navItems = document.querySelectorAll('.nav-item');
       navItems.forEach(item => item.classList.remove('active'));
 
-      if (element) {
-        element.classList.add('active');
+      if (activeElement) {
+        activeElement.classList.add('active');
       }
     }
 
-    // Dual Chrome & PWA safe back navigation
     function goBackInFrame(e) {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
 
-      // Try iframe inner page navigation first (for links clicked inside iframe)
-      let innerBackSuccess = false;
-      try {
-        if (iframe && iframe.contentWindow && iframe.contentWindow.history.length > 1) {
-          iframe.contentWindow.history.back();
-          innerBackSuccess = true;
-        }
-      } catch (err) {
-        // Cross-origin restriction fallback
-        innerBackSuccess = false;
-      }
+      // Pop from tab custom navigation stack if available
+      if (tabHistory.length > 1) {
+        tabHistory.pop(); // Remove current active tab
+        const previousPage = tabHistory[tabHistory.length - 1];
+        iframe.src = previousPage;
 
-      // Fallback to custom JS tab history array if iframe history was blocked or empty
-      if (!innerBackSuccess) {
-        if (tabHistory.length > 1) {
-          tabHistory.pop(); // Remove current tab
-          const previousPage = tabHistory[tabHistory.length - 1];
-          iframe.src = previousPage;
-
-          // Update navbar active state dynamically
-          const targetBtn = document.querySelector(`button[onclick*="${previousPage}"]`);
-          if (targetBtn) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            targetBtn.classList.add('active');
-          }
-        } else {
-          // Reset to home page if history is fully popped
-          iframe.src = 'n.html';
-        }
+        // Update active tab highlight dynamically
+        const targetBtn = document.querySelector(`button[onclick*="${previousPage}"]`);
+        updateActiveNav(targetBtn);
+      } else {
+        // Fallback default home tab
+        iframe.src = './n.html';
+        const homeBtn = document.getElementById('nav-news');
+        updateActiveNav(homeBtn);
       }
     }
 
-    // Safely unregister legacy service workers if PWA is turned off
+    // Unregister stale service workers
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (let registration of registrations) {
