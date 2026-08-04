@@ -243,7 +243,7 @@
       }
     }
 
-    // Robust back navigation for iframe
+    // Fixed browser-safe back navigation
     function goBackInFrame(e) {
       if (e) {
         e.preventDefault();
@@ -251,18 +251,20 @@
       }
       try {
         if (iframe && iframe.contentWindow) {
-          if (iframe.contentWindow.history.length > 1) {
+          // Check if history navigation can be performed inside browser security context
+          if (iframe.contentWindow.history && iframe.contentWindow.history.length > 1) {
             iframe.contentWindow.history.back();
           } else {
-            iframe.src = 'news.html';
+            iframe.src = 'n.html'; // Points strictly to valid n.html
           }
         }
       } catch (err) {
-        if (iframe) iframe.src = 'news.html';
+        // Safe fallback pointing directly to n.html instead of news.html
+        if (iframe) iframe.src = 'n.html';
       }
     }
 
-    // Completely unregister any active Service Workers to remove PWA behavior
+    // Completely unregister any active Service Workers to remove PWA caching behavior in browsers
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (let registration of registrations) {
