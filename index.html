@@ -224,6 +224,13 @@
             opacity: 0.8;
             cursor: not-allowed;
         }
+
+        /* Spacing helper for action area buttons */
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
     </style>
 
     <!-- ONESIGNAL SDK -->
@@ -371,6 +378,22 @@
                         </div>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </a>
+
+                    <!-- NEWS ARTICLE BUTTON (OPENS DIRECTLY IN CHROME, BYPASSES PWA INSTALL PROMPT) -->
+                    <a href="NewsApp/index.html" id="newsArticleBtn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="Read BirrGo News Articles">
+                        <div class="btn-left">
+                            <div class="btn-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path>
+                                    <line x1="7" y1="8" x2="11" y2="8"></line>
+                                    <line x1="7" y1="12" x2="13" y2="12"></line>
+                                    <line x1="7" y1="16" x2="13" y2="16"></line>
+                                </svg>
+                            </div>
+                            <span>News Articles</span>
+                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                 </div>
             </main>
 
@@ -382,7 +405,7 @@
                             <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
                         </svg>
                     </div>
-                    <span>Need help?</span> <a href="support.html" class="highlight" title="BirrGo Support">Contact support</a> <span class="divider">|</span> <a href="about.html" title="About BirrGo">About BirrGo</a> <span class="divider">|</span> <a href="term.html" title="BirrGo Terms">Terms</a> <span class="divider">|</span> <a href="privacy.html" title="BirrGo Privacy Policy">Privacy</a>
+                    <span>Need help?</span> <a href="support.html" class="highlight external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Support">Contact support</a> <span class="divider">|</span> <a href="about.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="About BirrGo">About BirrGo</a> <span class="divider">|</span> <a href="term.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Terms">Terms</a> <span class="divider">|</span> <a href="privacy.html" class="external-browser-link" target="_blank" rel="noopener noreferrer" title="BirrGo Privacy Policy">Privacy</a>
                 </div>
                 <div style="margin-top: 8px; font-size: 0.75rem; color: #ffffff; text-align: center;">
                     &copy; 2026 BirrGo. All rights reserved.
@@ -395,5 +418,24 @@
 
     <!-- EXTERNAL SCRIPT -->
     <script src="index.js"></script>
+
+    <!-- INLINE SCRIPT TO FORCE CHROME & PREVENT PWA INSTALL MODALS FOR NEWS, SUPPORT, ABOUT, TERMS, AND PRIVACY -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const bypassElements = document.querySelectorAll("#newsArticleBtn, .external-browser-link");
+        
+        bypassElements.forEach(function (el) {
+          el.addEventListener("click", function (e) {
+            // Stop PWA installation prompts or global index.js click listeners
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Force open in system browser/Chrome window directly
+            window.open(this.getAttribute("href"), "_blank", "noopener,noreferrer");
+            e.preventDefault();
+          });
+        });
+      });
+    </script>
 </body>
 </html>
