@@ -118,6 +118,137 @@
         .pin-btn-confirm:active {
             opacity: 0.9;
         }
+
+        /* -------------------------------------------------------------
+           3D SHINY ANIMATED BURGUNDY MATRIX BUTTON
+        ------------------------------------------------------------- */
+        .btn-matrix-3d-burgundy {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 20px;
+            margin-top: 12px;
+            border-radius: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #ffffff;
+            
+            /* Deep Burgundy Metallic Surface */
+            background: linear-gradient(135deg, #a71d31 0%, #680813 50%, #45030a 100%);
+            border: 1px solid rgba(255, 180, 190, 0.35);
+            
+            /* Elevated 3D Depth Shadow Effect */
+            box-shadow: 
+                0 6px 0 #300005,
+                0 10px 20px rgba(80, 0, 15, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        /* Continuous Shiny Metallic Flare Sweep */
+        .btn-matrix-3d-burgundy::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(
+                120deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.05) 30%, 
+                rgba(255, 255, 255, 0.6) 50%, 
+                rgba(255, 255, 255, 0.05) 70%, 
+                transparent 100%
+            );
+            transform: rotate(25deg);
+            animation: shineSweep 3.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Live Animated Digital Matrix Overlay Background */
+        .btn-matrix-3d-burgundy::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 100%);
+            background-size: 8px 8px, 100% 100%;
+            opacity: 0.6;
+            animation: matrixPulse 2s infinite alternate ease-in-out;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Button Text & Icon Layer */
+        .btn-matrix-3d-burgundy .btn-content {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Pulsing Matrix Dot Indicator */
+        .matrix-live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ff4d6d;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff4d6d;
+            animation: matrixDotPulse 1.2s infinite ease-in-out;
+        }
+
+        /* 3D Button Press Dynamic Mechanics */
+        .btn-matrix-3d-burgundy:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 0 #300005,
+                0 14px 25px rgba(80, 0, 15, 0.55),
+                inset 0 1px 2px rgba(255, 255, 255, 0.6);
+            filter: brightness(1.08);
+        }
+
+        .btn-matrix-3d-burgundy:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 2px 0 #300005,
+                0 4px 10px rgba(80, 0, 15, 0.3),
+                inset 0 1px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Animations */
+        @keyframes shineSweep {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        @keyframes matrixPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes matrixDotPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 4px #ff4d6d; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #ff4d6d; }
+        }
     </style>
 </head>
 <body>
@@ -189,9 +320,18 @@
         <!-- Actions -->
         <div class="action-container">
             <button class="btn-submit-booking" id="confirmPurchaseBtn" disabled>Authorize Placement (3,000 Br)</button>
-            <a href="Byds.html" class="btn-secondary-link">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                View Real-time Metrics Matrix
+            
+            <!-- Animated 3D Burgundy Matrix Button -->
+            <a href="Byds.html" class="btn-matrix-3d-burgundy">
+                <div class="btn-content">
+                    <span class="matrix-live-dot"></span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>View Real-Time Metrics Matrix</span>
+                </div>
             </a>
             
             <!-- Bottom Advertisement Space Box -->
@@ -211,7 +351,7 @@
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 </div>
                 <div class="popup-title">Unpaid Order Pending</div>
-                <div class="popup-subtitle" id="unpaidOrderText">You have an active unpaid ticket reservation (Pos #0). Please complete or cancel your payment first.</div>
+                <div class="popup-subtitle" id="unpaidOrderText">You have an active unpaid ticket reservation (Position #0). Please complete or cancel your payment first.</div>
                 <div class="popup-action-row">
                     <button class="btn-popup-cancel" id="cancelUnpaidOrderBtn">Cancel Order</button>
                     <button class="btn-popup-confirm" id="payUnpaidOrderBtn">Pay Now</button>
@@ -325,7 +465,7 @@
             mpesa: 'm1.jpg'
         };
 
-        // Utility: SHA-256 Hashing helper using Web Crypto API
+        // SHA-256 Hashing helper using Web Crypto API
         async function hashSHA256(str) {
             const encoder = new TextEncoder();
             const data = encoder.encode(str);
@@ -337,6 +477,29 @@
         function normalizePhoneNumber(phoneStr) {
             if (!phoneStr) return "";
             return phoneStr.replace(/\D/g, ''); 
+        }
+
+        // Masks the 2 center digits of a phone number (e.g. "+25191212**12")
+        function formatMaskedPhone(phoneStr) {
+            if (!phoneStr) return "+251000000**00";
+            
+            let digits = phoneStr.replace(/\D/g, '');
+            if (digits.startsWith("0")) {
+                digits = "251" + digits.slice(1);
+            }
+            if (!digits.startsWith("251") && digits.length === 9) {
+                digits = "251" + digits;
+            }
+
+            if (digits.length >= 12) {
+                const prefix = digits.substring(0, 8); // 25191212
+                const suffix = digits.slice(-2);        // 12
+                return `+${prefix}**${suffix}`;
+            }
+
+            const len = digits.length;
+            const mid = Math.floor(len / 2);
+            return "+" + digits.substring(0, mid - 1) + "**" + digits.substring(mid + 1);
         }
 
         function showCustomError(message) {
@@ -608,9 +771,11 @@
             validEntries.reverse().slice(0, 6).forEach(tx => {
                 const row = document.createElement('div');
                 row.className = 'feed-row';
-                const rawCard = tx.cardSequence || "0000000000";
-                const hiddenCard = rawCard.substring(0, 4) + "••••" + rawCard.slice(-4);
-                row.innerHTML = `<span class="buyer-id">CARD ID ${hiddenCard}</span><span class="buyer-ticket">POS #${tx.ticketNum}</span>`;
+                
+                const rawPhone = tx.phone || tx.cardSequence || "251900000000";
+                const maskedPhone = formatMaskedPhone(rawPhone);
+
+                row.innerHTML = `<span class="buyer-id">${maskedPhone}</span><span class="buyer-ticket">POS #${tx.ticketNum}</span>`;
                 container.appendChild(row);
             });
         }
@@ -636,11 +801,9 @@
             }
 
             try {
-                // Check primary location: users/{completeRawCardSequence}/pin
                 let userRef = ref(db, `users/${completeRawCardSequence}/pin`);
                 let snapshot = await get(userRef);
 
-                // Fallback check: users/{activeUserPhone}/pin in case phone formatting differs
                 if (!snapshot.exists()) {
                     userRef = ref(db, `users/${activeUserPhone}/pin`);
                     snapshot = await get(userRef);
@@ -651,13 +814,11 @@
                 if (snapshot.exists()) {
                     const storedPinValue = String(snapshot.val()).trim();
 
-                    // Compare against SHA-256 hash OR unhashed string (backward compatibility)
                     if (storedPinValue !== hashedInputPin && storedPinValue !== pinInput) {
                         showCustomError("Incorrect security PIN. Authorization denied.");
                         return;
                     }
                 } else {
-                    // Auto-provision PIN for account if no PIN node exists in DB yet
                     const pinUpdate = {};
                     pinUpdate[`/users/${completeRawCardSequence}/pin`] = hashedInputPin;
                     await update(ref(db), pinUpdate);
