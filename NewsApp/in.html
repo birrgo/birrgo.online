@@ -1,3 +1,6 @@
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1118823918279022"
+     crossorigin="anonymous"></script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -462,50 +465,24 @@
             }
         }
 
+        /* --- Google AdSense Dynamic Placement Execution --- */
         function triggerNativeAdExecution(containerId) {
             const target = document.getElementById(containerId);
             if (!target) return;
 
-            target.innerHTML = '';
+            target.innerHTML = `
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-1118823918279022"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            `;
 
-            const iframe = document.createElement('iframe');
-            iframe.style.width = '300px';
-            iframe.style.height = '250px';
-            iframe.style.border = 'none';
-            iframe.style.overflow = 'hidden';
-            iframe.style.display = 'block';
-            iframe.style.margin = '0 auto';
-            iframe.scrolling = 'no';
-
-            target.appendChild(iframe);
-
-            const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
-                    </style>
-                </head>
-                <body>
-                    <script type="text/javascript">
-                        var atOptions = {
-                            'key' : 'd2f535e8108b02e972de2d20b1d66e98',
-                            'format' : 'iframe',
-                            'height' : 250,
-                            'width' : 300,
-                            'params' : {}
-                        };
-                    <\/script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
+            try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (err) {
+                console.error("AdSense push error:", err);
+            }
         }
 
         window.duplicateAsAdmin = async function(itemId) {
@@ -732,7 +709,7 @@
                 
                 adCard.innerHTML = `
                     <div class="badge-meta-row" style="margin-bottom: 8px;">
-                        <span class="spotlight-pill inline-ad-badge">Our Partner</span>
+                        <span class="spotlight-pill inline-ad-badge">Sponsored Content</span>
                         <span class="timestamp-log-text">Verified Partner Content</span>
                     </div>
                     <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
