@@ -50,6 +50,18 @@ const searchInput = document.getElementById('modalSearchInput');
 let signupPayload = {};
 let countdownTimer;
 
+/* ==========================================================================
+   PWA INSTALLATION EVENT HANDLER
+   ========================================================================== */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome from automatically showing the standard banner
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+});
+
 function sanitizeEmail(email) {
     return email.toLowerCase().replace(/\./g, '_').replace(/@/g, '_at_');
 }
@@ -232,8 +244,11 @@ function showNotification(message, isSuccess = false) {
 document.getElementById('navBackBtn').addEventListener('click', () => {
     const signupForm = document.getElementById('signupForm');
     const otpView = document.getElementById('otpView');
+    const pwaView = document.getElementById('pwaInstallView');
     
-    if (otpView.style.display === 'flex') {
+    if (pwaView && pwaView.style.display === 'flex') {
+        window.location.href = "dashboard.html";
+    } else if (otpView.style.display === 'flex') {
         otpView.style.display = 'none';
         signupForm.style.display = 'flex';
         
@@ -422,6 +437,77 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     }
 });
 
+/* ==========================================================================
+   APP DOWNLOAD PROMPT VIEW LOGIC
+   ========================================================================== */
+function showPwaDownloadPrompt() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    // If user is already running inside installed PWA, redirect immediately
+    if (isStandalone) {
+        window.location.href = "dashboard.html";
+        return;
+    }
+
+    // Hide OTP view and display PWA installation screen
+    document.getElementById('otpView').style.display = 'none';
+    
+    let pwaView = document.getElementById('pwaInstallView');
+    if (!pwaView) {
+        pwaView = document.createElement('div');
+        pwaView.id = 'pwaInstallView';
+        pwaView.className = 'pwa-prompt-container';
+        pwaView.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; height: 100%;';
+        pwaView.innerHTML = `
+            <div style="background: #f0fdf4; border: 2px solid #10b981; border-radius: 50%; padding: 16px; margin-bottom: 20px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h2 style="margin-bottom: 8px; color: #111827;">Account Created!</h2>
+            <p style="color: #4b5563; font-size: 14px; margin-bottom: 24px;">
+                For the best mobile experience, faster access, and secure transactions, download and install the official app to your phone.
+            </p>
+            <button id="downloadAppBtn" class="primary-btn" style="width: 100%; padding: 14px; background: var(--primary-burgundy, #800020); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; margin-bottom: 12px;">
+                📱 Download & Install App
+            </button>
+            <button id="continueWebBtn" style="width: 100%; padding: 12px; background: transparent; color: #6b7280; border: 1px solid #d1d5db; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer;">
+                Continue in Browser
+            </button>
+        `;
+        document.querySelector('.container') ? document.querySelector('.container').appendChild(pwaView) : document.body.appendChild(pwaView);
+    } else {
+        pwaView.style.display = 'flex';
+    }
+
+    document.getElementById('screen-title').innerText = "Get the App";
+
+    // Handle App Installation Button Click
+    document.getElementById('downloadAppBtn').onclick = async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            if (outcome === 'accepted') {
+                showNotification("Thank you for installing! Redirecting...", true);
+                setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+            } else {
+                window.location.href = "dashboard.html";
+            }
+        } else {
+            // Chrome manual add to home screen instructions or fallback redirect
+            showNotification("To install: Tap browser menu (⋮) -> 'Add to Home screen'", true);
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
+        }
+    };
+
+    // Handle Web Fallback Button Click
+    document.getElementById('continueWebBtn').onclick = () => {
+        window.location.href = "dashboard.html";
+    };
+}
+
 document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
     let enteredOtp = "";
     otpInputs.forEach(input => enteredOtp += input.value);
@@ -559,9 +645,10 @@ document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
         localStorage.setItem('auth_session_phone', cleanPhone);
         localStorage.setItem('birrgo_last_page', 'dashboard.html');
 
+        // Instead of immediate redirect to dashboard.html, offer PWA installation
         setTimeout(() => {
-            window.location.href = "dashboard.html"; 
-        }, 1500);
+            showPwaDownloadPrompt();
+        }, 1200);
 
     } catch (error) {
         console.error("Database Write Error: ", error);
