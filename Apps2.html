@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0d0d0d;
+      background-color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -80,28 +80,176 @@
       display: block;
     }
 
+    /* DARK SILVER FULLSCREEN OVERLAY */
     .loading-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #121212;
-      color: #ffffff;
+      background: linear-gradient(180deg, #2e3138 0%, #1c1e22 100%);
+      color: #e0e0e0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      z-index: 5;
+      justify-content: flex-start;
+      z-index: 20;
       text-align: center;
-      padding: 20px;
+      padding-top: 20px;
+    }
+
+    /* Dark Silver Header Container */
+    .preview-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      background: #25282e;
+      border: 1px solid #3d414a;
+      padding: 12px 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      width: 80%;
+      max-width: 320px;
     }
 
     .loader-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: #2e7d32;
+      width: 30px;
+      height: 30px;
+      border: 3.5px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #4caf50;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
-      margin-bottom: 12px;
+    }
+
+    /* DESK SCENE CONTAINER */
+    .desk-scene {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* DARK SPACE-GRAY / DARK SILVER APPLE MAC MONITOR FRAME */
+    .mac-frame-wrapper {
+      position: relative;
+      background: #0d0d0e;
+      border: 10px solid #18191c; /* Outer Dark Metallic Bezel */
+      border-bottom-width: 28px;  /* Dark Silver Bottom Chin */
+      border-bottom-color: #484c54; 
+      border-radius: 16px 16px 4px 4px;
+      box-shadow: 
+        0 18px 35px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    /* Apple Logo on Dark Silver Bottom Chin */
+    .mac-frame-wrapper::after {
+      content: "";
+      position: absolute;
+      bottom: -23px;
+      font-size: 15px;
+      color: #9ba0aa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Mac Display Inner Screen */
+    .mac-screen {
+      background: #000000;
+      width: 300px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* DARK SILVER ALUMINUM STAND */
+    .mac-stand-neck {
+      width: 76px;
+      height: 32px;
+      background: linear-gradient(180deg, #50545c 0%, #3a3d43 40%, #282a2e 100%);
+      clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+      z-index: 2;
+    }
+
+    .mac-stand-base {
+      width: 130px;
+      height: 6px;
+      background: linear-gradient(180deg, #636873 0%, #34373d 100%);
+      border-radius: 2px 2px 4px 4px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 3;
+    }
+
+    /* WOODEN TABLE SURFACE WITH METALLIC SILVER LEGS */
+    .wooden-table {
+      width: 100vw;
+      max-width: 450px;
+      height: 45px;
+      background: linear-gradient(180deg, #b87333 0%, #8b4513 30%, #5c2e0b 100%);
+      margin-top: -3px; /* Seamless sit on table */
+      border-top: 4px solid #d49b6a; /* Highlight bevel on front edge */
+      box-shadow: 
+        inset 0 10px 15px rgba(0, 0, 0, 0.35),
+        0 12px 25px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Wood Grain Overlay Effect */
+    .wooden-table::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.03),
+        rgba(0, 0, 0, 0.03) 10px,
+        rgba(255, 255, 255, 0.03) 10px,
+        rgba(255, 255, 255, 0.03) 20px
+      );
+      pointer-events: none;
+    }
+
+    /* TABLE METALLIC SILVER LEGS */
+    .table-legs-container {
+      display: flex;
+      justify-content: space-between;
+      width: 85%;
+      max-width: 380px;
+      margin-top: 0px;
+      position: relative;
+      z-index: 0;
+    }
+
+    .table-leg {
+      width: 20px;
+      height: 75px;
+      background: linear-gradient(90deg, #e0e4e8 0%, #c0c4c9 15%, #909499 50%, #686c71 85%, #b0b4b8 100%);
+      border-bottom: 3px solid #3a3d41;
+      border-radius: 0 0 3px 3px;
+      box-shadow: 
+        3px 5px 12px rgba(0, 0, 0, 0.5),
+        inset 1px 0 2px rgba(255, 255, 255, 0.6);
+    }
+
+    .table-leg.left {
+      transform: skewX(-4deg);
+    }
+
+    .table-leg.right {
+      transform: skewX(4deg);
+    }
+
+    .ad-container {
+      width: 300px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     @keyframes spin {
@@ -111,19 +259,58 @@
 </head>
 <body>
 
-  <script src="loader.js"></script>
-
   <div class="app-header-bar">
     <button class="back-btn" onclick="goBackToStore()">&#8592; Back</button>
-    <div class="app-title-display" id="appTitle">Loading...</div>
+    <div class="app-title-display" id="appTitle">Loading App...</div>
     <div style="width: 60px;"></div>
   </div>
 
   <div class="app-frame-container">
+    <!-- DARK SILVER OVERLAY -->
     <div class="loading-overlay" id="frameLoader">
-      <div class="loader-spinner"></div>
-      <div id="loaderStatus" style="font-size: 14px; font-weight: 500;">Opening Application...</div>
+      
+      <!-- TOP HEADER LOADING ICON -->
+      <div class="preview-header">
+        <div class="loader-spinner"></div>
+        <div id="loaderStatus" style="font-size: 15px; font-weight: 600; color: #f0f0f0;">Opening Application...</div>
+      </div>
+
+      <!-- DESK SCENE WRAPPER -->
+      <div class="desk-scene">
+        <!-- DARK SILVER APPLE MAC MONITOR FRAME FOR AD -->
+        <div class="mac-frame-wrapper">
+          <div class="mac-screen">
+            <div class="ad-container">
+              <script>
+                atOptions = {
+                  'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
+            </div>
+          </div>
+        </div>
+
+        <!-- DARK SILVER MAC STAND -->
+        <div class="mac-stand-neck"></div>
+        <div class="mac-stand-base"></div>
+
+        <!-- WOODEN TABLE TOP -->
+        <div class="wooden-table"></div>
+
+        <!-- METALLIC SILVER TABLE LEGS -->
+        <div class="table-legs-container">
+          <div class="table-leg left"></div>
+          <div class="table-leg right"></div>
+        </div>
+      </div>
+
     </div>
+    
     <iframe id="appIframe" class="app-iframe" src="" allowfullscreen></iframe>
   </div>
 
@@ -145,15 +332,17 @@
       window.location.replace('Apps.html');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const appKey = urlParams.get('key');
-
-      if (!appKey) {
-        alert("Invalid app key specified.");
-        goBackToStore();
-        return;
+    // Force refresh if re-opened via Back/Forward Cache
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        window.location.reload();
       }
+    });
+
+    function initAppView(appKey) {
+      const loader = document.getElementById('frameLoader');
+      
+      if (loader) loader.style.display = 'flex';
 
       db.ref('pwa_apps/' + appKey).once('value').then((snapshot) => {
         if (!snapshot.exists()) {
@@ -174,27 +363,45 @@
         const category = appData.category;
         const canIframe = appData.canIframe;
 
-        // INSTANT REDIRECT (No waiting): If stored as invalid or app store link
         if (sourceType === 'playstore' || sourceType === 'appstore' || category === 'invalid' || canIframe === false) {
           window.location.replace(targetUrl);
           return;
         }
 
-        // VALID IFRAME: Load directly inside app container
         document.getElementById('appTitle').textContent = appName;
         const iframe = document.getElementById('appIframe');
-        iframe.src = targetUrl;
 
-        iframe.onload = () => {
-          const loader = document.getElementById('frameLoader');
+        // Silent 5-second minimum wait timer
+        const minimumWaitTime = new Promise((resolve) => setTimeout(resolve, 5000));
+        const iframeLoadEvent = new Promise((resolve) => {
+          iframe.onload = resolve;
+        });
+
+        // Hide overlay ONLY after 5 full seconds pass AND iframe completes loading
+        Promise.all([minimumWaitTime, iframeLoadEvent]).then(() => {
           if (loader) loader.style.display = 'none';
-        };
+        });
+
+        iframe.src = targetUrl;
 
       }).catch((err) => {
         console.error("Failed to fetch app info:", err);
         alert("Error loading app details.");
         goBackToStore();
       });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const appKey = urlParams.get('key');
+
+      if (!appKey) {
+        alert("Invalid app key specified.");
+        goBackToStore();
+        return;
+      }
+
+      initAppView(appKey);
     });
   </script>
 </body>

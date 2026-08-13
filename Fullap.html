@@ -209,6 +209,15 @@
       color: #444444;
     }
 
+    .ad-container-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 16px 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
     /* POPUP PIN MODAL */
     .security-modal-backdrop {
       position: fixed;
@@ -458,6 +467,9 @@
 
     let currentAppData = null;
 
+    // Your specific Ad Key
+    const AD_KEY = 'd2f535e8108b02e972de2d20b1d66e98';
+
     // Helper function: Encrypts plain PIN using Web Crypto SHA-256
     async function hashPinSHA256(plainPin) {
       const encoder = new TextEncoder();
@@ -532,6 +544,82 @@
       return app.pricingType === 'paid' && parseFloat(app.price) > 0;
     }
 
+    // Dynamic Ad Insertion every 200 characters using Iframe Sandboxing
+    function renderDescriptionWithAds(descriptionText) {
+      const container = document.getElementById('pageAppDescription');
+      container.innerHTML = '';
+
+      if (!descriptionText) {
+        container.textContent = 'No detailed article provided for this application.';
+        return;
+      }
+
+      let currentIndex = 0;
+
+      while (currentIndex < descriptionText.length) {
+        let nextIndex = currentIndex + 200;
+
+        // Align split to the nearest word space if within 50 characters
+        if (nextIndex < descriptionText.length) {
+          const spacePos = descriptionText.indexOf(' ', nextIndex);
+          if (spacePos !== -1 && spacePos - nextIndex < 50) {
+            nextIndex = spacePos;
+          }
+        } else {
+          nextIndex = descriptionText.length;
+        }
+
+        // Insert text segment
+        const textSegment = descriptionText.substring(currentIndex, nextIndex);
+        const spanElem = document.createElement('span');
+        spanElem.textContent = textSegment;
+        container.appendChild(spanElem);
+
+        // Append isolated Ad iframe if there's more text remaining
+        if (nextIndex < descriptionText.length) {
+          const adBox = document.createElement('div');
+          adBox.className = 'ad-container-wrapper';
+
+          const iframe = document.createElement('iframe');
+          iframe.style.width = '300px';
+          iframe.style.height = '250px';
+          iframe.style.border = 'none';
+          iframe.style.overflow = 'hidden';
+          iframe.scrolling = 'no';
+
+          adBox.appendChild(iframe);
+          container.appendChild(adBox);
+
+          // Render ad script dynamically into the isolated iframe document context
+          const iframeDoc = iframe.contentWindow || iframe.contentDocument.document || iframe.contentDocument;
+          iframeDoc.document.open();
+          iframeDoc.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; }</style>
+            </head>
+            <body>
+              <script type="text/javascript">
+                atOptions = {
+                  'key' : '${AD_KEY}',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              <\/script>
+              <script type="text/javascript" src="https://www.highperformanceformat.com/${AD_KEY}/invoke.js"><\/script>
+            </body>
+            </html>
+          `);
+          iframeDoc.document.close();
+        }
+
+        currentIndex = nextIndex;
+      }
+    }
+
     function loadAppDetails() {
       if (!appKey) {
         alert("Invalid app key specified.");
@@ -566,7 +654,7 @@
         iconElem.classList.remove('img-loaded');
         iconElem.src = icon;
 
-        document.getElementById('pageAppDescription').textContent = description;
+        renderDescriptionWithAds(description);
 
         document.getElementById('pageUserRating').textContent = getAdminUserRating(app);
         document.getElementById('pageSystemRating').textContent = getAdminSystemRating(app);
