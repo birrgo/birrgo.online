@@ -123,47 +123,57 @@
     }
 
     .installed-app-item {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      cursor: pointer;
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      aspect-ratio: 1 / 1 !important;
+      cursor: pointer !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
     }
 
+    /* Black Border & White Soft/Glow Shadow around Icons */
     .installed-app-icon {
-      width: 85%;
-      height: 85%;
-      max-width: 58px;
-      max-height: 58px;
-      border-radius: 14px;
-      object-fit: cover;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-      transition: transform 0.2s ease;
+      width: 85% !important;
+      height: 85% !important;
+      max-width: 58px !important;
+      max-height: 58px !important;
+      border-radius: 14px !important;
+      object-fit: cover !important;
+      background-color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.6), 0 0 8px rgba(255, 255, 255, 0.4) !important;
+      filter: drop-shadow(0px 2px 5px rgba(255, 255, 255, 0.5)) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      box-sizing: border-box !important;
     }
 
     .installed-app-item:active .installed-app-icon {
-      transform: scale(0.92);
+      transform: scale(0.92) !important;
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.8) !important;
     }
 
     /* Pin Badge Indicator */
     .pin-badge {
-      position: absolute;
-      top: 0px;
-      right: 0px;
-      font-size: 9px;
-      background: #5d0017;
-      color: #fff;
-      border-radius: 50%;
-      width: 15px;
-      height: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      z-index: 2;
+      position: absolute !important;
+      top: -2px !important;
+      right: -2px !important;
+      font-size: 9px !important;
+      background: #5d0017 !important;
+      color: #fff !important;
+      border-radius: 50% !important;
+      width: 15px !important;
+      height: 15px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6) !important;
+      z-index: 2 !important;
+      border: 1px solid rgba(0,0,0,0.5) !important;
     }
   </style>
 </head>
@@ -572,7 +582,7 @@
           return bTime - aTime;
         });
 
-        // Slice up to 30 items for a 5x6 single page grid layout
+        // Slice up to 30 items for a 5x6 grid
         const pageApps = sortedApps.slice(0, 30);
 
         let html = '<div class="installed-grid">';
