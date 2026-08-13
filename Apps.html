@@ -109,24 +109,61 @@
       transform: scale(0.98);
     }
 
-    /* Pin Badge Indicator */
+    /* 5x6 Grid Layout for Installed Section */
+    .installed-grid {
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      grid-template-rows: repeat(6, 1fr) !important;
+      gap: 10px !important;
+      padding: 10px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      justify-items: center !important;
+      align-items: center !important;
+    }
+
     .installed-app-item {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
     }
+
+    .installed-app-icon {
+      width: 85%;
+      height: 85%;
+      max-width: 58px;
+      max-height: 58px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease;
+    }
+
+    .installed-app-item:active .installed-app-icon {
+      transform: scale(0.92);
+    }
+
+    /* Pin Badge Indicator */
     .pin-badge {
       position: absolute;
-      top: 4px;
-      right: 4px;
-      font-size: 10px;
+      top: 0px;
+      right: 0px;
+      font-size: 9px;
       background: #5d0017;
       color: #fff;
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 2;
     }
   </style>
 </head>
@@ -535,9 +572,12 @@
           return bTime - aTime;
         });
 
+        // Slice up to 30 items for a 5x6 single page grid layout
+        const pageApps = sortedApps.slice(0, 30);
+
         let html = '<div class="installed-grid">';
 
-        sortedApps.forEach(({ key, app }) => {
+        pageApps.forEach(({ key, app }) => {
           const name = app.name || 'App';
           const targetUrl = app.url || '#';
           const icon = app.icon || `https://icon.horse/icon/${getDomain(targetUrl)}`;
@@ -549,10 +589,9 @@
           const pinBadgeHtml = isPinned ? `<span class="pin-badge">📌</span>` : '';
 
           html += `
-            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" ${contextMenuAttr}>
+            <div class="installed-app-item" onclick="openApp('${key}', '${targetUrl}', '${safeName}', false)" ${contextMenuAttr} title="${name}">
               ${pinBadgeHtml}
               <img src="${icon}" class="installed-app-icon" onerror="handleImageError(this, '${targetUrl}')" alt="${name}">
-              <span class="installed-app-name">${name}</span>
             </div>
           `;
         });
