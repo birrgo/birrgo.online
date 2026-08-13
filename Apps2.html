@@ -89,167 +89,126 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       z-index: 20;
       text-align: center;
-      padding-top: 20px;
+      overflow-y: auto;
+      padding: 20px 0;
     }
 
-    /* Header Container with Spinner */
+    /* HEADER LOADING STATUS ABOVE PHONE */
     .preview-header {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
       background: #ffffff;
-      border: 1px solid #e9ecef;
-      padding: 12px 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      width: 80%;
-      max-width: 320px;
+      border: 1px solid #e2e8f0;
+      padding: 10px 24px;
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .loader-spinner {
-      width: 30px;
-      height: 30px;
-      border: 3.5px solid rgba(0, 0, 0, 0.1);
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(0, 0, 0, 0.1);
       border-top-color: #2e7d32;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
 
-    /* DESK SCENE CONTAINER */
-    .desk-scene {
+    /* REALISTIC IPHONE 17 PRO MAX CONTAINER */
+    .phone-scene {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
     }
 
-    /* DARK SPACE-GRAY / DARK SILVER APPLE MAC MONITOR FRAME */
-    .mac-frame-wrapper {
+    /* CLEAN REALISTIC METALLIC TITANIUM FRAME (SHADOW REMOVED) */
+    .iphone-frame {
       position: relative;
-      background: #0d0d0e;
-      border: 10px solid #18191c; /* Outer Dark Metallic Bezel */
-      border-bottom-width: 28px;  /* Dark Silver Bottom Chin */
-      border-bottom-color: #484c54; 
-      border-radius: 16px 16px 4px 4px;
-      box-shadow: 
-        0 18px 35px rgba(0, 0, 0, 0.15),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 2;
-    }
-
-    /* Apple Logo on Dark Silver Bottom Chin */
-    .mac-frame-wrapper::after {
-      content: "";
-      position: absolute;
-      bottom: -23px;
-      font-size: 15px;
-      color: #9ba0aa;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    /* Mac Display Inner Screen */
-    .mac-screen {
+      width: 320px;
+      height: 580px;
       background: #000000;
+      border: 8px solid #3b3734; /* Desert Titanium Tone */
+      border-radius: 50px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); /* Clean inner bezel line, no outer drop shadow */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* REALISTIC DYNAMIC ISLAND */
+    .dynamic-island {
+      position: absolute;
+      top: 10px;
+      width: 85px;
+      height: 22px;
+      background-color: #000000;
+      border-radius: 20px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .camera-lens {
+      width: 10px;
+      height: 10px;
+      background-color: #0b101d;
+      border-radius: 50%;
+      border: 1px solid #1a233a;
+    }
+
+    /* SCREEN INNER CONTENT AREA */
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      background: #0f0f11;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 40px;
+      padding-bottom: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* AD SLOTS INSIDE THE PHONE */
+    .ad-slot {
       width: 300px;
       height: 250px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #18181c;
+      border-radius: 12px;
       overflow: hidden;
     }
 
-    /* DARK SILVER ALUMINUM STAND */
-    .mac-stand-neck {
-      width: 76px;
-      height: 32px;
-      background: linear-gradient(180deg, #50545c 0%, #3a3d43 40%, #282a2e 100%);
-      clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
-      z-index: 2;
+    .ad-slot iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
     }
 
-    .mac-stand-base {
-      width: 130px;
-      height: 6px;
-      background: linear-gradient(180deg, #636873 0%, #34373d 100%);
-      border-radius: 2px 2px 4px 4px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      z-index: 3;
-    }
-
-    /* WOODEN TABLE SURFACE WITH METALLIC SILVER LEGS */
-    .wooden-table {
-      width: 100vw;
-      max-width: 450px;
-      height: 45px;
-      background: linear-gradient(180deg, #b87333 0%, #8b4513 30%, #5c2e0b 100%);
-      margin-top: -3px; /* Seamless sit on table */
-      border-top: 4px solid #d49b6a; /* Highlight bevel on front edge */
-      box-shadow: 
-        inset 0 10px 15px rgba(0, 0, 0, 0.25),
-        0 12px 25px rgba(0, 0, 0, 0.2);
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Wood Grain Overlay Effect */
-    .wooden-table::before {
-      content: "";
+    /* HOME INDICATOR BAR */
+    .home-indicator {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0.03),
-        rgba(0, 0, 0, 0.03) 10px,
-        rgba(255, 255, 255, 0.03) 10px,
-        rgba(255, 255, 255, 0.03) 20px
-      );
-      pointer-events: none;
-    }
-
-    /* TABLE METALLIC SILVER LEGS */
-    .table-legs-container {
-      display: flex;
-      justify-content: space-between;
-      width: 85%;
-      max-width: 380px;
-      margin-top: 0px;
-      position: relative;
-      z-index: 0;
-    }
-
-    .table-leg {
-      width: 20px;
-      height: 75px;
-      background: linear-gradient(90deg, #e0e4e8 0%, #c0c4c9 15%, #909499 50%, #686c71 85%, #b0b4b8 100%);
-      border-bottom: 3px solid #3a3d41;
-      border-radius: 0 0 3px 3px;
-      box-shadow: 
-        3px 5px 12px rgba(0, 0, 0, 0.2),
-        inset 1px 0 2px rgba(255, 255, 255, 0.6);
-    }
-
-    .table-leg.left {
-      transform: skewX(-4deg);
-    }
-
-    .table-leg.right {
-      transform: skewX(4deg);
-    }
-
-    .ad-container {
-      width: 300px;
-      height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      bottom: 6px;
+      width: 110px;
+      height: 4px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      opacity: 0.7;
+      z-index: 20;
     }
 
     @keyframes spin {
@@ -269,18 +228,27 @@
     <!-- WHITE OVERLAY BACKGROUND -->
     <div class="loading-overlay" id="frameLoader">
       
-      <!-- TOP HEADER LOADING ICON -->
+      <!-- TOP STATUS INDICATOR -->
       <div class="preview-header">
         <div class="loader-spinner"></div>
-        <div id="loaderStatus" style="font-size: 15px; font-weight: 600; color: #1a1a1a;">Opening Application...</div>
+        <div id="loaderStatus" style="font-size: 14px; font-weight: 600; color: #1a1a1a;">Opening Application...</div>
       </div>
 
-      <!-- DESK SCENE WRAPPER -->
-      <div class="desk-scene">
-        <!-- DARK SILVER APPLE MAC MONITOR FRAME FOR AD -->
-        <div class="mac-frame-wrapper">
-          <div class="mac-screen">
-            <div class="ad-container">
+      <!-- IPHONE SCENE WRAPPER -->
+      <div class="phone-scene">
+        <!-- REALISTIC TITANIUM IPHONE CONTAINER -->
+        <div class="iphone-frame">
+          
+          <!-- DYNAMIC ISLAND WITH CAMERA -->
+          <div class="dynamic-island">
+            <div class="camera-lens"></div>
+          </div>
+
+          <!-- PHONE DISPLAY SCREEN -->
+          <div class="iphone-screen">
+            
+            <!-- TOP AD CONTAINER -->
+            <div class="ad-slot">
               <script>
                 atOptions = {
                   'key' : 'd2f535e8108b02e972de2d20b1d66e98',
@@ -292,20 +260,25 @@
               </script>
               <script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
             </div>
+
+            <!-- BOTTOM DUPLICATE AD CONTAINER -->
+            <div class="ad-slot">
+              <script>
+                atOptions = {
+                  'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
+            </div>
+
           </div>
-        </div>
 
-        <!-- DARK SILVER MAC STAND -->
-        <div class="mac-stand-neck"></div>
-        <div class="mac-stand-base"></div>
-
-        <!-- WOODEN TABLE TOP -->
-        <div class="wooden-table"></div>
-
-        <!-- METALLIC SILVER TABLE LEGS -->
-        <div class="table-legs-container">
-          <div class="table-leg left"></div>
-          <div class="table-leg right"></div>
+          <!-- HOME INDICATOR -->
+          <div class="home-indicator"></div>
         </div>
       </div>
 
